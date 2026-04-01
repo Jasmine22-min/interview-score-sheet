@@ -36,36 +36,62 @@
         #toast.show { transform: translateX(0); }
 
         /* ================= 列印 / 報告模式 CSS ================= */
-        .report-label { display: none; } /* 正常模式下隱藏中文標籤 */
+        .report-label { display: none; } 
         
         body.report-mode { background-color: white; }
         body.report-mode .hide-in-report { display: none !important; }
         body.report-mode input, body.report-mode textarea, body.report-mode select { border: none !important; background: transparent !important; appearance: none; -webkit-appearance: none; pointer-events: none; resize: none; padding: 0 !important; color: #0f172a !important; font-weight: 500; }
         body.report-mode .shadow-sm, body.report-mode .shadow-md, body.report-mode .shadow-lg, body.report-mode .shadow-xl { box-shadow: none !important; }
-        body.report-mode section { border: 1px solid #e2e8f0; margin-bottom: 16px; border-radius: 8px; break-inside: avoid; }
         
-        /* 報告模式下的分數按鈕切換 */
         body.report-mode .score-btn:not(.active) { display: none !important; }
         body.report-mode .score-btn.active { transform: none !important; cursor: default; width: auto !important; padding: 2px 12px; border-radius: 12px; font-size: 14px; font-weight: bold; box-shadow: none !important; }
         
-        /* 階段一與階段二特殊標籤切換 (優異5, 良好4...) */
         body.report-mode .s1-s2-btn .btn-num { display: none !important; }
         body.report-mode .s1-s2-btn .report-label { display: inline-block !important; }
 
-        /* 隱藏未選擇的決策按鈕 */
         body.report-mode .decision-btn:not([class*="active-"]) { display: none !important; }
         body.report-mode .decision-btn { padding: 8px 16px !important; pointer-events: none; }
         
+        /* 極致壓縮 A4 列印設定 */
         @media print {
             .no-print { display: none !important; }
-            body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            @page { margin: 1cm; }
+            body { -webkit-print-color-adjust: exact; print-color-adjust: exact; font-size: 10px !important; line-height: 1.1 !important; }
+            @page { size: A4 portrait; margin: 8mm; }
+            
+            main { padding: 0 !important; margin: 0 !important; max-width: 100% !important; }
+            .p-4, .p-5, .p-6, .p-8 { padding: 4px !important; }
+            .mb-6, .mb-8, .mb-4, .mb-3 { margin-bottom: 4px !important; }
+            .gap-6, .gap-8, .gap-4 { gap: 4px !important; }
+            .text-lg, .text-xl, .text-2xl, .text-3xl, .text-5xl { font-size: 13px !important; }
+            .text-sm { font-size: 10px !important; }
+            .text-xs { font-size: 9px !important; }
+            
+            section { border: 1px solid #ccc !important; margin-bottom: 4px !important; border-radius: 4px !important; break-inside: avoid; }
+            table th, table td { padding: 2px 4px !important; }
+            textarea { min-height: unset !important; height: auto !important; border-bottom: 1px dashed #ccc !important; }
+            
+            /* 將深色決策區塊轉為白底黑字省墨，並強制緊湊 */
+            .bg-slate-900, .bg-slate-800 { background-color: #f8fafc !important; color: #000 !important; border: 1px solid #94a3b8 !important; }
+            .text-white, .text-slate-200, .text-slate-300, .text-slate-400 { color: #1e293b !important; }
+            .text-blue-400, .text-emerald-400, .text-orange-400, .text-amber-300, .text-red-400 { color: #0f172a !important; font-weight: 900 !important; }
+            .grid { display: flex !important; flex-wrap: wrap !important; }
+            .grid > div { flex: 1 1 45% !important; }
+            #ideal-status-exp, #bonus-method-input { padding: 2px !important; border: none !important; }
         }
     </style>
 </head>
 <body class="text-slate-800 pb-40">
 
     <div id="toast">✅ 操作成功！</div>
+
+    <!-- 即時進度與防呆提示框 -->
+    <div id="validation-warning" class="fixed bottom-[80px] right-4 bg-white border-l-4 border-amber-500 text-slate-700 px-4 py-3 rounded-lg shadow-xl z-40 hidden text-sm font-bold flex items-start gap-3 w-72">
+        <svg class="w-5 h-5 text-amber-500 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+        <div>
+            <div class="font-black text-amber-600 mb-1">尚未完成所有評分</div>
+            <div id="missing-list" class="font-normal text-xs text-slate-500 leading-relaxed"></div>
+        </div>
+    </div>
 
     <header class="bg-slate-900 text-white p-4 shadow-lg sticky top-0 z-50 border-b-2 border-blue-500 no-print">
         <div class="container mx-auto flex justify-between items-center">
@@ -77,9 +103,9 @@
         </div>
     </header>
 
-    <div id="report-exit-bar" class="hidden fixed top-0 left-0 w-full bg-blue-600 text-white p-3 z-[60] flex justify-between items-center no-print shadow-lg">
-        <span class="font-bold ml-4">📄 報告預覽模式 (列印/下載 PDF)</span>
-        <button onclick="toggleReportMode(false)" class="bg-white text-blue-600 px-4 py-1.5 rounded-lg font-bold hover:bg-blue-50 mr-4">返回編輯模式</button>
+    <div id="report-exit-bar" class="hidden fixed top-0 left-0 w-full bg-blue-600 text-white p-2 z-[60] flex justify-between items-center no-print shadow-lg">
+        <span class="font-bold ml-4 text-sm">📄 報告預覽模式 (建議選擇 A4 直式、縮放預設)</span>
+        <button onclick="toggleReportMode(false)" class="bg-white text-blue-600 px-4 py-1 rounded-lg font-bold hover:bg-blue-50 mr-4 text-sm">返回編輯</button>
     </div>
 
     <main class="container mx-auto p-4 max-w-[1400px] mt-4 space-y-6">
@@ -88,63 +114,67 @@
             <div class="bg-slate-800 p-3 border-b border-slate-700">
                 <h2 class="text-white font-bold flex items-center gap-2 text-lg">面試基本資訊</h2>
             </div>
-            <div class="p-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div>
                     <label class="block text-sm font-bold text-slate-400 mb-1">應徵者姓名</label>
-                    <input type="text" class="w-full border-b-2 border-slate-200 p-2 focus:border-blue-500 outline-none bg-slate-50 transition-all text-lg font-bold">
+                    <input type="text" id="ipt-name" class="w-full border-b-2 border-slate-200 p-2 focus:border-blue-500 outline-none bg-slate-50 transition-all text-base font-bold">
                 </div>
                 <div class="row-span-2">
                     <label class="block text-sm font-bold text-slate-400 mb-1 flex justify-between items-center">
                         面試官姓名
-                        <button onclick="addInterviewer()" class="hide-in-report bg-blue-50 text-blue-600 hover:bg-blue-100 px-2 py-1 rounded text-xs flex items-center gap-1 font-bold">增加人員</button>
+                        <button onclick="addInterviewer()" class="hide-in-report bg-blue-50 text-blue-600 hover:bg-blue-100 px-2 py-1 rounded text-xs flex items-center gap-1 font-bold">增加人員點我</button>
                     </label>
-                    <div id="interviewer-list" class="space-y-3">
-                        <div class="flex gap-2"><input type="text" class="flex-1 border-b-2 border-slate-200 p-2 text-lg focus:border-blue-500 outline-none bg-slate-50"></div>
+                    <div id="interviewer-list" class="space-y-2">
+                        <div class="flex gap-2"><input type="text" class="flex-1 border-b-2 border-slate-200 p-2 text-base focus:border-blue-500 outline-none bg-slate-50"></div>
                     </div>
                 </div>
                 <div>
-                    <label class="block text-sm font-bold text-slate-400 mb-1">應徵分校</label>
-                    <select class="w-full border-b-2 border-slate-200 p-2 focus:border-blue-500 outline-none bg-slate-50 text-lg font-bold">
+                    <label class="block text-sm font-bold text-slate-400 mb-1">應徵分校/單位</label>
+                    <select id="sel-branch" class="w-full border-b-2 border-slate-200 p-2 focus:border-blue-500 outline-none bg-slate-50 text-base font-bold">
                         <option value="">請選擇...</option>
-                        <option>青埔翱翔校</option><option>青園展翅校</option><option>大園晨光校</option>
-                        <option>內壢森耀校</option><option>竹北知行校</option><option>文化極光校</option>
-                        <option>快樂騰雲校</option><option>大園參天校</option><option>園中方舟校</option>
-                        <option>青埔旭日校</option><option>中壢心夢想校</option><option>青埔升大校</option>
-                        <option>行政溝通處</option><option>人力資源處</option><option>財務會計處</option>
-                        <option>國小事業處</option><option>國高中事業處</option><option>產品研發處</option>
-                        <option>品牌行銷處</option>
+                        <optgroup label="【各分校單位】">
+                            <option>青埔翱翔校</option><option>青園展翅校</option><option>大園晨光校</option>
+                            <option>內壢森耀校</option><option>竹北知行校</option><option>文化極光校</option>
+                            <option>快樂騰雲校</option><option>大園參天校</option><option>園中方舟校</option>
+                            <option>青埔旭日校</option><option>中壢心夢想校</option><option>青埔升大校</option>
+                        </optgroup>
+                        <optgroup label="【總部處室】">
+                            <option>行政溝通處</option><option>人力資源處</option><option>財務會計處</option>
+                            <option>國小事業處</option><option>國高中事業處</option><option>產品研發處</option>
+                            <option>品牌行銷處</option>
+                        </optgroup>
                     </select>
                 </div>
                 <div>
                     <label class="block text-sm font-bold text-slate-400 mb-1">應徵職位</label>
-                    <select class="w-full border-b-2 border-slate-200 p-2 focus:border-blue-500 outline-none bg-slate-50 text-lg font-bold">
+                    <select id="sel-position" class="w-full border-b-2 border-slate-200 p-2 focus:border-blue-500 outline-none bg-slate-50 text-base font-bold">
                         <option value="">請選擇...</option>
                         <option>班級導師</option><option>行政導師</option><option>授課師</option>
                         <option>主任</option><option>處長</option><option>總部</option>
                     </select>
                 </div>
-                <div class="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4 bg-blue-50/50 p-4 rounded-xl border border-blue-100">
+                <div class="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4 bg-blue-50/50 p-3 rounded-xl border border-blue-100">
                     <div>
                         <label class="block text-xs font-bold text-blue-800 mb-1">面試日期</label>
-                        <input type="date" id="interview-date" onchange="updateDateTimeDisplay()" class="w-full border border-slate-200 rounded p-1.5 text-sm outline-none">
+                        <input type="date" id="interview-date" onchange="updateDateTimeDisplay()" class="w-full border border-slate-200 rounded p-1 text-sm outline-none">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-blue-800 mb-1">開始時間</label>
-                        <input type="time" id="interview-time" onchange="updateDateTimeDisplay()" class="w-full border border-slate-200 rounded p-1.5 text-sm outline-none">
+                        <input type="time" id="interview-time" onchange="updateDateTimeDisplay()" class="w-full border border-slate-200 rounded p-1 text-sm outline-none">
                     </div>
                     <div class="sm:col-span-2">
-                        <div id="datetime-preview" class="mt-1 text-sm font-black text-blue-700 tracking-wide"></div>
+                        <div id="datetime-preview" class="text-sm font-black text-blue-700 tracking-wide"></div>
                     </div>
                 </div>
             </div>
         </section>
 
         <section class="bg-white rounded-2xl shadow-sm border border-slate-200">
-            <div class="bg-emerald-50 p-4 border-b border-emerald-100 flex justify-between items-center">
+            <div class="bg-emerald-50 p-3 border-b border-emerald-100 flex justify-between items-center">
                 <h2 class="text-lg font-bold text-emerald-900">1. 階段一：筆試與綜合面談 <span class="text-sm font-normal text-emerald-600 ml-2">(30%)</span></h2>
-                <div class="text-sm font-bold text-emerald-700">貢獻分: <span id="s1-final" class="text-xl">0.00</span>/30</div>
+                <div class="text-sm font-bold text-emerald-700">得分: <span id="s1-final" class="text-xl">0.00</span>/30</div>
             </div>
-            <div class="p-6 space-y-6 bg-slate-50/30">
+            <div class="p-4 space-y-3 bg-slate-50/30">
                 <div id="s1-exp-section"></div>
                 <div id="s1-mot-section"></div>
                 <div id="s1-sty-section"></div>
@@ -154,18 +184,18 @@
         </section>
 
         <section class="bg-white rounded-2xl shadow-sm border border-slate-200">
-            <div class="bg-indigo-50 p-4 border-b border-indigo-100 flex justify-between items-center">
+            <div class="bg-indigo-50 p-3 border-b border-indigo-100 flex justify-between items-center">
                 <div>
                     <h2 class="text-lg font-bold text-indigo-900">2. 階段二：外顯特質評分 <span class="text-sm font-normal text-indigo-600 ml-2">(10%)</span></h2>
-                    <p class="text-xs text-indigo-700 mt-1 hide-in-report">評分基準：[5]優異、[4]良好、[3]佳、[2]尚可、[1]差</p>
+                    <p class="text-xs text-indigo-700 mt-1 hide-in-report">評分基準：[5]優異、[4]良好、[3]佳、[2]尚可、[1]差 (再次點擊可取消)</p>
                 </div>
-                <div class="text-sm font-bold text-indigo-700">貢獻分: <span id="s2-final" class="text-xl">0.00</span>/10</div>
+                <div class="text-sm font-bold text-indigo-700">得分: <span id="s2-final" class="text-xl">0.00</span>/10</div>
             </div>
-            <div class="p-5 grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-1" id="s2-container"></div>
+            <div class="p-4 grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-1" id="s2-container"></div>
         </section>
 
         <section class="bg-white rounded-2xl shadow-sm border border-slate-200">
-            <div class="bg-orange-50 p-4 border-b border-orange-200 flex justify-between items-center">
+            <div class="bg-orange-50 p-3 border-b border-orange-200 flex justify-between items-center">
                 <h2 class="text-lg font-bold text-orange-900">3. 階段三：職能評估 <span class="text-sm font-normal text-orange-600 ml-2">(60%)</span></h2>
                 <div class="flex items-center gap-4">
                     <select id="job-level-select" class="border rounded outline-none font-bold text-sm p-1 hide-in-report" onchange="updateLevelLogic()">
@@ -177,7 +207,7 @@
                         <option value="6">職等 6 (核心40% / 管理60%)</option>
                         <option value="7">職等 7 (核心30% / 管理70%)</option>
                     </select>
-                    <div class="text-sm font-bold text-orange-700">貢獻分: <span id="s3-final" class="text-xl">0.00</span>/60</div>
+                    <div class="text-sm font-bold text-orange-700">得分: <span id="s3-final" class="text-xl">0.00</span>/60</div>
                 </div>
             </div>
 
@@ -197,32 +227,32 @@
             </div>
         </section>
 
-        <section class="bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8 text-white mb-8 border border-slate-700 relative">
-            <h2 class="text-2xl font-black mb-6 flex items-center gap-3">面試成績總結算 (Report Card)</h2>
-            <div class="bg-slate-800 p-5 rounded-xl border border-slate-600 flex justify-between items-center mb-6">
+        <section class="bg-slate-900 rounded-2xl shadow-xl p-5 md:p-6 text-white mb-8 border border-slate-700 relative">
+            <h2 class="text-xl font-black mb-4 flex items-center gap-3">面試成績總結算 (Report Card)</h2>
+            <div class="bg-slate-800 p-4 rounded-xl border border-slate-600 flex justify-between items-center mb-5">
                 <div>
-                    <div class="text-xl font-black text-slate-200">系統最終總得分</div>
+                    <div class="text-lg font-black text-slate-200">系統最終總得分</div>
                 </div>
-                <div class="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400" id="report-grand-total">0.00</div>
+                <div class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400" id="report-grand-total">0.00</div>
             </div>
             
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div class="space-y-4 bg-slate-800 p-5 rounded-xl border border-slate-700">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="space-y-3 bg-slate-800 p-4 rounded-xl border border-slate-700">
                     <label class="block text-slate-400 text-sm font-bold">系統建議理想狀態</label>
-                    <div id="ideal-status-text" class="text-2xl font-black text-white mb-4">等待評分...</div>
+                    <div id="ideal-status-text" class="text-xl font-black text-white mb-2">等待評分...</div>
                     <label class="block text-slate-400 text-sm font-bold">理想狀態判定說明</label>
-                    <div id="ideal-status-exp" class="text-sm font-medium text-amber-300 bg-amber-900/30 p-3 rounded-lg border border-amber-700/50">-</div>
+                    <div id="ideal-status-exp" class="text-sm font-medium text-amber-300 bg-amber-900/30 p-2.5 rounded-lg border border-amber-700/50">-</div>
                 </div>
 
-                <div class="space-y-4 bg-slate-800 p-5 rounded-xl border border-slate-700">
-                    <label class="block text-slate-300 text-sm font-bold mb-2">加分方式 / 補救培訓計畫</label>
+                <div class="space-y-3 bg-slate-800 p-4 rounded-xl border border-slate-700 flex flex-col">
+                    <label class="block text-slate-300 text-sm font-bold">加分方式 / 補救培訓計畫</label>
                     <div id="bonus-hint-area" class="text-xs text-amber-400 bg-amber-900/20 px-3 py-2 rounded-t-lg hidden hide-in-report"></div>
-                    <textarea id="bonus-method-input" rows="3" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-white text-sm focus:border-blue-500 outline-none mb-4 placeholder-slate-500" placeholder="請填寫..."></textarea>
+                    <textarea id="bonus-method-input" rows="2" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2.5 text-white text-sm focus:border-blue-500 outline-none mb-2 placeholder-slate-500 flex-1" placeholder="請填寫..."></textarea>
                     
-                    <label class="block text-slate-300 text-sm font-bold mb-2 hide-in-report">最終錄取結果</label>
+                    <label class="block text-slate-300 text-sm font-bold hide-in-report">最終錄取結果</label>
                     <div class="flex gap-4">
-                        <button id="btn-pass" onclick="setFinalDecision('pass')" class="decision-btn flex-1 bg-slate-700 text-slate-300 py-3 rounded-xl font-black text-lg hover:bg-slate-600">✅ 確認錄取</button>
-                        <button id="btn-fail" onclick="setFinalDecision('fail')" class="decision-btn flex-1 bg-slate-700 text-slate-300 py-3 rounded-xl font-black text-lg hover:bg-slate-600">❌ 不予錄取</button>
+                        <button id="btn-pass" onclick="setFinalDecision('pass')" class="decision-btn flex-1 bg-slate-700 text-slate-300 py-2 rounded-xl font-black text-base hover:bg-slate-600">✅ 確認錄取</button>
+                        <button id="btn-fail" onclick="setFinalDecision('fail')" class="decision-btn flex-1 bg-slate-700 text-slate-300 py-2 rounded-xl font-black text-base hover:bg-slate-600">❌ 不予錄取</button>
                     </div>
                 </div>
             </div>
@@ -237,7 +267,7 @@
             </div>
             <div class="flex gap-3">
                 <button onclick="saveDraft()" class="px-4 py-2 bg-slate-100 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-200 font-bold transition-colors">💾 暫存人才</button>
-                <button onclick="fakeSaveBackend()" class="px-4 py-2 bg-slate-800 rounded-lg text-white hover:bg-slate-700 font-bold">☁️ 儲存到後台</button>
+                <button onclick="exportToCSV()" class="px-4 py-2 bg-slate-800 rounded-lg text-white hover:bg-slate-700 font-bold shadow-md">☁️ 儲存到後台 (匯出 CSV)</button>
                 <button onclick="toggleReportMode(true)" class="px-6 py-2 bg-blue-600 rounded-lg text-white hover:bg-blue-700 font-black shadow-md">📄 產出成績單</button>
             </div>
         </div>
@@ -256,22 +286,19 @@
             showToast('✅ 已成功暫存人才資料於本機！');
         }
 
-        function fakeSaveBackend() {
-            showToast('☁️ 正在上傳至後台資料庫...');
-            setTimeout(() => showToast('✅ 儲存成功！已完成建檔。'), 1500);
-        }
-
         function toggleReportMode(isReport) {
             if(isReport) {
                 document.body.classList.add('report-mode');
                 document.getElementById('action-bar').classList.add('hidden');
                 document.getElementById('report-exit-bar').classList.remove('hidden');
+                document.getElementById('validation-warning').classList.add('hidden'); // 列印時隱藏警告
                 window.scrollTo(0,0);
                 setTimeout(() => window.print(), 500);
             } else {
                 document.body.classList.remove('report-mode');
                 document.getElementById('action-bar').classList.remove('hidden');
                 document.getElementById('report-exit-bar').classList.add('hidden');
+                calculateScores(); // 恢復警告狀態
             }
         }
 
@@ -279,7 +306,7 @@
             const container = document.getElementById('interviewer-list');
             const div = document.createElement('div');
             div.className = 'flex gap-2';
-            div.innerHTML = `<input type="text" class="flex-1 border-b-2 border-slate-200 p-2 text-lg outline-none"><button onclick="this.parentElement.remove()" class="text-red-500 font-bold px-2">✕</button>`;
+            div.innerHTML = `<input type="text" class="flex-1 border-b-2 border-slate-200 p-2 text-base outline-none"><button onclick="this.parentElement.remove()" class="text-red-500 font-bold px-2">✕</button>`;
             container.appendChild(div);
         }
 
@@ -336,6 +363,8 @@
             s2: Array(S2_QUESTIONS.length).fill(0), s3: { core: Array(6).fill(0), mgmt: Array(3).fill(0) }
         };
 
+        window.finalDecision = null; // 用於紀錄最終決策並匯出
+
         window.onload = () => {
             document.getElementById('interview-date').value = new Date().toISOString().split('T')[0];
             updateDateTimeDisplay();
@@ -347,17 +376,33 @@
         function renderS1() {
             S1_DATA.forEach(group => {
                 const container = document.getElementById(`s1-${group.id}-section`);
-                let html = `<div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm mb-3"><div class="flex justify-between border-b-2 border-slate-100 pb-2"><h3 class="font-bold">${group.title}</h3></div><div class="space-y-2 mt-2">`;
-                group.qs.forEach((q, i) => {
-                    html += `<div class="bg-slate-50 p-2 rounded flex justify-between items-center"><div class="text-sm flex-1">${q}</div><div class="flex gap-1">`;
+                let html = `<div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm mb-2"><div class="flex justify-between border-b-2 border-slate-100 pb-1"><h3 class="font-bold text-sm text-slate-800">${group.title}</h3></div><div class="space-y-1.5 mt-1.5">`;
+                
+                if (group.id === 'bon') {
+                    // 加分題特殊版型 (文字框 + 按鈕)
+                    html += `<div class="bg-slate-50 p-2 rounded flex flex-col gap-2 hover:bg-slate-100 transition-colors">
+                        <div class="text-sm font-medium text-slate-700">${group.qs[0]} <span class="text-xs text-slate-400 font-normal">(此題選填)</span></div>
+                        <textarea id="s1-bon-text" rows="1" class="input-cell" placeholder="請填寫面試官說明的加分項目..."></textarea>
+                        <div class="flex gap-1.5 self-end">`;
                     [1,2,3,4,5].map(v => {
-                        const isActive = state.s1[group.id][i] == v;
-                        html += `<button onclick="setScore('s1-${group.id}', ${i}, ${v}, this)" class="score-btn s1-s2-btn w-8 h-8 rounded text-sm font-bold ${isActive?'active':''}" data-val="${v}">
+                        const isActive = state.s1[group.id][0] == v;
+                        html += `<button onclick="setScore('s1-${group.id}', 0, ${v}, this)" class="score-btn s1-s2-btn w-7 h-7 rounded text-xs font-bold text-slate-600 ${isActive?'active':''}" data-val="${v}">
                             <span class="btn-num">${v}</span><span class="report-label">${GRADE_LABELS[v]}</span>
                         </button>`;
                     });
                     html += `</div></div>`;
-                });
+                } else {
+                    group.qs.forEach((q, i) => {
+                        html += `<div class="bg-slate-50 p-2 rounded flex justify-between items-center"><div class="text-sm flex-1 text-slate-700">${q}</div><div class="flex gap-1">`;
+                        [1,2,3,4,5].map(v => {
+                            const isActive = state.s1[group.id][i] == v;
+                            html += `<button onclick="setScore('s1-${group.id}', ${i}, ${v}, this)" class="score-btn s1-s2-btn w-7 h-7 rounded text-xs font-bold text-slate-600 ${isActive?'active':''}" data-val="${v}">
+                                <span class="btn-num">${v}</span><span class="report-label">${GRADE_LABELS[v]}</span>
+                            </button>`;
+                        });
+                        html += `</div></div>`;
+                    });
+                }
                 container.innerHTML = html + `</div>`;
             });
         }
@@ -367,11 +412,11 @@
             container.innerHTML = S2_QUESTIONS.map((q, i) => {
                 let btns = [1,2,3,4,5].map(v => {
                     const isActive = state.s2[i] == v;
-                    return `<button onclick="setScore('s2', ${i}, ${v}, this)" class="score-btn s1-s2-btn w-8 h-8 rounded text-xs font-bold ${isActive?'active':''}" data-val="${v}">
+                    return `<button onclick="setScore('s2', ${i}, ${v}, this)" class="score-btn s1-s2-btn w-7 h-7 rounded text-xs font-bold text-slate-600 ${isActive?'active':''}" data-val="${v}">
                         <span class="btn-num">${v}</span><span class="report-label">${GRADE_LABELS[v]}</span>
                     </button>`;
                 }).join('');
-                return `<div class="flex justify-between items-center border-b border-slate-100 py-2 px-1"><span class="text-sm">${i+1}. ${q}</span><div class="flex gap-1">${btns}</div></div>`;
+                return `<div class="flex justify-between items-center border-b border-slate-100 py-1.5 px-1"><span class="text-sm text-slate-700">${i+1}. ${q}</span><div class="flex gap-1">${btns}</div></div>`;
             }).join('');
         }
 
@@ -384,7 +429,7 @@
                 html += `<tr class="border-b border-slate-200"><td class="p-2 border-r bg-blue-50 font-bold text-center text-sm">核心<br><span class="text-xs text-blue-600">(${d.c[i]}%)</span></td><td class="p-2 border-r font-bold text-sm text-center">${item.name}</td><td class="bg-blue-50/10 p-1 border-r"><textarea class="input-cell" rows="1"></textarea></td><td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell" rows="1"></textarea></td><td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell" rows="1"></textarea></td><td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell" rows="1"></textarea></td><td class="p-2 text-center"><div class="flex gap-1 justify-center">`;
                 [1,2,3,4,5].map(v => {
                     const isActive = state.s3.core[i] == v;
-                    html += `<button onclick="setScore('s3-core', ${i}, ${v}, this)" class="score-btn w-7 h-7 rounded text-xs font-bold ${isActive?'active':''}" data-val="${v}">${v}<span class="tooltip-text">${item.levels[v-1]}</span></button>`;
+                    html += `<button onclick="setScore('s3-core', ${i}, ${v}, this)" class="score-btn w-7 h-7 rounded text-xs font-bold text-slate-600 ${isActive?'active':''}" data-val="${v}">${v}<span class="tooltip-text">${item.levels[v-1]}</span></button>`;
                 });
                 html += `</div></td></tr>`;
                 const desc = state.s3.core[i] > 0 ? item.descs[state.s3.core[i]-1] : '';
@@ -395,7 +440,7 @@
                 html += `<tr class="border-b border-slate-200"><td class="p-2 border-r bg-green-50 font-bold text-center text-sm">管理<br><span class="text-xs text-green-600">(${d.m[i]}%)</span></td><td class="p-2 border-r font-bold text-sm text-center">${item.name}</td><td class="bg-blue-50/10 p-1 border-r"><textarea class="input-cell" rows="1"></textarea></td><td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell" rows="1"></textarea></td><td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell" rows="1"></textarea></td><td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell" rows="1"></textarea></td><td class="p-2 text-center"><div class="flex gap-1 justify-center">`;
                 [1,2,3,4,5].map(v => {
                     const isActive = state.s3.mgmt[i] == v;
-                    html += `<button onclick="setScore('s3-mgmt', ${i}, ${v}, this)" class="score-btn w-7 h-7 rounded text-xs font-bold ${isActive?'active':''}" data-val="${v}">${v}<span class="tooltip-text">${item.levels[v-1]}</span></button>`;
+                    html += `<button onclick="setScore('s3-mgmt', ${i}, ${v}, this)" class="score-btn w-7 h-7 rounded text-xs font-bold text-slate-600 ${isActive?'active':''}" data-val="${v}">${v}<span class="tooltip-text">${item.levels[v-1]}</span></button>`;
                 });
                 html += `</div></td></tr>`;
                 const desc = state.s3.mgmt[i] > 0 ? item.descs[state.s3.mgmt[i]-1] : '';
@@ -406,27 +451,42 @@
 
         function updateLevelLogic() { state.level = parseInt(document.getElementById('job-level-select').value); renderS3(); calculateScores(); }
 
+        // ================= Toggle 評分機制 =================
         window.setScore = function(group, idx, val, btn) {
-            Array.from(btn.parentElement.children).forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
+            const parent = btn.parentElement;
+            const isActive = btn.classList.contains('active');
 
-            if(group === 's2') state.s2[idx] = val;
-            else if(group.startsWith('s1-')) state.s1[group.split('-')[1]][idx] = val;
+            Array.from(parent.children).forEach(b => b.classList.remove('active'));
+
+            let newVal = val;
+            if (isActive) {
+                newVal = 0; // 反悔取消選取
+            } else {
+                btn.classList.add('active');
+            }
+
+            if(group === 's2') state.s2[idx] = newVal;
+            else if(group.startsWith('s1-')) state.s1[group.split('-')[1]][idx] = newVal;
             else if(group.startsWith('s3-')) {
                 const type = group.split('-')[1];
-                state.s3[type][idx] = val;
+                state.s3[type][idx] = newVal;
                 const BARS = type === 'core' ? S3_BARS_CORE : S3_BARS_MGMT;
-                document.getElementById(`desc-${type}-${idx}`).classList.remove('hidden');
-                document.getElementById(`desc-text-${type}-${idx}`).innerText = BARS[idx].descs[val-1];
+                const descRow = document.getElementById(`desc-${type}-${idx}`);
+                if (newVal > 0) {
+                    descRow.classList.remove('hidden');
+                    document.getElementById(`desc-text-${type}-${idx}`).innerText = BARS[idx].descs[newVal-1];
+                } else {
+                    descRow.classList.add('hidden');
+                }
             }
             calculateScores();
         }
 
         function setFinalDecision(type) {
-            document.getElementById('btn-pass').className = 'decision-btn flex-1 bg-slate-700 text-slate-300 py-3 rounded-xl font-black hover:bg-slate-600';
-            document.getElementById('btn-fail').className = 'decision-btn flex-1 bg-slate-700 text-slate-300 py-3 rounded-xl font-black hover:bg-slate-600';
-            if(type==='pass') document.getElementById('btn-pass').classList.add('active-pass');
-            if(type==='fail') document.getElementById('btn-fail').classList.add('active-fail');
+            document.getElementById('btn-pass').className = 'decision-btn flex-1 bg-slate-700 text-slate-300 py-3 rounded-xl font-black text-lg hover:bg-slate-600';
+            document.getElementById('btn-fail').className = 'decision-btn flex-1 bg-slate-700 text-slate-300 py-3 rounded-xl font-black text-lg hover:bg-slate-600';
+            if(type==='pass') { document.getElementById('btn-pass').classList.add('active-pass'); window.finalDecision = '錄取'; }
+            if(type==='fail') { document.getElementById('btn-fail').classList.add('active-fail'); window.finalDecision = '不錄取'; }
         }
 
         function calculateScores() {
@@ -456,8 +516,28 @@
             document.getElementById('report-grand-total').innerText = grandTotal.toFixed(2);
             document.getElementById('footer-total').innerText = grandTotal.toFixed(2);
 
+            // ================= 檢查未填寫項目 =================
+            let missing = [];
+            S1_DATA.forEach(g => {
+                if (g.id !== 'bon') { // 加分題為選填，不列入檢查
+                    g.qs.forEach((q, i) => { if (state.s1[g.id][i] === 0) missing.push(`[筆試] ${g.title} (第${i+1}題)`); });
+                }
+            });
+            S2_QUESTIONS.forEach((q, i) => { if (state.s2[i] === 0) missing.push(`[外顯] ${q}`); });
+            S3_BARS_CORE.forEach((c, i) => { if (state.s3.core[i] === 0) missing.push(`[職能] 核心-${c.name}`); });
+            S3_BARS_MGMT.forEach((m, i) => { if (state.s3.mgmt[i] === 0) missing.push(`[職能] 管理-${m.name}`); });
+
+            const warningDiv = document.getElementById('validation-warning');
+            if (missing.length > 0) {
+                document.getElementById('missing-list').innerHTML = missing.slice(0, 3).join(', ') + (missing.length > 3 ? ` ...等共 ${missing.length} 項` : '');
+                warningDiv.classList.remove('hidden');
+            } else {
+                warningDiv.classList.add('hidden');
+            }
+
             if(grandTotal === 0) return;
 
+            // ================= 級距與地雷判定 =================
             let finalStatusIndex = 5, baseDesc = "";
             if (grandTotal >= 90) { finalStatusIndex = 0; baseDesc = "面試與筆試表現皆出色，具高度文化契合度與執行潛力。"; }
             else if (grandTotal >= 80) { finalStatusIndex = 1; baseDesc = "穩定且具培育潛力，文化契合良好，能快速上線。"; }
@@ -501,7 +581,7 @@
             statusDiv.className = `text-2xl font-black mb-4 ${finalStatusIndex<=1?'text-emerald-400':(finalStatusIndex<=3?'text-amber-400':'text-red-400')}`;
 
             if(vetoReasons.length > 0) {
-                expDiv.innerHTML = `<span class="text-red-400 font-bold">⚠️ 降級原因：</span> ${vetoReasons.join('、')}。`;
+                expDiv.innerHTML = `<span class="text-red-400 font-bold">⚠️ 觸發特殊條件：</span> ${vetoReasons.join('、')}。`;
                 hintArea.innerHTML = "💡 系統加分提示：<br>• " + vetoHints.join('<br>• ');
                 hintArea.classList.remove('hidden');
                 inputArea.classList.remove('rounded-t-lg');
@@ -511,6 +591,56 @@
                 hintArea.classList.add('hidden');
                 inputArea.classList.add('rounded-t-lg');
             }
+        }
+
+        // ================= 匯出報表 CSV (模擬資料庫對接) =================
+        function exportToCSV() {
+            showToast('☁️ 正在產出數據報表並下載...');
+            const name = document.getElementById('ipt-name').value || '未填寫';
+            const branch = document.getElementById('sel-branch').value || '未填寫';
+            const position = document.getElementById('sel-position').value || '未填寫';
+            const date = document.getElementById('interview-date').value || '未填寫';
+            
+            const gTotal = document.getElementById('header-total').innerText;
+            const ideal = document.getElementById('ideal-status-text').innerText;
+            const finalDec = window.finalDecision || '未決策';
+            const bonusText = document.getElementById('bonus-method-input').value.replace(/\n/g, ' ') || '無';
+            
+            const bonTextElem = document.getElementById('s1-bon-text');
+            const bonReason = bonTextElem ? bonTextElem.value.replace(/\n/g, ' ') : '無';
+
+            // 加入 BOM 讓 Excel 正確讀取中文
+            let csv = "\uFEFF"; 
+            csv += "應徵者姓名,面試日期,應徵分校/單位,應徵職位\n";
+            csv += `"${name}","${date}","${branch}","${position}"\n\n`;
+
+            csv += "總得分,系統建議狀態,最終錄取結果,加分/培訓計畫\n";
+            csv += `"${gTotal}","${ideal}","${finalDec}","${bonusText}"\n\n`;
+
+            csv += "階段一:筆試得分,階段二:外顯得分,階段三:職能得分\n";
+            csv += `"${document.getElementById('s1-final').innerText}","${document.getElementById('s2-final').innerText}","${document.getElementById('s3-final').innerText}"\n\n`;
+
+            csv += "評分維度,項目細節,得分/內容\n";
+            S1_DATA.forEach(g => {
+                if (g.id === 'bon') {
+                    csv += `階段一(筆試),${g.title}-說明,${bonReason}\n`;
+                    csv += `階段一(筆試),${g.title}-給分,${state.s1[g.id][0]}\n`;
+                } else {
+                    g.qs.forEach((q, i) => csv += `階段一(筆試),${g.title}-${q},${state.s1[g.id][i]}\n`);
+                }
+            });
+            S2_QUESTIONS.forEach((q, i) => csv += `階段二(外顯),${q},${state.s2[i]}\n`);
+            S3_BARS_CORE.forEach((c, i) => csv += `階段三(職能)-核心,${c.name},${state.s3.core[i]}\n`);
+            S3_BARS_MGMT.forEach((m, i) => csv += `階段三(職能)-管理,${m.name},${state.s3.mgmt[i]}\n`);
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.setAttribute("href", url);
+            link.setAttribute("download", `面試數據_${name}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
     </script>
 </body>
