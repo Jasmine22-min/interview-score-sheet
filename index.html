@@ -3,74 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>面試評分系統 - 企業主題版</title>
+    <title>面試評分系統</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <style>
         /* ================= 動態主題顏色變數 ================= */
         :root {
-            /* 預設 (國中部 / 深藍色) */
-            --th-header: #1e3a8a; /* blue-900 */
-            --th-header-border: #3b82f6; /* blue-500 */
-            --th-header-dark: #172554; /* blue-950 */
-            --th-light-bg: #eff6ff; /* blue-50 */
-            --th-light-border: #bfdbfe; /* blue-200 */
-            --th-text: #1d4ed8; /* blue-700 */
-            --th-btn: #2563eb; /* blue-600 */
-            --th-btn-hover: #1d4ed8; /* blue-700 */
-            --th-score: #60a5fa; /* blue-400 */
+            --th-header: #1e3a8a; --th-header-border: #3b82f6; --th-header-dark: #172554;
+            --th-light-bg: #eff6ff; --th-light-border: #bfdbfe; --th-text: #1d4ed8;
+            --th-btn: #2563eb; --th-btn-hover: #1d4ed8; --th-score: #60a5fa;
         }
         body[data-theme="green"] {
-            /* 高中部 / 深綠色 */
-            --th-header: #14532d; /* green-900 */
-            --th-header-border: #22c55e; /* green-500 */
-            --th-header-dark: #052e16; /* green-950 */
-            --th-light-bg: #f0fdf4; /* green-50 */
-            --th-light-border: #bbf7d0; /* green-200 */
-            --th-text: #15803d; /* green-700 */
-            --th-btn: #16a34a; /* green-600 */
-            --th-btn-hover: #15803d; /* green-700 */
-            --th-score: #4ade80; /* green-400 */
+            --th-header: #14532d; --th-header-border: #22c55e; --th-header-dark: #052e16;
+            --th-light-bg: #f0fdf4; --th-light-border: #bbf7d0; --th-text: #15803d;
+            --th-btn: #16a34a; --th-btn-hover: #15803d; --th-score: #4ade80;
         }
         body[data-theme="yellow"] {
-            /* 國小部 / 暖黃色 */
-            --th-header: #d97706; /* amber-600 */
-            --th-header-border: #fcd34d; /* amber-300 */
-            --th-header-dark: #b45309; /* amber-700 */
-            --th-light-bg: #fffbeb; /* amber-50 */
-            --th-light-border: #fde68a; /* amber-200 */
-            --th-text: #b45309; /* amber-700 */
-            --th-btn: #f59e0b; /* amber-500 */
-            --th-btn-hover: #d97706; /* amber-600 */
-            --th-score: #fbbf24; /* amber-400 */
+            --th-header: #d97706; --th-header-border: #fcd34d; --th-header-dark: #b45309;
+            --th-light-bg: #fffbeb; --th-light-border: #fde68a; --th-text: #b45309;
+            --th-btn: #f59e0b; --th-btn-hover: #d97706; --th-score: #fbbf24;
         }
         body[data-theme="black"] {
-            /* 總部 / 極簡黑 */
-            --th-header: #0f172a; /* slate-900 */
-            --th-header-border: #64748b; /* slate-500 */
-            --th-header-dark: #020617; /* slate-950 */
-            --th-light-bg: #f8fafc; /* slate-50 */
-            --th-light-border: #e2e8f0; /* slate-200 */
-            --th-text: #334155; /* slate-700 */
-            --th-btn: #1e293b; /* slate-800 */
-            --th-btn-hover: #0f172a; /* slate-900 */
-            --th-score: #94a3b8; /* slate-400 */
+            --th-header: #0f172a; --th-header-border: #64748b; --th-header-dark: #020617;
+            --th-light-bg: #f8fafc; --th-light-border: #e2e8f0; --th-text: #334155;
+            --th-btn: #1e293b; --th-btn-hover: #0f172a; --th-score: #94a3b8;
         }
-
-        /* 應用主題 CSS */
-        .th-header { background-color: var(--th-header); border-bottom: 3px solid var(--th-header-border); transition: all 0.3s ease; }
+        
+        .th-header { background-color: var(--th-header); border-bottom: 3px solid var(--th-header-border); transition: background-color 0.3s ease; }
         .th-header-box { background-color: var(--th-header-dark); border: 1px solid var(--th-header-border); }
         .th-light-box { background-color: var(--th-light-bg); border: 1px solid var(--th-light-border); }
         .th-text { color: var(--th-text); }
         .th-score-text { color: var(--th-score); }
         .th-btn-primary { background-color: var(--th-btn); color: white; transition: all 0.3s ease; }
-        .th-btn-primary:hover { background-color: var(--th-btn-hover); }
+        .th-btn-primary:hover { background-color: var(--th-btn-hover); transform: translateY(-1px); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
         
         body { font-family: 'Noto Sans TC', sans-serif; background-color: #f1f5f9; }
         
-        /* 評分按鈕與提示 */
-        .score-btn { transition: all 0.15s; cursor: pointer; border: 1px solid #cbd5e1; background-color: white; position: relative; }
-        .score-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        /* 評分按鈕 */
+        .score-btn { transition: all 0.1s; cursor: pointer; border: 1px solid #cbd5e1; background-color: white; position: relative; }
+        .score-btn:hover { transform: translateY(-1px); box-shadow: 0 2px 4px -1px rgba(0,0,0,0.1); }
         .score-btn.active { transform: scale(1.05); border-width: 2px; }
         .score-btn.active[data-val="1"] { background-color: #ef4444; color: white; border-color: #b91c1c; }
         .score-btn.active[data-val="2"] { background-color: #f97316; color: white; border-color: #c2410c; }
@@ -78,6 +49,7 @@
         .score-btn.active[data-val="4"] { background-color: #84cc16; color: white; border-color: #4d7c0f; }
         .score-btn.active[data-val="5"] { background-color: #22c55e; color: white; border-color: #15803d; }
         
+        /* Tooltip */
         .tooltip-text { visibility: hidden; opacity: 0; position: absolute; bottom: 120%; left: 50%; transform: translateX(-50%); background-color: #1e293b; color: white; text-align: center; padding: 4px 8px; border-radius: 6px; font-size: 11px; white-space: nowrap; z-index: 10; transition: opacity 0.2s; pointer-events: none; }
         .score-btn:hover .tooltip-text { visibility: visible; opacity: 1; }
 
@@ -89,74 +61,77 @@
         .decision-btn.active-pass { background-color: #ecfdf5; border-color: #10b981; color: #047857; transform: scale(1.02); }
         .decision-btn.active-fail { background-color: #fef2f2; border-color: #ef4444; color: #b91c1c; transform: scale(1.02); }
 
+        /* Toast 通知 */
         #toast { position: fixed; top: 80px; right: 20px; background: #10b981; color: white; padding: 12px 24px; border-radius: 8px; font-weight: bold; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); transform: translateX(150%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 9999; }
         #toast.show { transform: translateX(0); }
 
-        /* ================= 列印 / 報告模式 CSS (極致壓縮版) ================= */
+        /* Modals */
+        .modal-overlay { display: none; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(4px); z-index: 99999; }
+        .modal-overlay.show { display: flex; }
+
+        /* ================= 列印 / 報告模式 CSS (A4極致壓縮) ================= */
         .report-label { display: none; } 
-        
-        body.report-mode { background-color: white; }
+        body.report-mode { background-color: white; padding-bottom: 0 !important; }
         body.report-mode .hide-in-report { display: none !important; }
-        body.report-mode input, body.report-mode textarea, body.report-mode select { border: none !important; background: transparent !important; appearance: none; -webkit-appearance: none; pointer-events: none; resize: none; padding: 0 !important; color: #0f172a !important; font-weight: 500; }
+        body.report-mode input, body.report-mode textarea, body.report-mode select { border: none !important; background: transparent !important; appearance: none; -webkit-appearance: none; pointer-events: none; resize: none; padding: 0 !important; color: #000 !important; font-weight: bold; }
         body.report-mode .shadow-sm, body.report-mode .shadow-md, body.report-mode .shadow-lg, body.report-mode .shadow-xl { box-shadow: none !important; }
         
         body.report-mode .score-btn:not(.active) { display: none !important; }
-        body.report-mode .score-btn.active { transform: none !important; cursor: default; width: auto !important; padding: 2px 10px; border-radius: 8px; font-size: 13px; font-weight: bold; box-shadow: none !important; margin: 0; }
-        
+        body.report-mode .score-btn.active { transform: none !important; cursor: default; width: auto !important; padding: 1px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; margin: 0; box-shadow: none !important; border: 1px solid #ccc; }
         body.report-mode .s1-s2-btn .btn-num { display: none !important; }
-        body.report-mode .s1-s2-btn .report-label { display: inline-block !important; }
+        body.report-mode .s1-s2-btn .report-label { display: inline-block !important; margin-left: 2px; }
 
         body.report-mode .decision-btn:not([class*="active-"]) { display: none !important; }
-        body.report-mode .decision-btn { padding: 6px 12px !important; pointer-events: none; }
+        body.report-mode .decision-btn { padding: 4px 8px !important; pointer-events: none; font-size: 12px; border: 1px solid #ccc; }
         
         @media print {
             .no-print { display: none !important; }
-            body { -webkit-print-color-adjust: exact; print-color-adjust: exact; font-size: 10px !important; line-height: 1.15 !important; }
-            @page { size: A4 portrait; margin: 8mm; }
+            body { -webkit-print-color-adjust: exact; print-color-adjust: exact; font-size: 9px !important; line-height: 1.1 !important; color: #000; }
+            @page { size: A4 portrait; margin: 5mm; }
             
             main { padding: 0 !important; margin: 0 !important; max-width: 100% !important; }
-            .p-4, .p-5, .p-6, .p-8, .p-3 { padding: 4px !important; }
-            .mb-6, .mb-8, .mb-4, .mb-3, .mb-2 { margin-bottom: 4px !important; }
-            .gap-6, .gap-8, .gap-4, .gap-3 { gap: 4px !important; }
-            .text-lg, .text-xl, .text-2xl, .text-3xl, .text-5xl, .text-4xl { font-size: 13px !important; }
-            .text-sm { font-size: 10px !important; }
-            .text-xs { font-size: 9px !important; }
+            .p-4, .p-5, .p-6, .p-8, .p-3, .p-2 { padding: 2px 4px !important; }
+            .mb-6, .mb-8, .mb-4, .mb-3, .mb-2, .mb-1 { margin-bottom: 2px !important; }
+            .gap-6, .gap-8, .gap-4, .gap-3, .gap-2 { gap: 2px !important; }
+            .text-lg, .text-xl, .text-2xl, .text-3xl, .text-5xl, .text-4xl { font-size: 12px !important; line-height: 1.2 !important; }
+            .text-base { font-size: 10px !important; }
+            .text-sm { font-size: 9px !important; }
+            .text-xs { font-size: 8px !important; }
             
-            section { border: 1px solid #cbd5e1 !important; margin-bottom: 4px !important; border-radius: 4px !important; break-inside: avoid; }
-            table th, table td { padding: 2px 4px !important; }
-            textarea { min-height: unset !important; height: auto !important; border-bottom: 1px dashed #cbd5e1 !important; }
+            section { border: 1px solid #94a3b8 !important; margin-bottom: 3px !important; border-radius: 4px !important; break-inside: avoid; }
             
-            .bg-slate-900, .bg-slate-800 { background-color: #f8fafc !important; color: #000 !important; border: 1px solid #94a3b8 !important; }
-            .text-white, .text-slate-200, .text-slate-300, .text-slate-400 { color: #1e293b !important; }
-            .text-blue-400, .text-emerald-400, .text-orange-400, .text-amber-300, .text-red-400 { color: #0f172a !important; font-weight: 900 !important; }
+            /* 壓縮表格 */
+            table { width: 100% !important; table-layout: fixed !important; }
+            table th, table td { padding: 1px 2px !important; border: 1px solid #cbd5e1 !important; font-size: 7px !important; word-wrap: break-word !important; }
+            .overflow-x-auto { overflow: hidden !important; }
+            
+            textarea { min-height: unset !important; height: auto !important; border-bottom: 1px dashed #ccc !important; }
+            
+            .bg-slate-900, .bg-slate-800, .bg-emerald-50, .bg-indigo-50, .bg-orange-50 { background-color: #f1f5f9 !important; color: #000 !important; border: none !important; }
+            .text-white, .text-slate-200, .text-slate-300, .text-slate-400 { color: #0f172a !important; }
+            .text-blue-400, .text-emerald-400, .text-orange-400, .text-amber-300, .text-red-400, .text-red-500 { color: #000 !important; font-weight: 900 !important; }
+            
             #ideal-status-exp, #bonus-method-input { padding: 2px !important; border: none !important; }
+            #report-grand-total { font-size: 20px !important; }
         }
+
+        @keyframes small-pop { 0% { transform: scale(0.95); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        .animate-small-pop { animation: small-pop 0.2s ease-out; }
     </style>
 </head>
 <body class="text-slate-800 pb-40" data-theme="blue">
 
     <div id="toast">✅ 操作成功！</div>
 
-    <!-- 即時進度與防呆提示框 -->
-    <div id="validation-warning" class="fixed bottom-[80px] right-4 bg-white border-l-4 border-amber-500 text-slate-700 px-4 py-3 rounded-lg shadow-xl z-40 hidden text-sm font-bold flex items-start gap-3 w-72">
-        <svg class="w-5 h-5 text-amber-500 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-        <div>
-            <div class="font-black text-amber-600 mb-1">尚未完成所有評分</div>
-            <div id="missing-list" class="font-normal text-xs text-slate-500 leading-relaxed"></div>
-        </div>
-    </div>
-
-    <!-- 動態主題標頭 -->
-    <header class="th-header text-white p-4 shadow-lg sticky top-0 z-50 no-print">
+    <header class="th-header text-white p-3 md:p-4 shadow-lg sticky top-0 z-50 no-print">
         <div class="container mx-auto flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <!-- 企業 Logo 區塊 (替換 src 網址即可) -->
-                <div class="bg-white/90 p-1 rounded backdrop-blur-sm shadow-sm flex items-center justify-center">
-                    <img src="https://raw.githubusercontent.com/username/repo/main/逗點教室LOGO-直-co%20-去背.png" 
+                <div class="bg-white/90 p-1 rounded-lg backdrop-blur-sm shadow-sm flex items-center justify-center h-10 w-32 relative overflow-hidden">
+                    <img src="逗點教室LOGO-直-co -去背.png" 
                          onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\' fill=\'%23333\'><rect width=\'100\' height=\'100\' rx=\'20\' fill=\'%23e2e8f0\'/><text x=\'50\' y=\'55\' font-size=\'24\' font-family=\'sans-serif\' font-weight=\'bold\' text-anchor=\'middle\' fill=\'%2364748b\'>LOGO</text></svg>'" 
-                         alt="逗點教室" class="h-8 md:h-10 object-contain max-w-[120px]">
+                         alt="逗點教室" class="h-full w-full object-contain">
                 </div>
-                <h1 class="text-xl md:text-2xl font-black tracking-wider">面試評分系統</h1>
+                <h1 class="text-xl md:text-2xl font-black tracking-widest">面試評分系統</h1>
             </div>
             <div class="text-right flex items-center gap-4 th-header-box px-4 py-1 rounded-lg shadow-inner">
                 <span class="text-sm text-slate-300 font-bold hidden md:inline">總得分</span>
@@ -166,66 +141,62 @@
     </header>
 
     <div id="report-exit-bar" class="hidden fixed top-0 left-0 w-full bg-blue-600 text-white p-2 z-[60] flex justify-between items-center no-print shadow-lg">
-        <span class="font-bold ml-4 text-sm">📄 報告預覽模式 (建議選擇 A4 直式列印)</span>
+        <span class="font-bold ml-4 text-sm">📄 報告預覽模式 (建議列印設定：A4 直式、縮放預設)</span>
         <button onclick="toggleReportMode(false)" class="bg-white text-blue-600 px-4 py-1 rounded-lg font-bold hover:bg-blue-50 mr-4 text-sm">返回編輯</button>
     </div>
 
-    <main class="container mx-auto p-4 max-w-[1400px] mt-4 space-y-6">
+    <main class="container mx-auto p-4 max-w-[1400px] mt-2 space-y-5">
 
-        <!-- 基本資料 -->
         <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <div class="bg-slate-800 p-3 border-b border-slate-700">
-                <h2 class="text-white font-bold flex items-center gap-2 text-lg">面試基本資訊</h2>
+            <div class="bg-slate-800 p-2.5 border-b border-slate-700">
+                <h2 class="text-white font-bold flex items-center gap-2 text-base">面試基本資訊</h2>
             </div>
             <div class="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div>
-                    <label class="block text-sm font-bold text-slate-400 mb-1">應徵者姓名</label>
-                    <input type="text" id="ipt-name" class="w-full border-b-2 border-slate-200 p-2 outline-none bg-slate-50 transition-all text-base font-bold">
+                    <label class="block text-xs font-bold text-slate-400 mb-1">應徵者姓名</label>
+                    <input type="text" id="ipt-name" onblur="checkDraft()" onchange="syncState()" class="w-full border-b-2 border-slate-200 p-1.5 outline-none bg-slate-50 transition-all text-base font-bold" placeholder="輸入姓名 (離開欄位自動搜尋暫存)">
                 </div>
                 <div class="row-span-2">
-                    <label class="block text-sm font-bold text-slate-400 mb-1 flex justify-between items-center">
+                    <label class="block text-xs font-bold text-slate-400 mb-1 flex justify-between items-center">
                         面試官姓名
-                        <button onclick="addInterviewer()" class="hide-in-report bg-blue-50 text-blue-600 hover:bg-blue-100 px-2 py-1 rounded text-xs flex items-center gap-1 font-bold transition-colors">增加人員點我</button>
+                        <button onclick="addInterviewer()" class="hide-in-report bg-blue-50 text-blue-600 hover:bg-blue-100 px-2 py-0.5 rounded text-xs flex items-center gap-1 font-bold transition-colors">增加人員點我</button>
                     </label>
                     <div id="interviewer-list" class="space-y-2">
-                        <div class="flex gap-2"><input type="text" class="flex-1 border-b-2 border-slate-200 p-2 text-base outline-none bg-slate-50"></div>
+                        <div class="flex gap-2"><input type="text" class="ipt-interviewer flex-1 border-b-2 border-slate-200 p-1.5 text-base outline-none bg-slate-50" onchange="syncState()"></div>
                     </div>
                 </div>
                 <div>
-                    <label class="block text-sm font-bold text-slate-400 mb-1">應徵分校/單位</label>
-                    <select id="sel-branch" class="w-full border-b-2 border-slate-200 p-2 outline-none bg-slate-50 text-base font-bold transition-colors" onchange="updateTheme()">
+                    <label class="block text-xs font-bold text-slate-400 mb-1">應徵分校/單位</label>
+                    <select id="sel-branch" onchange="updateTheme(); syncState();" class="w-full border-b-2 border-slate-200 p-1.5 outline-none bg-slate-50 text-base font-bold transition-colors">
                         <option value="">請選擇...</option>
                         <optgroup label="【各分校單位】">
-                            <option>青埔升大校</option> <!-- 觸發綠色 -->
+                            <option>青埔升大校</option>
                             <option>青埔翱翔校</option><option>青園展翅校</option><option>大園晨光校</option>
-                            <option>內壢森耀校</option><option>竹北知行校</option><option>文化極光校</option>
-                            <option>快樂騰雲校</option> <!-- 觸發黃色 -->
-                            <option>大園參天校</option><option>園中方舟校</option><option>青埔旭日校</option>
-                            <option>中壢心夢想校</option> <!-- 觸發藍色 -->
+                            <option>內壢森耀校</option><option>竹北知行校</option><option>文化極光校</option><option>快樂騰雲校</option>
+                            <option>大園參天校</option><option>園中方舟校</option><option>青埔旭日校</option><option>中壢心夢想校</option>
                         </optgroup>
                         <optgroup label="【總部處室】">
                             <option>行政溝通處</option><option>人力資源處</option><option>財務會計處</option>
-                            <option>國小事業處</option><option>國高中事業處</option><option>產品研發處</option>
-                            <option>品牌行銷處</option> <!-- 觸發極簡黑 -->
+                            <option>國小事業處</option><option>國高中事業處</option><option>產品研發處</option><option>品牌行銷處</option>
                         </optgroup>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-bold text-slate-400 mb-1">應徵職位</label>
-                    <select id="sel-position" class="w-full border-b-2 border-slate-200 p-2 outline-none bg-slate-50 text-base font-bold">
+                    <label class="block text-xs font-bold text-slate-400 mb-1">應徵職位</label>
+                    <select id="sel-position" onchange="syncState()" class="w-full border-b-2 border-slate-200 p-1.5 outline-none bg-slate-50 text-base font-bold">
                         <option value="">請選擇...</option>
                         <option>班級導師</option><option>行政導師</option><option>授課師</option>
                         <option>主任</option><option>處長</option><option>總部</option>
                     </select>
                 </div>
-                <div class="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4 th-light-box p-3 rounded-xl transition-all duration-300">
+                <div class="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-3 th-light-box p-3 rounded-xl transition-all duration-300">
                     <div>
                         <label class="block text-xs font-bold th-text mb-1">面試日期</label>
-                        <input type="date" id="interview-date" onchange="updateDateTimeDisplay()" class="w-full border border-white/50 rounded p-1 text-sm outline-none bg-white/80">
+                        <input type="date" id="interview-date" onchange="updateDateTimeDisplay(); syncState();" class="w-full border border-white/50 rounded p-1 text-sm outline-none bg-white/80">
                     </div>
                     <div>
                         <label class="block text-xs font-bold th-text mb-1">開始時間</label>
-                        <input type="time" id="interview-time" onchange="updateDateTimeDisplay()" class="w-full border border-white/50 rounded p-1 text-sm outline-none bg-white/80">
+                        <input type="time" id="interview-time" onchange="updateDateTimeDisplay(); syncState();" class="w-full border border-white/50 rounded p-1 text-sm outline-none bg-white/80">
                     </div>
                     <div class="sm:col-span-2">
                         <div id="datetime-preview" class="text-sm font-black th-text tracking-wide"></div>
@@ -235,35 +206,31 @@
         </section>
 
         <section class="bg-white rounded-2xl shadow-sm border border-slate-200">
-            <div class="bg-emerald-50 p-3 border-b border-emerald-100 flex justify-between items-center">
-                <h2 class="text-lg font-bold text-emerald-900">1. 階段一：筆試與綜合面談 <span class="text-sm font-normal text-emerald-600 ml-2">(30%)</span></h2>
-                <div class="text-sm font-bold text-emerald-700">得分: <span id="s1-final" class="text-xl">0.00</span>/30</div>
+            <div class="bg-emerald-50 p-2.5 border-b border-emerald-100 flex justify-between items-center">
+                <h2 class="text-base font-bold text-emerald-900">1. 階段一：筆試與綜合面談 <span class="text-xs font-normal text-emerald-600 ml-1">(30%)</span></h2>
+                <div class="text-xs font-bold text-emerald-700">得分: <span id="s1-final" class="text-lg">0.00</span>/30</div>
             </div>
-            <div class="p-4 space-y-3 bg-slate-50/30">
-                <div id="s1-exp-section"></div>
-                <div id="s1-mot-section"></div>
-                <div id="s1-sty-section"></div>
-                <div id="s1-sal-section"></div>
-                <div id="s1-bon-section"></div>
+            <div class="p-3 space-y-2.5 bg-slate-50/30">
+                <div id="s1-exp-section"></div><div id="s1-mot-section"></div><div id="s1-sty-section"></div><div id="s1-sal-section"></div><div id="s1-bon-section"></div>
             </div>
         </section>
 
         <section class="bg-white rounded-2xl shadow-sm border border-slate-200">
-            <div class="bg-indigo-50 p-3 border-b border-indigo-100 flex justify-between items-center">
+            <div class="bg-indigo-50 p-2.5 border-b border-indigo-100 flex justify-between items-center">
                 <div>
-                    <h2 class="text-lg font-bold text-indigo-900">2. 階段二：外顯特質評分 <span class="text-sm font-normal text-indigo-600 ml-2">(10%)</span></h2>
-                    <p class="text-xs text-indigo-700 mt-1 hide-in-report">評分基準：[5]優異、[4]良好、[3]佳、[2]尚可、[1]差 (再次點擊可取消選取)</p>
+                    <h2 class="text-base font-bold text-indigo-900">2. 階段二：外顯特質評分 <span class="text-xs font-normal text-indigo-600 ml-1">(10%)</span></h2>
+                    <p class="text-[10px] text-indigo-700 mt-0.5 hide-in-report">評分基準：[5]優異、[4]良好、[3]佳、[2]尚可、[1]差 (再次點選可取消)</p>
                 </div>
-                <div class="text-sm font-bold text-indigo-700">得分: <span id="s2-final" class="text-xl">0.00</span>/10</div>
+                <div class="text-xs font-bold text-indigo-700">得分: <span id="s2-final" class="text-lg">0.00</span>/10</div>
             </div>
-            <div class="p-4 grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-1" id="s2-container"></div>
+            <div class="p-3 grid grid-cols-1 lg:grid-cols-2 gap-x-6 gap-y-0.5" id="s2-container"></div>
         </section>
 
         <section class="bg-white rounded-2xl shadow-sm border border-slate-200">
-            <div class="bg-orange-50 p-3 border-b border-orange-200 flex justify-between items-center">
-                <h2 class="text-lg font-bold text-orange-900">3. 階段三：職能評估 <span class="text-sm font-normal text-orange-600 ml-2">(60%)</span></h2>
-                <div class="flex items-center gap-4">
-                    <select id="job-level-select" class="border rounded outline-none font-bold text-sm p-1 hide-in-report" onchange="updateLevelLogic()">
+            <div class="bg-orange-50 p-2.5 border-b border-orange-200 flex justify-between items-center">
+                <h2 class="text-base font-bold text-orange-900">3. 階段三：職能評估 <span class="text-xs font-normal text-orange-600 ml-1">(60%)</span></h2>
+                <div class="flex items-center gap-3">
+                    <select id="job-level-select" class="border rounded outline-none font-bold text-xs p-1 hide-in-report" onchange="updateLevelLogic()">
                         <option value="1">職等 1 (核心90% / 管理10%)</option>
                         <option value="2">職等 2 (核心85% / 管理15%)</option>
                         <option value="3">職等 3 (核心70% / 管理30%)</option>
@@ -272,19 +239,19 @@
                         <option value="6">職等 6 (核心40% / 管理60%)</option>
                         <option value="7">職等 7 (核心30% / 管理70%)</option>
                     </select>
-                    <div class="text-sm font-bold text-orange-700">得分: <span id="s3-final" class="text-xl">0.00</span>/60</div>
+                    <div class="text-xs font-bold text-orange-700">得分: <span id="s3-final" class="text-lg">0.00</span>/60</div>
                 </div>
             </div>
 
             <div class="p-0 overflow-x-auto no-scrollbar">
-                <table class="w-full text-left border-collapse min-w-[1000px]">
+                <table class="w-full text-left border-collapse min-w-[900px]">
                     <thead>
-                        <tr class="bg-slate-100 text-slate-700 text-sm text-center">
-                            <th class="p-2 border border-slate-200 w-20">維度</th>
-                            <th class="p-2 border border-slate-200 w-28">職能項目</th>
-                            <th class="p-2 border border-slate-200 text-blue-800" width="180">BEI (問題描述)</th>
-                            <th class="p-2 border border-slate-200 text-indigo-800" colspan="3">CAR (狀況 / 行動 / 結果)</th>
-                            <th class="p-2 border border-slate-200 w-36">給分 (放置滑鼠看提示)</th>
+                        <tr class="bg-slate-100 text-slate-700 text-[11px] text-center">
+                            <th class="p-1 border border-slate-200 w-16">維度</th>
+                            <th class="p-1 border border-slate-200 w-24">職能項目</th>
+                            <th class="p-1 border border-slate-200 text-blue-800" width="140">BEI (問題描述)</th>
+                            <th class="p-1 border border-slate-200 text-indigo-800" colspan="3">CAR (狀況 / 行動 / 結果)</th>
+                            <th class="p-1 border border-slate-200 w-36">給分 (放置滑鼠看提示)</th>
                         </tr>
                     </thead>
                     <tbody id="s3-tbody"></tbody>
@@ -292,32 +259,37 @@
             </div>
         </section>
 
-        <section class="bg-slate-900 rounded-2xl shadow-xl p-5 md:p-6 text-white mb-8 border border-slate-700 relative break-inside-avoid">
-            <h2 class="text-xl font-black mb-4 flex items-center gap-3">面試成績總結算 (Report Card)</h2>
-            <div class="bg-slate-800 p-4 rounded-xl border border-slate-600 flex justify-between items-center mb-5">
-                <div>
-                    <div class="text-lg font-black text-slate-200">系統最終總得分</div>
-                </div>
-                <div class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400" id="report-grand-total">0.00</div>
+        <div class="flex justify-center my-8 no-print">
+            <button onclick="checkCompletion()" class="bg-blue-600 text-white px-10 py-3 rounded-2xl font-black shadow-lg hover:bg-blue-700 hover:shadow-xl transition-all text-lg hover:scale-105 flex items-center gap-2">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                階段評分完成，進入最終決策
+            </button>
+        </div>
+
+        <section id="report-card-section" class="bg-slate-900 rounded-2xl shadow-xl p-5 text-white mb-8 border border-slate-700 relative break-inside-avoid">
+            <h2 class="text-lg font-black mb-3 flex items-center gap-2">面試成績總結算 (Report Card)</h2>
+            <div class="bg-slate-800 p-3 rounded-xl border border-slate-600 flex justify-between items-center mb-4">
+                <div class="text-base font-black text-slate-200">系統最終總得分</div>
+                <div class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400" id="report-grand-total">0.00</div>
             </div>
             
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div class="space-y-3 bg-slate-800 p-4 rounded-xl border border-slate-700">
-                    <label class="block text-slate-400 text-sm font-bold">系統建議理想狀態</label>
-                    <div id="ideal-status-text" class="text-xl font-black text-white mb-2">等待評分...</div>
-                    <label class="block text-slate-400 text-sm font-bold">理想狀態判定說明</label>
-                    <div id="ideal-status-exp" class="text-sm font-medium text-amber-300 bg-amber-900/30 p-2.5 rounded-lg border border-amber-700/50">-</div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div class="space-y-2 bg-slate-800 p-4 rounded-xl border border-slate-700">
+                    <label class="block text-slate-400 text-xs font-bold">系統建議理想狀態</label>
+                    <div id="ideal-status-text" class="text-lg font-black text-white mb-2">等待評分...</div>
+                    <label class="block text-slate-400 text-xs font-bold">理想狀態判定說明</label>
+                    <div id="ideal-status-exp" class="text-xs font-medium text-amber-300 bg-amber-900/30 p-2 rounded-lg border border-amber-700/50">-</div>
                 </div>
 
-                <div class="space-y-3 bg-slate-800 p-4 rounded-xl border border-slate-700 flex flex-col">
-                    <label class="block text-slate-300 text-sm font-bold">加分方式 / 補救培訓計畫</label>
-                    <div id="bonus-hint-area" class="text-xs text-amber-400 bg-amber-900/20 px-3 py-2 rounded-t-lg hidden hide-in-report"></div>
-                    <textarea id="bonus-method-input" rows="2" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2.5 text-white text-sm focus:border-slate-500 outline-none mb-2 placeholder-slate-500 flex-1" placeholder="請填寫..."></textarea>
+                <div class="space-y-2 bg-slate-800 p-4 rounded-xl border border-slate-700 flex flex-col">
+                    <label class="block text-slate-300 text-xs font-bold">加分方式 / 補救培訓計畫 (必填)</label>
+                    <div id="bonus-hint-area" class="text-[10px] text-amber-400 bg-amber-900/20 px-2 py-1.5 rounded-t-lg hidden hide-in-report"></div>
+                    <textarea id="bonus-method-input" onchange="syncState()" rows="2" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2 text-white text-xs focus:border-slate-500 outline-none mb-2 placeholder-slate-500 flex-1" placeholder="請填寫..."></textarea>
                     
-                    <label class="block text-slate-300 text-sm font-bold hide-in-report">最終錄取結果</label>
-                    <div class="flex gap-4">
-                        <button id="btn-pass" onclick="setFinalDecision('pass')" class="decision-btn flex-1 bg-slate-700 text-slate-300 py-2 rounded-xl font-black text-base hover:bg-slate-600">✅ 確認錄取</button>
-                        <button id="btn-fail" onclick="setFinalDecision('fail')" class="decision-btn flex-1 bg-slate-700 text-slate-300 py-2 rounded-xl font-black text-base hover:bg-slate-600">❌ 不予錄取</button>
+                    <label class="block text-slate-300 text-xs font-bold hide-in-report">最終錄取結果</label>
+                    <div class="flex gap-3">
+                        <button id="btn-pass" onclick="setFinalDecision('pass')" class="decision-btn flex-1 bg-slate-700 text-slate-300 py-1.5 rounded-lg font-black text-sm hover:bg-slate-600">✅ 確認錄取</button>
+                        <button id="btn-fail" onclick="setFinalDecision('fail')" class="decision-btn flex-1 bg-slate-700 text-slate-300 py-1.5 rounded-lg font-black text-sm hover:bg-slate-600">❌ 不予錄取</button>
                     </div>
                 </div>
             </div>
@@ -325,47 +297,181 @@
 
     </main>
 
-    <div id="action-bar" class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-3 shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.1)] z-50 no-print">
+    <div id="action-bar" class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-2.5 shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.1)] z-50 no-print">
         <div class="container mx-auto max-w-[1400px] flex justify-between items-center">
-            <div class="text-lg font-black text-slate-800">
-                總得分：<span id="footer-total" class="text-blue-700 text-2xl ml-2">0.00</span>
+            <div class="text-base font-black text-slate-800 flex items-center">
+                <button onclick="openBackend()" class="text-[10px] bg-slate-200 hover:bg-slate-300 px-2 py-1 rounded text-slate-500 mr-3 transition-colors">⚙️ 進入人資後台</button>
+                總得分：<span id="footer-total" class="text-blue-700 text-xl ml-1">0.00</span>
             </div>
-            <div class="flex gap-3">
-                <button onclick="saveDraft()" class="px-4 py-2 bg-slate-100 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-200 font-bold transition-colors">💾 暫存人才</button>
-                <!-- 儲存到後台按鈕，套用動態主題顏色 -->
-                <button onclick="exportToCSV()" class="th-btn-primary px-4 py-2 rounded-lg font-bold shadow-md">☁️ 儲存到後台 (匯出 CSV)</button>
-                <button onclick="toggleReportMode(true)" class="px-6 py-2 bg-slate-800 rounded-lg text-white hover:bg-slate-700 font-black shadow-md">📄 產出成績單</button>
+            <div class="flex gap-2">
+                <button onclick="saveDraftManual()" class="px-3 py-1.5 bg-slate-100 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-200 text-xs font-bold transition-colors">💾 暫存人才</button>
+                <button onclick="submitToBackend()" class="th-btn-primary px-4 py-1.5 rounded-lg text-sm font-bold shadow-md">☁️ 確認送出並建檔</button>
+                <button onclick="toggleReportMode(true)" class="px-4 py-1.5 bg-slate-800 rounded-lg text-white hover:bg-slate-700 text-sm font-black shadow-md">📄 產出成績單</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="missing-modal" class="fixed inset-0 items-center justify-center modal-overlay no-print">
+        <div class="bg-white w-11/12 max-w-md rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-small-pop">
+            <div class="bg-amber-500 p-3.5 flex justify-between items-center">
+                <h2 class="text-white font-bold text-base flex items-center gap-2">⚠️ 尚未完成評分項目</h2>
+                <button onclick="document.getElementById('missing-modal').classList.remove('show')" class="text-amber-100 hover:text-white text-xl leading-none">✕</button>
+            </div>
+            <div class="p-5 max-h-[60vh] overflow-auto bg-slate-50">
+                <p class="text-slate-600 text-sm mb-3">您還有以下項目尚未評分，請補齊後再進行最終決策：</p>
+                <ul id="missing-modal-list" class="list-disc pl-5 text-sm font-bold text-slate-800 space-y-1"></ul>
+            </div>
+            <div class="p-4 bg-white border-t border-slate-200 text-right">
+                <button onclick="document.getElementById('missing-modal').classList.remove('show')" class="bg-slate-800 text-white px-5 py-2 rounded-lg font-bold hover:bg-slate-700 transition-colors">我知道了</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="backend-modal" class="fixed inset-0 items-center justify-center modal-overlay no-print">
+        <div class="bg-white w-11/12 max-w-5xl max-h-[85vh] rounded-xl shadow-2xl flex flex-col overflow-hidden">
+            <div class="bg-slate-900 p-4 flex justify-between items-center">
+                <h2 class="text-white font-bold text-lg flex items-center gap-2">⚙️ 人資後台數據庫 (已結案名單)</h2>
+                <button onclick="document.getElementById('backend-modal').classList.remove('show')" class="text-slate-400 hover:text-white text-xl leading-none">✕</button>
+            </div>
+            <div class="p-4 flex-1 overflow-auto bg-slate-50">
+                <table class="w-full text-sm text-left border-collapse bg-white shadow-sm rounded-lg overflow-hidden">
+                    <thead class="bg-slate-200 text-slate-700">
+                        <tr>
+                            <th class="p-2 border">面試日期</th><th class="p-2 border">姓名</th><th class="p-2 border">單位/職位</th>
+                            <th class="p-2 border">總得分</th><th class="p-2 border">建議狀態</th><th class="p-2 border text-center">最終決策</th>
+                        </tr>
+                    </thead>
+                    <tbody id="db-tbody"></tbody>
+                </table>
+            </div>
+            <div class="p-4 bg-white border-t border-slate-200 flex justify-end gap-3">
+                <button onclick="exportCSV()" class="bg-emerald-600 text-white px-5 py-2 rounded-lg font-bold hover:bg-emerald-700 shadow-md transition-colors">📥 匯出總資料庫 (CSV)</button>
             </div>
         </div>
     </div>
 
     <script>
-        // ================= 動態主題切換 =================
+        // ================= 資料庫與狀態設定 =================
+        const GRADE_LABELS = ["", "差1", "尚可2", "佳3", "良好4", "優異5"];
+        const S1_DATA = [
+            { id: 'exp', title: "工作經歷", weight: 0.20, max: 5, qs: ["最能代表其專業能力及理想的經歷？"] },
+            { id: 'mot', title: "動機與價值", weight: 0.35, max: 10, qs: ["與我們最契合的價值觀？", "影響個人去留的主因？"] },
+            { id: 'sty', title: "工作風格", weight: 0.25, max: 10, qs: ["最滿意或欣賞的工作環境、管理制度？", "感到挫敗或壓力最大的案例？當時如何應對？"] },
+            { id: 'sal', title: "薪資與期待", weight: 0.20, max: 15, qs: ["期望月薪/年薪及初期最低薪資？", "最感興趣的工作任務與職涯關聯？", "想了解或擔心的部分？"] },
+            { id: 'bon', title: "特別加分題", weight: 0.01, max: 5, qs: ["補充說明"] }
+        ];
+        const S2_QUESTIONS = ["儀容穿著", "禮貌應對", "表達流暢", "自信穩健", "誠懇親和", "對分校了解", "對職務認知", "企圖心展現", "配合度", "邏輯思考", "臨場反應", "學習意願", "情緒穩定", "抗壓性", "團隊合作", "經歷相關", "專業知識"];
+        const S3_LEVELS = {
+            1: { c: [30, 20, 20, 15, 10, 5], m: [30, 30, 40], ratio: { c: 90, m: 10 } },
+            2: { c: [30, 20, 20, 15, 10, 5], m: [30, 30, 40], ratio: { c: 85, m: 15 } },
+            3: { c: [20, 15, 20, 15, 15, 15], m: [30, 35, 35], ratio: { c: 70, m: 30 } },
+            4: { c: [20, 15, 20, 15, 15, 15], m: [30, 40, 30], ratio: { c: 60, m: 40 } },
+            5: { c: [15, 10, 20, 15, 20, 20], m: [35, 35, 30], ratio: { c: 50, m: 50 } },
+            6: { c: [15, 10, 20, 15, 20, 20], m: [40, 35, 25], ratio: { c: 40, m: 60 } },
+            7: { c: [15, 10, 20, 15, 20, 20], m: [40, 35, 25], ratio: { c: 30, m: 70 } }
+        };
+        const S3_BARS_CORE = [
+            { name: "品質成果導向", levels: ["逃避責任", "被動執行", "穩定執行", "主動精進", "卓越引領"], descs: ["經常拖延，需多次提醒才執行；遇問題傾向抱怨，品質不穩。","僅完成明確指示，缺乏自我檢查；需主管持續監督。","理解任務並依計畫執行；遇困難主動回報，品質大致穩定。","清楚拆解目標並優化流程；面對挑戰能分析並協調資源，具高責任感。","高度自我要求，帶領他人檢視改進；建立標準化機制與信任文化。"] },
+            { name: "顧客導向", levels: ["忽視需求", "被動回應", "穩定服務", "主動協助", "建立信任"], descs: ["對家長反應漠不關心，傾向以規則回應，不願理解對方焦慮。","僅被詢問時回覆；面對抱怨易緊張防禦，缺乏安撫技巧。","能友善回覆，並在指導下處理簡單抱怨；維持禮貌與穩定。","察覺家長焦慮並主動關懷，提供具體協助；平衡雙方期待。","化解負面情緒並建立信任，帶領團隊形成穩定服務文化。"] },
+            { name: "問題解決", levels: ["逃避問題", "被動回報", "穩定修正", "主動分析", "系統改善"], descs: ["面對問題閃避或推卸責任，缺乏改善行動。","察覺問題但僅通報主管，未嘗試分析或提出方案。","在指導下釐清問題，提出可行修正並完成任務。","獨立找出根源、提出並執行方案，追蹤結果防止重複。","整合團隊經驗建立SOP，推動持續改善與風險預警。"] },
+            { name: "團隊合作", levels: ["抗拒合作", "被動配合", "穩定參與", "主動支援", "領導團隊"], descs: ["缺乏團隊意識，只顧自身任務，對他人需求漠不關心。","願意合作但僅在被要求時行動，難以主動協助。","理解目標並完成分配任務，衝突時保持理性尊重。","協調不同意見、推動共識，主動分享經驗協助同儕。","帶領團隊形成穩定機制，推動跨部門協作建立信任。"] },
+            { name: "溝通協調", levels: ["表達混亂", "被動回應", "清楚表達", "彈性調整", "影響引導"], descs: ["溝通缺乏邏輯或情緒化，易造成誤會或衝突。","單向表達未確認對方理解；常需他人重複解釋。","條理說明工作，能傾聽並確認理解。","依對象調整語氣方式，協助建立共識與合作。","跨部門清晰表達觀點，影響他人並維護形象。"] },
+            { name: "創新能力", levels: ["抗拒改變", "被動接受", "穩定嘗試", "主動創新", "引領創新"], descs: ["拒絕新做法，傾向維持現狀或否定他人創意。","願意嘗試但缺乏主動觀察；需指導才能執行。","配合新流程，並在指導下提出小幅優化。","獨立觀察問題、提出新做法並追蹤結果，積極改善。","發展創新專案或制度，推動團隊建立優化文化。"] }
+        ];
+        const S3_BARS_MGMT = [
+            { name: "策略性思考", levels: ["僅執行命令", "理解指令 / 缺乏分析", "基本分析 / 連結目標", "前瞻規劃 / 主動提案", "組織引領 / 策略制定"], descs: ["只關注自身任務，不理解組織方向；缺乏思考長期影響。","能理解策略但無法轉化行動；僅依他人決策行動。","能分析資料、理解願景並與部門任務連結。","能發現趨勢或問題，提出可行策略建議並落實。","能設計策略地圖、影響決策並推動長期發展。"] },
+            { name: "人才發展", levels: ["無學習動機", "被動學習 / 有限支持", "穩定學習 / 願意分享", "主動培育 / 指導他人", "系統傳承 / 文化引導"], descs: ["對自身或他人發展無興趣，不參與訓練也不支持學習。","僅完成要求的培訓，偶爾給予同事建議但缺乏持續追蹤。","能自我成長並主動協助新進同事適應任務。","能計畫學習方向、提供具體回饋，帶領同儕進步。","能設計培訓制度、建立導師文化，推動組織人才成長。"] },
+            { name: "文化落實", levels: ["不認同 / 違反價值", "被動參與 / 理解不足", "穩定實踐 / 態度正向", "主動傳遞 / 影響同儕", "文化引領 / 價值代言"], descs: ["行為與組織價值相悖，對文化活動冷漠或抵制。","表面配合但缺乏實際行動，僅在被要求時參與。","認同價值觀並在工作中展現，能主動參與文化活動。","以行動影響他人、推動文化活動，展現正向力量。","能建立文化制度、引領團隊內化價值並對外傳遞品牌信念。"] }
+        ];
+
+        // 核心狀態
+        let state = getEmptyState();
+
+        function getEmptyState() {
+            return {
+                name: "", branch: "", position: "", date: "", time: "",
+                level: 1, finalDecision: null, bonusMethod: "", idealStatus: "", grandTotal: "",
+                s1: { exp: [0], mot: [0,0], sty: [0,0], sal: [0,0,0], bon: [0], bonText: "" },
+                s2: Array(S2_QUESTIONS.length).fill(0),
+                s3: { core: Array(6).fill(0), mgmt: Array(3).fill(0) }
+            };
+        }
+
+        window.onload = () => {
+            // 一開始不載入暫存，維持空白
+            document.getElementById('interview-date').value = new Date().toISOString().split('T')[0];
+            updateDateTimeDisplay();
+            hydrateUI(); 
+            renderS1(); renderS2(); renderS3(); calculateScores();
+        };
+
+        // ================= UI 綁定與智慧讀取 =================
+        function syncState() {
+            state.name = document.getElementById('ipt-name').value.trim();
+            state.branch = document.getElementById('sel-branch').value;
+            state.position = document.getElementById('sel-position').value;
+            state.date = document.getElementById('interview-date').value;
+            state.time = document.getElementById('interview-time').value;
+            state.bonusMethod = document.getElementById('bonus-method-input').value;
+            
+            const bonTextEl = document.getElementById('s1-bon-text');
+            if(bonTextEl) state.s1.bonText = bonTextEl.value;
+        }
+
+        // 離開姓名欄位時檢查暫存
+        function checkDraft() {
+            let name = document.getElementById('ipt-name').value.trim();
+            if(!name) return;
+            let drafts = JSON.parse(localStorage.getItem('interview_drafts') || '{}');
+            if(drafts[name]) {
+                if(confirm(`系統尋找到『${name}』的暫存評分紀錄，是否載入？`)) {
+                    state = drafts[name];
+                    hydrateUI(); renderS1(); renderS2(); renderS3(); calculateScores();
+                    updateTheme(); showToast('✅ 已成功載入暫存資料');
+                }
+            }
+        }
+
+        function hydrateUI() {
+            document.getElementById('ipt-name').value = state.name;
+            document.getElementById('sel-branch').value = state.branch;
+            document.getElementById('sel-position').value = state.position;
+            if(state.date) document.getElementById('interview-date').value = state.date;
+            if(state.time) document.getElementById('interview-time').value = state.time;
+            document.getElementById('job-level-select').value = state.level;
+            document.getElementById('bonus-method-input').value = state.bonusMethod || "";
+            
+            document.getElementById('btn-pass').className = 'decision-btn flex-1 bg-slate-700 text-slate-300 py-1.5 rounded-lg font-black text-sm hover:bg-slate-600';
+            document.getElementById('btn-fail').className = 'decision-btn flex-1 bg-slate-700 text-slate-300 py-1.5 rounded-lg font-black text-sm hover:bg-slate-600';
+            if(state.finalDecision === 'pass') document.getElementById('btn-pass').classList.add('active-pass');
+            if(state.finalDecision === 'fail') document.getElementById('btn-fail').classList.add('active-fail');
+            
+            updateTheme(); updateDateTimeDisplay();
+        }
+
+        function saveDraftManual() {
+            syncState();
+            let name = state.name.trim();
+            if(!name) return alert('請先輸入「應徵者姓名」才能暫存！');
+            let drafts = JSON.parse(localStorage.getItem('interview_drafts') || '{}');
+            drafts[name] = state;
+            localStorage.setItem('interview_drafts', JSON.stringify(drafts));
+            showToast(`✅ 已暫存【${name}】的資料於本機！`);
+        }
+
+        // ================= 渲染邏輯 =================
         function updateTheme() {
             const branch = document.getElementById('sel-branch').value;
-            const body = document.body;
-            
-            const greenBranches = ["青埔升大校"];
-            const yellowBranches = ["青埔翱翔校", "青園展翅校", "大園晨光校", "內壢森耀校", "竹北知行校", "文化極光校", "快樂騰雲校"];
-            const blackBranches = ["行政溝通處", "人力資源處", "財務會計處", "國小事業處", "國高中事業處", "產品研發處", "品牌行銷處"];
-
-            if (greenBranches.includes(branch)) { body.setAttribute("data-theme", "green"); } 
-            else if (yellowBranches.includes(branch)) { body.setAttribute("data-theme", "yellow"); } 
-            else if (blackBranches.includes(branch)) { body.setAttribute("data-theme", "black"); } 
-            else { body.setAttribute("data-theme", "blue"); } // 國中部與預設
+            const b = document.body;
+            if (["青埔升大校"].includes(branch)) b.setAttribute("data-theme", "green");
+            else if (["青埔翱翔校", "青園展翅校", "大園晨光校", "內壢森耀校", "竹北知行校", "文化極光校", "快樂騰雲校"].includes(branch)) b.setAttribute("data-theme", "yellow");
+            else if (["行政溝通處", "人力資源處", "財務會計處", "國小事業處", "國高中事業處", "產品研發處", "品牌行銷處"].includes(branch)) b.setAttribute("data-theme", "black");
+            else b.setAttribute("data-theme", "blue");
         }
 
-        // ================= 工具與顯示 =================
         function showToast(msg) {
-            const toast = document.getElementById('toast');
-            toast.innerText = msg;
-            toast.classList.add('show');
+            const toast = document.getElementById('toast'); toast.innerText = msg; toast.classList.add('show');
             setTimeout(() => toast.classList.remove('show'), 3000);
-        }
-
-        function saveDraft() {
-            localStorage.setItem('interviewDraft', JSON.stringify(state));
-            showToast('✅ 已成功暫存人才資料於本機！');
         }
 
         function toggleReportMode(isReport) {
@@ -374,8 +480,7 @@
                 document.getElementById('action-bar').classList.add('hidden');
                 document.getElementById('report-exit-bar').classList.remove('hidden');
                 document.getElementById('validation-warning').classList.add('hidden'); 
-                window.scrollTo(0,0);
-                setTimeout(() => window.print(), 500);
+                window.scrollTo(0,0); setTimeout(() => window.print(), 500);
             } else {
                 document.body.classList.remove('report-mode');
                 document.getElementById('action-bar').classList.remove('hidden');
@@ -386,9 +491,8 @@
 
         function addInterviewer() {
             const container = document.getElementById('interviewer-list');
-            const div = document.createElement('div');
-            div.className = 'flex gap-2';
-            div.innerHTML = `<input type="text" class="flex-1 border-b-2 border-slate-200 p-2 text-base outline-none"><button onclick="this.parentElement.remove()" class="text-red-500 font-bold px-2">✕</button>`;
+            const div = document.createElement('div'); div.className = 'flex gap-2';
+            div.innerHTML = `<input type="text" class="ipt-interviewer flex-1 border-b-2 border-slate-200 p-1.5 text-base outline-none bg-slate-50"><button onclick="this.parentElement.remove()" class="text-red-500 font-bold px-2">✕</button>`;
             container.appendChild(div);
         }
 
@@ -397,94 +501,26 @@
             const tInput = document.getElementById('interview-time').value;
             if(!dInput) return;
             const d = new Date(dInput);
-            const days = ["星期日","星期一","星期二","星期三","星期四","星期五","星期六"];
-            const timeStr = tInput ? ` / ${tInput} 開始` : '';
-            document.getElementById('datetime-preview').innerText = `${d.getFullYear()}年 / ${d.getMonth()+1}月 / ${d.getDate()}日 / ${days[d.getDay()]}${timeStr}`;
+            document.getElementById('datetime-preview').innerText = `${d.getFullYear()}年 / ${d.getMonth()+1}月 / ${d.getDate()}日 / ${["星期日","星期一","星期二","星期三","星期四","星期五","星期六"][d.getDay()]} ${tInput ? '/ '+tInput+' 開始':''}`;
         }
-
-        // ================= 資料庫與設定 =================
-        const GRADE_LABELS = ["", "差1", "尚可2", "佳3", "良好4", "優異5"];
-        
-        const S1_DATA = [
-            { id: 'exp', title: "工作經歷", weight: 0.20, max: 5, qs: ["最能代表其專業能力及理想的經歷？"] },
-            { id: 'mot', title: "動機與價值", weight: 0.35, max: 10, qs: ["與我們最契合的價值觀？", "影響個人去留的主因？"] },
-            { id: 'sty', title: "工作風格", weight: 0.25, max: 10, qs: ["最滿意或欣賞的工作環境、管理制度？", "感到挫敗或壓力最大的案例？當時如何應對？"] },
-            { id: 'sal', title: "薪資與期待", weight: 0.20, max: 15, qs: ["期望月薪/年薪及初期最低薪資？", "最感興趣的工作任務與職涯關聯？", "想了解或擔心的部分？"] },
-            { id: 'bon', title: "特別加分題", weight: 0.01, max: 5, qs: ["補充說明？"] }
-        ];
-
-        const S2_QUESTIONS = ["儀容穿著", "禮貌應對", "表達流暢", "自信穩健", "誠懇親和", "對分校了解", "對職務認知", "企圖心展現", "配合度", "邏輯思考", "臨場反應", "學習意願", "情緒穩定", "抗壓性", "團隊合作", "經歷相關", "專業知識"];
-
-        const S3_LEVELS = {
-            1: { c: [30, 20, 20, 15, 10, 5], m: [30, 30, 40], ratio: { c: 90, m: 10 } },
-            2: { c: [30, 20, 20, 15, 10, 5], m: [30, 30, 40], ratio: { c: 85, m: 15 } },
-            3: { c: [20, 15, 20, 15, 15, 15], m: [30, 35, 35], ratio: { c: 70, m: 30 } },
-            4: { c: [20, 15, 20, 15, 15, 15], m: [30, 40, 30], ratio: { c: 60, m: 40 } },
-            5: { c: [15, 10, 20, 15, 20, 20], m: [35, 35, 30], ratio: { c: 50, m: 50 } },
-            6: { c: [15, 10, 20, 15, 20, 20], m: [40, 35, 25], ratio: { c: 40, m: 60 } },
-            7: { c: [15, 10, 20, 15, 20, 20], m: [40, 35, 25], ratio: { c: 30, m: 70 } }
-        };
-
-        const S3_BARS_CORE = [
-            { name: "品質成果導向", levels: ["逃避責任", "被動執行", "穩定執行", "主動精進", "卓越引領"], descs: ["經常拖延，需多次提醒才執行；遇問題傾向抱怨，品質不穩。","僅完成明確指示，缺乏自我檢查；需主管持續監督。","理解任務並依計畫執行；遇困難主動回報，品質大致穩定。","清楚拆解目標並優化流程；面對挑戰能分析並協調資源，具高責任感。","高度自我要求，帶領他人檢視改進；建立標準化機制與信任文化。"] },
-            { name: "顧客導向", levels: ["忽視需求", "被動回應", "穩定服務", "主動協助", "建立信任"], descs: ["對家長反應漠不關心，傾向以規則回應，不願理解對方焦慮。","僅被詢問時回覆；面對抱怨易緊張防禦，缺乏安撫技巧。","能友善回覆，並在指導下處理簡單抱怨；維持禮貌與穩定。","察覺家長焦慮並主動關懷，提供具體協助；平衡雙方期待。","化解負面情緒並建立信任，帶領團隊形成穩定服務文化。"] },
-            { name: "問題解決", levels: ["逃避問題", "被動回報", "穩定修正", "主動分析", "系統改善"], descs: ["面對問題閃避或推卸責任，缺乏改善行動。","察覺問題但僅通報主管，未嘗試分析或提出方案。","在指導下釐清問題，提出可行修正並完成任務。","獨立找出根源、提出並執行方案，追蹤結果防止重複。","整合團隊經驗建立SOP，推動持續改善與風險預警。"] },
-            { name: "團隊合作", levels: ["抗拒合作", "被動配合", "穩定參與", "主動支援", "領導團隊"], descs: ["缺乏團隊意識，只顧自身任務，對他人需求漠不關心。","願意合作但僅在被要求時行動，難以主動協助。","理解目標並完成分配任務，衝突時保持理性尊重。","協調不同意見、推動共識，主動分享經驗協助同儕。","帶領團隊形成穩定機制，推動跨部門協作建立信任。"] },
-            { name: "溝通協調", levels: ["表達混亂", "被動回應", "清楚表達", "彈性調整", "影響引導"], descs: ["溝通缺乏邏輯或情緒化，易造成誤會或衝突。","單向表達未確認對方理解；常需他人重複解釋。","條理說明工作，能傾聽並確認理解。","依對象調整語氣方式，協助建立共識與合作。","跨部門清晰表達觀點，影響他人並維護形象。"] },
-            { name: "創新能力", levels: ["抗拒改變", "被動接受", "穩定嘗試", "主動創新", "引領創新"], descs: ["拒絕新做法，傾向維持現狀或否定他人創意。","願意嘗試但缺乏主動觀察；需指導才能執行。","配合新流程，並在指導下提出小幅優化。","獨立觀察問題、提出新做法並追蹤結果，積極改善。","發展創新專案或制度，推動團隊建立優化文化。"] }
-        ];
-
-        const S3_BARS_MGMT = [
-            { name: "策略性思考", levels: ["僅執行命令", "理解指令 / 缺乏分析", "基本分析 / 連結目標", "前瞻規劃 / 主動提案", "組織引領 / 策略制定"], descs: ["只關注自身任務，不理解組織方向；缺乏思考長期影響。","能理解策略但無法轉化行動；僅依他人決策行動。","能分析資料、理解願景並與部門任務連結。","能發現趨勢或問題，提出可行策略建議並落實。","能設計策略地圖、影響決策並推動長期發展。"] },
-            { name: "人才發展", levels: ["無學習動機", "被動學習 / 有限支持", "穩定學習 / 願意分享", "主動培育 / 指導他人", "系統傳承 / 文化引導"], descs: ["對自身或他人發展無興趣，不參與訓練也不支持學習。","僅完成要求的培訓，偶爾給予同事建議但缺乏持續追蹤。","能自我成長並主動協助新進同事適應任務。","能計畫學習方向、提供具體回饋，帶領同儕進步。","能設計培訓制度、建立導師文化，推動組織人才成長。"] },
-            { name: "文化落實", levels: ["不認同 / 違反價值", "被動參與 / 理解不足", "穩定實踐 / 態度正向", "主動傳遞 / 影響同儕", "文化引領 / 價值代言"], descs: ["行為與組織價值相悖，對文化活動冷漠或抵制。","表面配合但缺乏實際行動，僅在被要求時參與。","認同價值觀並在工作中展現，能主動參與文化活動。","以行動影響他人、推動文化活動，展現正向力量。","能建立文化制度、引領團隊內化價值並對外傳遞品牌信念。"] }
-        ];
-
-        let state = {
-            level: 1, s1: { exp: [0], mot: [0,0], sty: [0,0], sal: [0,0,0], bon: [0] },
-            s2: Array(S2_QUESTIONS.length).fill(0), s3: { core: Array(6).fill(0), mgmt: Array(3).fill(0) }
-        };
-
-        window.finalDecision = null;
-
-        window.onload = () => {
-            document.getElementById('interview-date').value = new Date().toISOString().split('T')[0];
-            updateDateTimeDisplay();
-            const saved = localStorage.getItem('interviewDraft');
-            if(saved) { 
-                state = JSON.parse(saved); 
-                document.getElementById('job-level-select').value = state.level; 
-                // 還原選項後也要更新主題顏色
-                // (實務上通常存檔不會存表頭文字，但為求完整先呼叫)
-            }
-            renderS1(); renderS2(); renderS3(); calculateScores();
-        };
 
         function renderS1() {
             S1_DATA.forEach(group => {
                 const container = document.getElementById(`s1-${group.id}-section`);
-                let html = `<div class="bg-white p-2.5 rounded-xl border border-slate-200 shadow-sm mb-2"><div class="flex justify-between border-b-2 border-slate-100 pb-1"><h3 class="font-bold text-sm text-slate-800">${group.title}</h3></div><div class="space-y-1.5 mt-1.5">`;
-                
+                let html = `<div class="bg-white p-2 rounded-xl border border-slate-200 shadow-sm mb-2"><div class="flex justify-between border-b-2 border-slate-100 pb-1"><h3 class="font-bold text-[13px] text-slate-800">${group.title}</h3></div><div class="space-y-1.5 mt-1.5">`;
                 if (group.id === 'bon') {
-                    html += `<div class="bg-slate-50 p-2 rounded flex flex-col gap-2 hover:bg-slate-100 transition-colors">
-                        <div class="text-sm font-medium text-slate-700">${group.qs[0]} <span class="text-xs text-slate-400 font-normal">(選填)</span></div>
-                        <textarea id="s1-bon-text" rows="1" class="input-cell" placeholder="請填寫加分項目說明..."></textarea>
-                        <div class="flex gap-1.5 self-end">`;
+                    html += `<div class="bg-slate-50 p-2 rounded flex flex-col gap-1.5"><div class="text-[13px] font-medium text-slate-700">${group.qs[0]} <span class="text-[10px] text-slate-400 font-normal">(選填)</span></div><textarea id="s1-bon-text" onchange="syncState()" rows="1" class="input-cell" placeholder="請填寫加分項目說明...">${state.s1.bonText||''}</textarea><div class="flex gap-1.5 self-end">`;
                     [1,2,3,4,5].map(v => {
                         const isActive = state.s1[group.id][0] == v;
-                        html += `<button onclick="setScore('s1-${group.id}', 0, ${v}, this)" class="score-btn s1-s2-btn w-6 h-6 rounded text-xs font-bold text-slate-600 ${isActive?'active':''}" data-val="${v}">
-                            <span class="btn-num">${v}</span><span class="report-label">${GRADE_LABELS[v]}</span>
-                        </button>`;
+                        html += `<button onclick="setScore('s1-${group.id}', 0, ${v}, this)" class="score-btn s1-s2-btn w-6 h-6 rounded text-xs font-bold text-slate-600 ${isActive?'active':''}" data-val="${v}"><span class="btn-num">${v}</span><span class="report-label">${GRADE_LABELS[v]}</span></button>`;
                     });
                     html += `</div></div>`;
                 } else {
                     group.qs.forEach((q, i) => {
-                        html += `<div class="bg-slate-50 p-1.5 rounded flex justify-between items-center"><div class="text-sm flex-1 text-slate-700 leading-snug pr-2">${q}</div><div class="flex gap-1">`;
+                        html += `<div class="bg-slate-50 p-1.5 rounded flex justify-between items-center"><div class="text-[13px] flex-1 text-slate-700 pr-2">${q}</div><div class="flex gap-1">`;
                         [1,2,3,4,5].map(v => {
                             const isActive = state.s1[group.id][i] == v;
-                            html += `<button onclick="setScore('s1-${group.id}', ${i}, ${v}, this)" class="score-btn s1-s2-btn w-6 h-6 rounded text-xs font-bold text-slate-600 ${isActive?'active':''}" data-val="${v}">
-                                <span class="btn-num">${v}</span><span class="report-label">${GRADE_LABELS[v]}</span>
-                            </button>`;
+                            html += `<button onclick="setScore('s1-${group.id}', ${i}, ${v}, this)" class="score-btn s1-s2-btn w-6 h-6 rounded text-xs font-bold text-slate-600 ${isActive?'active':''}" data-val="${v}"><span class="btn-num">${v}</span><span class="report-label">${GRADE_LABELS[v]}</span></button>`;
                         });
                         html += `</div></div>`;
                     });
@@ -494,15 +530,12 @@
         }
 
         function renderS2() {
-            const container = document.getElementById('s2-container');
-            container.innerHTML = S2_QUESTIONS.map((q, i) => {
+            document.getElementById('s2-container').innerHTML = S2_QUESTIONS.map((q, i) => {
                 let btns = [1,2,3,4,5].map(v => {
                     const isActive = state.s2[i] == v;
-                    return `<button onclick="setScore('s2', ${i}, ${v}, this)" class="score-btn s1-s2-btn w-6 h-6 rounded text-xs font-bold text-slate-600 ${isActive?'active':''}" data-val="${v}">
-                        <span class="btn-num">${v}</span><span class="report-label">${GRADE_LABELS[v]}</span>
-                    </button>`;
+                    return `<button onclick="setScore('s2', ${i}, ${v}, this)" class="score-btn s1-s2-btn w-6 h-6 rounded text-xs font-bold text-slate-600 ${isActive?'active':''}" data-val="${v}"><span class="btn-num">${v}</span><span class="report-label">${GRADE_LABELS[v]}</span></button>`;
                 }).join('');
-                return `<div class="flex justify-between items-center border-b border-slate-100 py-1 px-1"><span class="text-sm text-slate-700">${i+1}. ${q}</span><div class="flex gap-1">${btns}</div></div>`;
+                return `<div class="flex justify-between items-center border-b border-slate-100 py-1 px-1"><span class="text-[13px] text-slate-700">${i+1}. ${q}</span><div class="flex gap-1">${btns}</div></div>`;
             }).join('');
         }
 
@@ -512,32 +545,32 @@
             let html = '';
             
             S3_BARS_CORE.forEach((item, i) => {
-                html += `<tr class="border-b border-slate-200"><td class="p-1.5 border-r bg-blue-50 font-bold text-center text-xs">核心<br><span class="text-[10px] text-blue-600">(${d.c[i]}%)</span></td><td class="p-1.5 border-r font-bold text-xs text-center">${item.name}</td><td class="bg-blue-50/10 p-1 border-r"><textarea class="input-cell" rows="1"></textarea></td><td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell" rows="1"></textarea></td><td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell" rows="1"></textarea></td><td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell" rows="1"></textarea></td><td class="p-1.5 text-center"><div class="flex gap-1 justify-center">`;
+                html += `<tr class="border-b border-slate-200"><td class="p-1 border-r bg-blue-50 font-bold text-center text-[11px]">核心<br><span class="text-[9px] text-blue-600">(${d.c[i]}%)</span></td><td class="p-1 border-r font-bold text-[11px] text-center">${item.name}</td><td class="bg-blue-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="1"></textarea></td><td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="1"></textarea></td><td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="1"></textarea></td><td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="1"></textarea></td><td class="p-1 text-center"><div class="flex gap-1 justify-center">`;
                 [1,2,3,4,5].map(v => {
                     const isActive = state.s3.core[i] == v;
-                    html += `<button onclick="setScore('s3-core', ${i}, ${v}, this)" class="score-btn w-6 h-6 rounded text-xs font-bold text-slate-600 ${isActive?'active':''}" data-val="${v}">${v}<span class="tooltip-text">${item.levels[v-1]}</span></button>`;
+                    html += `<button onclick="setScore('s3-core', ${i}, ${v}, this)" class="score-btn w-5 h-5 rounded text-[10px] font-bold text-slate-600 ${isActive?'active':''}" data-val="${v}">${v}<span class="tooltip-text">${item.levels[v-1]}</span></button>`;
                 });
                 html += `</div></td></tr>`;
                 const desc = state.s3.core[i] > 0 ? item.descs[state.s3.core[i]-1] : '';
-                html += `<tr id="desc-core-${i}" class="bg-slate-50 text-xs text-slate-600 ${state.s3.core[i]>0?'':'hidden'}"><td colspan="7" class="p-1.5 border-b"><span class="font-bold text-blue-700">行為描述：</span> <span id="desc-text-core-${i}">${desc}</span></td></tr>`;
+                html += `<tr id="desc-core-${i}" class="bg-slate-50 text-[10px] text-slate-600 ${state.s3.core[i]>0?'':'hidden'}"><td colspan="7" class="p-1 border-b"><span class="font-bold text-blue-700">行為描述：</span> <span id="desc-text-core-${i}">${desc}</span></td></tr>`;
             });
 
             S3_BARS_MGMT.forEach((item, i) => {
-                html += `<tr class="border-b border-slate-200"><td class="p-1.5 border-r bg-green-50 font-bold text-center text-xs">管理<br><span class="text-[10px] text-green-600">(${d.m[i]}%)</span></td><td class="p-1.5 border-r font-bold text-xs text-center">${item.name}</td><td class="bg-blue-50/10 p-1 border-r"><textarea class="input-cell" rows="1"></textarea></td><td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell" rows="1"></textarea></td><td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell" rows="1"></textarea></td><td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell" rows="1"></textarea></td><td class="p-1.5 text-center"><div class="flex gap-1 justify-center">`;
+                html += `<tr class="border-b border-slate-200"><td class="p-1 border-r bg-green-50 font-bold text-center text-[11px]">管理<br><span class="text-[9px] text-green-600">(${d.m[i]}%)</span></td><td class="p-1 border-r font-bold text-[11px] text-center">${item.name}</td><td class="bg-blue-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="1"></textarea></td><td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="1"></textarea></td><td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="1"></textarea></td><td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="1"></textarea></td><td class="p-1 text-center"><div class="flex gap-1 justify-center">`;
                 [1,2,3,4,5].map(v => {
                     const isActive = state.s3.mgmt[i] == v;
-                    html += `<button onclick="setScore('s3-mgmt', ${i}, ${v}, this)" class="score-btn w-6 h-6 rounded text-xs font-bold text-slate-600 ${isActive?'active':''}" data-val="${v}">${v}<span class="tooltip-text">${item.levels[v-1]}</span></button>`;
+                    html += `<button onclick="setScore('s3-mgmt', ${i}, ${v}, this)" class="score-btn w-5 h-5 rounded text-[10px] font-bold text-slate-600 ${isActive?'active':''}" data-val="${v}">${v}<span class="tooltip-text">${item.levels[v-1]}</span></button>`;
                 });
                 html += `</div></td></tr>`;
                 const desc = state.s3.mgmt[i] > 0 ? item.descs[state.s3.mgmt[i]-1] : '';
-                html += `<tr id="desc-mgmt-${i}" class="bg-slate-50 text-xs text-slate-600 ${state.s3.mgmt[i]>0?'':'hidden'}"><td colspan="7" class="p-1.5 border-b"><span class="font-bold text-green-700">行為描述：</span> <span id="desc-text-mgmt-${i}">${desc}</span></td></tr>`;
+                html += `<tr id="desc-mgmt-${i}" class="bg-slate-50 text-[10px] text-slate-600 ${state.s3.mgmt[i]>0?'':'hidden'}"><td colspan="7" class="p-1 border-b"><span class="font-bold text-green-700">行為描述：</span> <span id="desc-text-mgmt-${i}">${desc}</span></td></tr>`;
             });
-            tbody.innerHTML = html;
+            document.getElementById('s3-tbody').innerHTML = html;
         }
 
         function updateLevelLogic() { state.level = parseInt(document.getElementById('job-level-select').value); renderS3(); calculateScores(); }
 
-        // ================= Toggle 反悔取消選取機制 =================
+        // ================= Toggle 反悔取消機制 =================
         window.setScore = function(group, idx, val, btn) {
             const parent = btn.parentElement;
             const isActive = btn.classList.contains('active');
@@ -545,11 +578,7 @@
             Array.from(parent.children).forEach(b => b.classList.remove('active'));
 
             let newVal = val;
-            if (isActive) {
-                newVal = 0; // 反悔取消選取
-            } else {
-                btn.classList.add('active');
-            }
+            if (isActive) newVal = 0; else btn.classList.add('active');
 
             if(group === 's2') state.s2[idx] = newVal;
             else if(group.startsWith('s1-')) state.s1[group.split('-')[1]][idx] = newVal;
@@ -569,10 +598,10 @@
         }
 
         function setFinalDecision(type) {
-            document.getElementById('btn-pass').className = 'decision-btn flex-1 bg-slate-700 text-slate-300 py-2 rounded-xl font-black text-base hover:bg-slate-600';
-            document.getElementById('btn-fail').className = 'decision-btn flex-1 bg-slate-700 text-slate-300 py-2 rounded-xl font-black text-base hover:bg-slate-600';
-            if(type==='pass') { document.getElementById('btn-pass').classList.add('active-pass'); window.finalDecision = '錄取'; }
-            if(type==='fail') { document.getElementById('btn-fail').classList.add('active-fail'); window.finalDecision = '不錄取'; }
+            document.getElementById('btn-pass').className = 'decision-btn flex-1 bg-slate-700 text-slate-300 py-1.5 rounded-lg font-black text-sm hover:bg-slate-600';
+            document.getElementById('btn-fail').className = 'decision-btn flex-1 bg-slate-700 text-slate-300 py-1.5 rounded-lg font-black text-sm hover:bg-slate-600';
+            if(type==='pass') { document.getElementById('btn-pass').classList.add('active-pass'); state.finalDecision = 'pass'; }
+            if(type==='fail') { document.getElementById('btn-fail').classList.add('active-fail'); state.finalDecision = 'fail'; }
         }
 
         function calculateScores() {
@@ -602,28 +631,12 @@
             document.getElementById('report-grand-total').innerText = grandTotal.toFixed(2);
             document.getElementById('footer-total').innerText = grandTotal.toFixed(2);
 
-            // ================= 檢查未填寫項目 =================
-            let missing = [];
-            S1_DATA.forEach(g => {
-                if (g.id !== 'bon') { // 加分題選填
-                    g.qs.forEach((q, i) => { if (state.s1[g.id][i] === 0) missing.push(`[筆試] ${g.title}`); });
-                }
-            });
-            S2_QUESTIONS.forEach((q, i) => { if (state.s2[i] === 0) missing.push(`[外顯] ${q}`); });
-            S3_BARS_CORE.forEach((c, i) => { if (state.s3.core[i] === 0) missing.push(`[職能] 核心-${c.name}`); });
-            S3_BARS_MGMT.forEach((m, i) => { if (state.s3.mgmt[i] === 0) missing.push(`[職能] 管理-${m.name}`); });
-
-            const warningDiv = document.getElementById('validation-warning');
-            if (missing.length > 0) {
-                // 去除重複顯示以縮短文字
-                const uniqueMissing = [...new Set(missing)];
-                document.getElementById('missing-list').innerHTML = uniqueMissing.slice(0, 3).join(', ') + (uniqueMissing.length > 3 ? ` ...等共 ${missing.length} 題` : '');
-                warningDiv.classList.remove('hidden');
-            } else {
-                warningDiv.classList.add('hidden');
+            if(grandTotal === 0) {
+                document.getElementById('ideal-status-text').innerText = "等待評分...";
+                document.getElementById('ideal-status-exp').innerText = "-";
+                document.getElementById('bonus-hint-area').classList.add('hidden');
+                return;
             }
-
-            if(grandTotal === 0) return;
 
             // ================= 級距與地雷判定 =================
             let finalStatusIndex = 5, baseDesc = "";
@@ -666,16 +679,16 @@
             const inputArea = document.getElementById('bonus-method-input');
 
             statusDiv.innerText = STATUS[finalStatusIndex];
+            state.idealStatus = STATUS[finalStatusIndex];
             
-            // 報告模式下顏色較深，網頁模式保持高亮
             if (document.body.classList.contains('report-mode')) {
-                statusDiv.className = "text-xl font-black mb-2 text-slate-800";
+                statusDiv.className = "text-lg font-black mb-1 text-slate-800";
             } else {
-                statusDiv.className = `text-xl font-black mb-2 ${finalStatusIndex<=1?'text-emerald-400':(finalStatusIndex<=3?'text-amber-400':'text-red-400')}`;
+                statusDiv.className = `text-lg font-black mb-1 ${finalStatusIndex<=1?'text-emerald-400':(finalStatusIndex<=3?'text-amber-400':'text-red-400')}`;
             }
 
             if(vetoReasons.length > 0) {
-                expDiv.innerHTML = `<span class="text-red-500 font-bold">⚠️ 觸發特殊條件：</span> ${vetoReasons.join('、')}。`;
+                expDiv.innerHTML = `<span class="text-red-500 font-bold">⚠️ 降級原因：</span> ${vetoReasons.join('、')}。`;
                 hintArea.innerHTML = "💡 系統加分提示：<br>• " + vetoHints.join('<br>• ');
                 hintArea.classList.remove('hidden');
                 inputArea.classList.remove('rounded-t-lg');
@@ -687,56 +700,113 @@
             }
         }
 
-        // ================= 匯出報表 CSV (優化供人資後台分析) =================
-        function exportToCSV() {
-            showToast('☁️ 正在產出數據報表並下載...');
-            const name = document.getElementById('ipt-name').value || '未填寫';
-            const branch = document.getElementById('sel-branch').value || '未填寫';
-            const position = document.getElementById('sel-position').value || '未填寫';
-            const date = document.getElementById('interview-date').value || '未填寫';
-            
-            const gTotal = document.getElementById('header-total').innerText;
-            const ideal = document.getElementById('ideal-status-text').innerText;
-            const finalDec = window.finalDecision || '未決策';
-            const bonusText = document.getElementById('bonus-method-input').value.replace(/\n/g, ' ') || '無';
-            
-            const bonTextElem = document.getElementById('s1-bon-text');
-            const bonReason = bonTextElem ? bonTextElem.value.replace(/\n/g, ' ') : '無';
+        // ================= 面試完成檢查與警告視窗 =================
+        function checkCompletion() {
+            syncState();
+            let missing = [];
+            S1_DATA.forEach(g => {
+                if (g.id !== 'bon') { // 加分選填
+                    g.qs.forEach((q, i) => { if (state.s1[g.id][i] === 0) missing.push(`[階段一] ${g.title}`); });
+                }
+            });
+            S2_QUESTIONS.forEach((q, i) => { if (state.s2[i] === 0) missing.push(`[階段二] ${q}`); });
+            S3_BARS_CORE.forEach((c, i) => { if (state.s3.core[i] === 0) missing.push(`[階段三] 核心-${c.name}`); });
+            S3_BARS_MGMT.forEach((m, i) => { if (state.s3.mgmt[i] === 0) missing.push(`[階段三] 管理-${m.name}`); });
 
-            // CSV BOM
+            if (missing.length > 0) {
+                const uniqueMissing = [...new Set(missing)];
+                document.getElementById('missing-modal-list').innerHTML = uniqueMissing.map(m => `<li>${m}</li>`).join('');
+                document.getElementById('missing-modal').classList.add('show');
+            } else {
+                showToast('✅ 所有階段評分皆已完成！請進行最終決策。');
+                document.getElementById('report-card-section').scrollIntoView({behavior: 'smooth'});
+            }
+        }
+
+        // ================= 人資後台與結案流程 =================
+        function submitToBackend() {
+            syncState();
+            let missing = [];
+            S1_DATA.forEach(g => { if(g.id !== 'bon') g.qs.forEach((q, i) => { if(state.s1[g.id][i]===0) missing.push(g.title); }); });
+            S2_QUESTIONS.forEach((q, i) => { if(state.s2[i]===0) missing.push('外顯特質'); });
+            S3_BARS_CORE.forEach((c, i) => { if(state.s3.core[i]===0) missing.push('核心職能'); });
+            S3_BARS_MGMT.forEach((m, i) => { if(state.s3.mgmt[i]===0) missing.push('管理職能'); });
+            
+            if(missing.length > 0) {
+                checkCompletion(); // 如果漏填，直接呼叫警告彈窗
+                return;
+            }
+            if(!state.finalDecision) return alert("請先在最下方選擇「最終錄取結果」！");
+            if(!state.name.trim()) return alert("請填寫應徵者姓名！");
+
+            state.grandTotal = document.getElementById('header-total').innerText;
+            
+            let db = JSON.parse(localStorage.getItem('interview_db') || '[]');
+            db.push(state);
+            localStorage.setItem('interview_db', JSON.stringify(db));
+
+            // 清除暫存
+            let drafts = JSON.parse(localStorage.getItem('interview_drafts') || '{}');
+            if(drafts[state.name]) { delete drafts[state.name]; localStorage.setItem('interview_drafts', JSON.stringify(drafts)); }
+
+            showToast('☁️ 儲存成功！已轉入後台資料庫。');
+            
+            // 恢復空白全新品
+            setTimeout(() => {
+                state = getEmptyState();
+                hydrateUI(); renderS1(); renderS2(); renderS3(); calculateScores();
+                document.getElementById('datetime-preview').innerText = '';
+                window.scrollTo(0,0);
+            }, 1500);
+        }
+
+        function openBackend() {
+            if(prompt('請輸入人資權限密碼：') === '2017') {
+                const db = JSON.parse(localStorage.getItem('interview_db') || '[]');
+                const tbody = document.getElementById('db-tbody');
+                tbody.innerHTML = db.map(r => `
+                    <tr class="border-b hover:bg-slate-100">
+                        <td class="p-2 border">${r.date || '-'}</td>
+                        <td class="p-2 border font-bold">${r.name}</td>
+                        <td class="p-2 border">${r.branch} / ${r.position}</td>
+                        <td class="p-2 border text-blue-600 font-bold">${r.grandTotal}</td>
+                        <td class="p-2 border">${r.idealStatus}</td>
+                        <td class="p-2 border text-center">${r.finalDecision==='pass'?'✅ 錄取':'❌ 不錄取'}</td>
+                    </tr>
+                `).join('');
+                if(db.length === 0) tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-400">目前尚無結案紀錄</td></tr>`;
+                document.getElementById('backend-modal').classList.add('show');
+            } else {
+                alert('密碼錯誤！');
+            }
+        }
+
+        function exportCSV() {
+            const db = JSON.parse(localStorage.getItem('interview_db') || '[]');
+            if(db.length === 0) return alert('目前後台尚無資料可匯出！');
+
             let csv = "\uFEFF"; 
+            csv += "面試日期,應徵者姓名,應徵單位,應徵職位,系統總得分,建議狀態,最終決策,加分與培訓計畫,";
             
-            // 第一列：資料庫標頭
-            csv += "應徵者姓名,面試日期,應徵單位,應徵職位,系統總得分,建議理想狀態,面試官最終決策,培訓與加分方式,階段一筆試得分,階段二外顯得分,階段三職能得分,";
-            
-            // 動態產生所有題目的標頭
-            S1_DATA.forEach(g => {
-                if (g.id === 'bon') csv += `[加分題] 說明,[加分題] 得分,`;
-                else g.qs.forEach((q, i) => csv += `[筆試] ${g.title}-${q},`);
-            });
-            S2_QUESTIONS.forEach(q => csv += `[外顯] ${q},`);
-            S3_BARS_CORE.forEach(c => csv += `[職能核心] ${c.name},`);
-            S3_BARS_MGMT.forEach(m => csv += `[職能管理] ${m.name},`);
+            S1_DATA.forEach(g => { if(g.id==='bon') csv += `[筆試]加分說明,[筆試]加分得分,`; else g.qs.forEach((q,i) => csv += `[筆試]${g.title}-Q${i+1},`); });
+            S2_QUESTIONS.forEach(q => csv += `[外顯]${q},`);
+            S3_BARS_CORE.forEach(c => csv += `[職能核心]${c.name},`);
+            S3_BARS_MGMT.forEach(m => csv += `[職能管理]${m.name},`);
             csv += "\n";
 
-            // 第二列：資料列
-            csv += `"${name}","${date}","${branch}","${position}","${gTotal}","${ideal}","${finalDec}","${bonusText}","${document.getElementById('s1-final').innerText}","${document.getElementById('s2-final').innerText}","${document.getElementById('s3-final').innerText}",`;
-            
-            // 動態填入分數
-            S1_DATA.forEach(g => {
-                if (g.id === 'bon') csv += `"${bonReason}","${state.s1[g.id][0]}",`;
-                else g.qs.forEach((q, i) => csv += `"${state.s1[g.id][i]}",`);
+            db.forEach(r => {
+                csv += `"${r.date}","${r.name}","${r.branch}","${r.position}","${r.grandTotal}","${r.idealStatus}","${r.finalDecision==='pass'?'錄取':'不錄取'}","${(r.bonusMethod||'').replace(/\n/g, ' ')}",`;
+                S1_DATA.forEach(g => { if(g.id==='bon') csv += `"${(r.s1.bonText||'').replace(/\n/g, ' ')}","${r.s1[g.id][0]}",`; else g.qs.forEach((q, i) => csv += `"${r.s1[g.id][i]}",`); });
+                S2_QUESTIONS.forEach((q, i) => csv += `"${r.s2[i]}",`);
+                S3_BARS_CORE.forEach((c, i) => csv += `"${r.s3.core[i]}",`);
+                S3_BARS_MGMT.forEach((m, i) => csv += `"${r.s3.mgmt[i]}",`);
+                csv += "\n";
             });
-            S2_QUESTIONS.forEach((q, i) => csv += `"${state.s2[i]}",`);
-            S3_BARS_CORE.forEach((c, i) => csv += `"${state.s3.core[i]}",`);
-            S3_BARS_MGMT.forEach((m, i) => csv += `"${state.s3.mgmt[i]}",`);
-            csv += "\n";
 
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
             const link = document.createElement("a");
-            link.setAttribute("href", url);
-            link.setAttribute("download", `面試數據庫匯出_${name}.csv`);
+            link.href = URL.createObjectURL(blob);
+            link.download = `面試總資料庫匯出_${new Date().toISOString().split('T')[0]}.csv`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
