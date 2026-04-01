@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>面試評分系統 - BARS與成績單輸出版</title>
+    <title>面試評分系統</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <style>
@@ -36,18 +36,25 @@
         #toast.show { transform: translateX(0); }
 
         /* ================= 列印 / 報告模式 CSS ================= */
+        .report-label { display: none; } /* 正常模式下隱藏中文標籤 */
+        
         body.report-mode { background-color: white; }
         body.report-mode .hide-in-report { display: none !important; }
         body.report-mode input, body.report-mode textarea, body.report-mode select { border: none !important; background: transparent !important; appearance: none; -webkit-appearance: none; pointer-events: none; resize: none; padding: 0 !important; color: #0f172a !important; font-weight: 500; }
         body.report-mode .shadow-sm, body.report-mode .shadow-md, body.report-mode .shadow-lg, body.report-mode .shadow-xl { box-shadow: none !important; }
         body.report-mode section { border: 1px solid #e2e8f0; margin-bottom: 16px; border-radius: 8px; break-inside: avoid; }
-        /* 分數按鈕變成純文字標籤 */
+        
+        /* 報告模式下的分數按鈕切換 */
         body.report-mode .score-btn:not(.active) { display: none !important; }
         body.report-mode .score-btn.active { transform: none !important; cursor: default; width: auto !important; padding: 2px 12px; border-radius: 12px; font-size: 14px; font-weight: bold; box-shadow: none !important; }
+        
+        /* 階段一與階段二特殊標籤切換 (優異5, 良好4...) */
+        body.report-mode .s1-s2-btn .btn-num { display: none !important; }
+        body.report-mode .s1-s2-btn .report-label { display: inline-block !important; }
+
         /* 隱藏未選擇的決策按鈕 */
         body.report-mode .decision-btn:not([class*="active-"]) { display: none !important; }
         body.report-mode .decision-btn { padding: 8px 16px !important; pointer-events: none; }
-        body.report-mode .report-s2-text { display: inline-block !important; margin-left: 6px; font-size: 14px; color: #1e293b; }
         
         @media print {
             .no-print { display: none !important; }
@@ -62,7 +69,7 @@
 
     <header class="bg-slate-900 text-white p-4 shadow-lg sticky top-0 z-50 border-b-2 border-blue-500 no-print">
         <div class="container mx-auto flex justify-between items-center">
-            <h1 class="text-xl md:text-2xl font-black tracking-wider flex items-center gap-2">面試評分系統 <span class="text-xs bg-blue-600 px-2 py-0.5 rounded ml-2 font-normal">評估與報告產出版</span></h1>
+            <h1 class="text-xl md:text-2xl font-black tracking-wider">面試評分系統</h1>
             <div class="text-right flex items-center gap-4 bg-slate-800 px-4 py-1 rounded-lg border border-slate-700 shadow-inner">
                 <span class="text-sm text-slate-400 font-bold hidden md:inline">總得分</span>
                 <span id="header-total" class="text-2xl md:text-3xl font-black text-blue-400 drop-shadow-md">0.00</span>
@@ -77,7 +84,6 @@
 
     <main class="container mx-auto p-4 max-w-[1400px] mt-4 space-y-6">
 
-        <!-- 基本資料 -->
         <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
             <div class="bg-slate-800 p-3 border-b border-slate-700">
                 <h2 class="text-white font-bold flex items-center gap-2 text-lg">面試基本資訊</h2>
@@ -85,7 +91,7 @@
             <div class="p-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div>
                     <label class="block text-sm font-bold text-slate-400 mb-1">應徵者姓名</label>
-                    <input type="text" id="ipt-name" class="w-full border-b-2 border-slate-200 p-2 focus:border-blue-500 outline-none bg-slate-50 transition-all text-lg font-bold" placeholder="請輸入全名">
+                    <input type="text" class="w-full border-b-2 border-slate-200 p-2 focus:border-blue-500 outline-none bg-slate-50 transition-all text-lg font-bold">
                 </div>
                 <div class="row-span-2">
                     <label class="block text-sm font-bold text-slate-400 mb-1 flex justify-between items-center">
@@ -93,38 +99,46 @@
                         <button onclick="addInterviewer()" class="hide-in-report bg-blue-50 text-blue-600 hover:bg-blue-100 px-2 py-1 rounded text-xs flex items-center gap-1 font-bold">增加人員</button>
                     </label>
                     <div id="interviewer-list" class="space-y-3">
-                        <div class="flex gap-2"><input type="text" class="flex-1 border-b-2 border-slate-200 p-2 text-lg focus:border-blue-500 outline-none bg-slate-50" placeholder="主面試官姓名"></div>
+                        <div class="flex gap-2"><input type="text" class="flex-1 border-b-2 border-slate-200 p-2 text-lg focus:border-blue-500 outline-none bg-slate-50"></div>
                     </div>
                 </div>
                 <div>
-                    <label class="block text-sm font-bold text-slate-400 mb-1">應徵分校/單位</label>
+                    <label class="block text-sm font-bold text-slate-400 mb-1">應徵分校</label>
                     <select class="w-full border-b-2 border-slate-200 p-2 focus:border-blue-500 outline-none bg-slate-50 text-lg font-bold">
                         <option value="">請選擇...</option>
-                        <option>青埔翱翔校</option><option>行政溝通處</option><option>人力資源處</option>
+                        <option>青埔翱翔校</option><option>青園展翅校</option><option>大園晨光校</option>
+                        <option>內壢森耀校</option><option>竹北知行校</option><option>文化極光校</option>
+                        <option>快樂騰雲校</option><option>大園參天校</option><option>園中方舟校</option>
+                        <option>青埔旭日校</option><option>中壢心夢想校</option><option>青埔升大校</option>
+                        <option>行政溝通處</option><option>人力資源處</option><option>財務會計處</option>
+                        <option>國小事業處</option><option>國高中事業處</option><option>產品研發處</option>
+                        <option>品牌行銷處</option>
                     </select>
                 </div>
                 <div>
                     <label class="block text-sm font-bold text-slate-400 mb-1">應徵職位</label>
                     <select class="w-full border-b-2 border-slate-200 p-2 focus:border-blue-500 outline-none bg-slate-50 text-lg font-bold">
                         <option value="">請選擇...</option>
-                        <option>班級導師</option><option>主任</option><option>處長</option>
+                        <option>班級導師</option><option>行政導師</option><option>授課師</option>
+                        <option>主任</option><option>處長</option><option>總部</option>
                     </select>
                 </div>
                 <div class="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4 bg-blue-50/50 p-4 rounded-xl border border-blue-100">
                     <div>
                         <label class="block text-xs font-bold text-blue-800 mb-1">面試日期</label>
-                        <input type="date" id="interview-date" onchange="updateDateDisplay()" class="w-full border border-slate-200 rounded p-1.5 text-sm outline-none">
-                        <div id="date-preview" class="mt-1 text-sm font-black text-blue-700"></div>
+                        <input type="date" id="interview-date" onchange="updateDateTimeDisplay()" class="w-full border border-slate-200 rounded p-1.5 text-sm outline-none">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-blue-800 mb-1">開始時間</label>
-                        <input type="time" class="w-full border border-slate-200 rounded p-1.5 text-sm outline-none">
+                        <input type="time" id="interview-time" onchange="updateDateTimeDisplay()" class="w-full border border-slate-200 rounded p-1.5 text-sm outline-none">
+                    </div>
+                    <div class="sm:col-span-2">
+                        <div id="datetime-preview" class="mt-1 text-sm font-black text-blue-700 tracking-wide"></div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- 階段一：筆試 -->
         <section class="bg-white rounded-2xl shadow-sm border border-slate-200">
             <div class="bg-emerald-50 p-4 border-b border-emerald-100 flex justify-between items-center">
                 <h2 class="text-lg font-bold text-emerald-900">1. 階段一：筆試與綜合面談 <span class="text-sm font-normal text-emerald-600 ml-2">(30%)</span></h2>
@@ -139,7 +153,6 @@
             </div>
         </section>
 
-        <!-- 階段二：外顯特質 -->
         <section class="bg-white rounded-2xl shadow-sm border border-slate-200">
             <div class="bg-indigo-50 p-4 border-b border-indigo-100 flex justify-between items-center">
                 <div>
@@ -151,29 +164,20 @@
             <div class="p-5 grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-1" id="s2-container"></div>
         </section>
 
-        <!-- 階段三：職能評分 -->
         <section class="bg-white rounded-2xl shadow-sm border border-slate-200">
             <div class="bg-orange-50 p-4 border-b border-orange-200 flex justify-between items-center">
                 <h2 class="text-lg font-bold text-orange-900">3. 階段三：職能評估 <span class="text-sm font-normal text-orange-600 ml-2">(60%)</span></h2>
                 <div class="flex items-center gap-4">
                     <select id="job-level-select" class="border rounded outline-none font-bold text-sm p-1 hide-in-report" onchange="updateLevelLogic()">
                         <option value="1">職等 1 (核心90% / 管理10%)</option>
+                        <option value="2">職等 2 (核心85% / 管理15%)</option>
+                        <option value="3">職等 3 (核心70% / 管理30%)</option>
                         <option value="4">職等 4 (核心60% / 管理40%)</option>
+                        <option value="5">職等 5 (核心50% / 管理50%)</option>
+                        <option value="6">職等 6 (核心40% / 管理60%)</option>
                         <option value="7">職等 7 (核心30% / 管理70%)</option>
                     </select>
                     <div class="text-sm font-bold text-orange-700">貢獻分: <span id="s3-final" class="text-xl">0.00</span>/60</div>
-                </div>
-            </div>
-            
-            <!-- 5分量表總定義 (只在編輯畫面顯示，協助面試官) -->
-            <div class="p-4 bg-orange-50/30 border-b border-slate-200 hide-in-report">
-                <h3 class="text-sm font-bold text-slate-700 mb-2">📊 五分量表行為定義基準</h3>
-                <div class="flex flex-wrap gap-2 text-xs">
-                    <span class="bg-green-100 text-green-800 px-2 py-1 rounded">5分: 表現極佳，具備引領帶動潛力</span>
-                    <span class="bg-lime-100 text-lime-800 px-2 py-1 rounded">4分: 表現良好，能立即投入並展現主動</span>
-                    <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded">3分: 表現普通，能理解執行但尚需指導</span>
-                    <span class="bg-orange-100 text-orange-800 px-2 py-1 rounded">2分: 表現不足，目前不穩定或動機不明</span>
-                    <span class="bg-red-100 text-red-800 px-2 py-1 rounded">1分: 不符文化或缺乏基本行為模式</span>
                 </div>
             </div>
 
@@ -185,7 +189,7 @@
                             <th class="p-2 border border-slate-200 w-32">職能項目</th>
                             <th class="p-2 border border-slate-200 text-blue-800" width="180">BEI (問題描述)</th>
                             <th class="p-2 border border-slate-200 text-indigo-800" colspan="3">CAR (狀況 / 行動 / 結果)</th>
-                            <th class="p-2 border border-slate-200 w-40">給分 (Hover看提示)</th>
+                            <th class="p-2 border border-slate-200 w-40">給分 (放置滑鼠看提示)</th>
                         </tr>
                     </thead>
                     <tbody id="s3-tbody"></tbody>
@@ -193,7 +197,6 @@
             </div>
         </section>
 
-        <!-- 成績單與決策 -->
         <section class="bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8 text-white mb-8 border border-slate-700 relative">
             <h2 class="text-2xl font-black mb-6 flex items-center gap-3">面試成績總結算 (Report Card)</h2>
             <div class="bg-slate-800 p-5 rounded-xl border border-slate-600 flex justify-between items-center mb-6">
@@ -212,8 +215,8 @@
                 </div>
 
                 <div class="space-y-4 bg-slate-800 p-5 rounded-xl border border-slate-700">
-                    <label class="block text-slate-300 text-sm font-bold mb-2">加分方式 / 補救培訓計畫 (面試官填寫)</label>
-                    <div id="bonus-hint-area" class="text-xs text-amber-400 bg-amber-900/20 px-3 py-2 rounded-t-lg hidden"></div>
+                    <label class="block text-slate-300 text-sm font-bold mb-2">加分方式 / 補救培訓計畫</label>
+                    <div id="bonus-hint-area" class="text-xs text-amber-400 bg-amber-900/20 px-3 py-2 rounded-t-lg hidden hide-in-report"></div>
                     <textarea id="bonus-method-input" rows="3" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-white text-sm focus:border-blue-500 outline-none mb-4 placeholder-slate-500" placeholder="請填寫..."></textarea>
                     
                     <label class="block text-slate-300 text-sm font-bold mb-2 hide-in-report">最終錄取結果</label>
@@ -227,7 +230,6 @@
 
     </main>
 
-    <!-- 底部操作列 (列印時隱藏) -->
     <div id="action-bar" class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-3 shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.1)] z-50 no-print">
         <div class="container mx-auto max-w-[1400px] flex justify-between items-center">
             <div class="text-lg font-black text-slate-800">
@@ -265,7 +267,7 @@
                 document.getElementById('action-bar').classList.add('hidden');
                 document.getElementById('report-exit-bar').classList.remove('hidden');
                 window.scrollTo(0,0);
-                setTimeout(() => window.print(), 500); // 自動喚起列印
+                setTimeout(() => window.print(), 500);
             } else {
                 document.body.classList.remove('report-mode');
                 document.getElementById('action-bar').classList.remove('hidden');
@@ -273,7 +275,27 @@
             }
         }
 
-        // ================= 資料庫 (含 BARS 行為描述) =================
+        function addInterviewer() {
+            const container = document.getElementById('interviewer-list');
+            const div = document.createElement('div');
+            div.className = 'flex gap-2';
+            div.innerHTML = `<input type="text" class="flex-1 border-b-2 border-slate-200 p-2 text-lg outline-none"><button onclick="this.parentElement.remove()" class="text-red-500 font-bold px-2">✕</button>`;
+            container.appendChild(div);
+        }
+
+        function updateDateTimeDisplay() {
+            const dInput = document.getElementById('interview-date').value;
+            const tInput = document.getElementById('interview-time').value;
+            if(!dInput) return;
+            const d = new Date(dInput);
+            const days = ["星期日","星期一","星期二","星期三","星期四","星期五","星期六"];
+            const timeStr = tInput ? ` / ${tInput} 開始` : '';
+            document.getElementById('datetime-preview').innerText = `${d.getFullYear()}年 / ${d.getMonth()+1}月 / ${d.getDate()}日 / ${days[d.getDay()]}${timeStr}`;
+        }
+
+        // ================= 資料庫與標籤設定 =================
+        const GRADE_LABELS = ["", "差1", "尚可2", "佳3", "良好4", "優異5"];
+        
         const S1_DATA = [
             { id: 'exp', title: "工作經歷", weight: 0.20, max: 5, qs: ["最能代表其專業能力及理想的經歷？"] },
             { id: 'mot', title: "動機與價值", weight: 0.35, max: 10, qs: ["與我們最契合的價值觀？", "影響個人去留的主因？"] },
@@ -283,11 +305,14 @@
         ];
 
         const S2_QUESTIONS = ["儀容穿著", "禮貌應對", "表達流暢", "自信穩健", "誠懇親和", "對分校了解", "對職務認知", "企圖心展現", "配合度", "邏輯思考", "臨場反應", "學習意願", "情緒穩定", "抗壓性", "團隊合作", "經歷相關", "專業知識"];
-        const S2_LABELS = ["", "差", "尚可", "佳", "良好", "優異"]; // 對應 1~5 分
 
         const S3_LEVELS = {
             1: { c: [30, 20, 20, 15, 10, 5], m: [30, 30, 40], ratio: { c: 90, m: 10 } },
+            2: { c: [30, 20, 20, 15, 10, 5], m: [30, 30, 40], ratio: { c: 85, m: 15 } },
+            3: { c: [20, 15, 20, 15, 15, 15], m: [30, 35, 35], ratio: { c: 70, m: 30 } },
             4: { c: [20, 15, 20, 15, 15, 15], m: [30, 40, 30], ratio: { c: 60, m: 40 } },
+            5: { c: [15, 10, 20, 15, 20, 20], m: [35, 35, 30], ratio: { c: 50, m: 50 } },
+            6: { c: [15, 10, 20, 15, 20, 20], m: [40, 35, 25], ratio: { c: 40, m: 60 } },
             7: { c: [15, 10, 20, 15, 20, 20], m: [40, 35, 25], ratio: { c: 30, m: 70 } }
         };
 
@@ -301,9 +326,9 @@
         ];
 
         const S3_BARS_MGMT = [
-            { name: "策略性思考", levels: ["缺乏全貌", "被動執行", "理解策略", "主動規劃", "跨界整合"], descs: ["只關注眼前任務，無法理解公司方向。","依循指示但未能連結長遠目標。","理解公司策略，能將部門工作與策略對齊。","主動根據趨勢規劃部門中長期計畫。","跨部門整合資源，推動組織層級的策略變革。"] },
-            { name: "人才發展", levels: ["忽視培育", "被動指導", "基礎培育", "因材施教", "建立梯隊"], descs: ["只要求績效，不關心部屬職涯發展。","僅在部屬犯錯時給予指正。","能提供基本訓練資源，協助部屬上手。","能辨識部屬優勢，提供專屬的發展任務。","主動發掘高潛力人才，為組織建立接班梯隊。"] },
-            { name: "文化落實", levels: ["言行不一", "消極遵守", "以身作則", "主動宣導", "文化塑造"], descs: ["自身行為常違背公司核心價值觀。","不主動違規，但也不積極推動文化。","自身能嚴格遵守並展現公司價值觀。","能向部屬清楚詮釋文化，並糾正不符行為。","將文化融入管理制度與日常考核，形塑團隊氛圍。"] }
+            { name: "策略性思考", levels: ["僅執行命令 / 缺乏全局觀", "理解指令 / 缺乏分析", "基本分析 / 連結目標", "前瞻規劃 / 主動提案", "組織引領 / 策略制定"], descs: ["只關注自身任務，不理解組織方向；缺乏思考長期影響。","能理解策略但無法轉化行動；僅依他人決策行動。","能分析資料、理解願景並與部門任務連結。","能發現趨勢或問題，提出可行策略建議並落實。","能設計策略地圖、影響決策並推動長期發展。"] },
+            { name: "人才發展", levels: ["無學習動機 / 忽視他人", "被動學習 / 有限支持", "穩定學習 / 願意分享", "主動培育 / 指導他人", "系統傳承 / 文化引導"], descs: ["對自身或他人發展無興趣，不參與訓練也不支持學習。","僅完成要求的培訓，偶爾給予同事建議但缺乏持續追蹤。","能自我成長並主動協助新進同事適應任務。","能計畫學習方向、提供具體回饋，帶領同儕進步。","能設計培訓制度、建立導師文化，推動組織人才成長。"] },
+            { name: "文化落實與價值傳遞", levels: ["不認同 / 違反價值", "被動參與 / 理解不足", "穩定實踐 / 態度正向", "主動傳遞 / 影響同儕", "文化引領 / 價值代言"], descs: ["行為與組織價值相悖，對文化活動冷漠或抵制。","表面配合但缺乏實際行動，僅在被要求時參與。","認同價值觀並在工作中展現，能主動參與文化活動。","以行動影響他人、推動文化活動，展現正向力量。","能建立文化制度、引領團隊內化價值並對外傳遞品牌信念。"] }
         ];
 
         let state = {
@@ -312,6 +337,8 @@
         };
 
         window.onload = () => {
+            document.getElementById('interview-date').value = new Date().toISOString().split('T')[0];
+            updateDateTimeDisplay();
             const saved = localStorage.getItem('interviewDraft');
             if(saved) { state = JSON.parse(saved); document.getElementById('job-level-select').value = state.level; }
             renderS1(); renderS2(); renderS3(); calculateScores();
@@ -323,7 +350,12 @@
                 let html = `<div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm mb-3"><div class="flex justify-between border-b-2 border-slate-100 pb-2"><h3 class="font-bold">${group.title}</h3></div><div class="space-y-2 mt-2">`;
                 group.qs.forEach((q, i) => {
                     html += `<div class="bg-slate-50 p-2 rounded flex justify-between items-center"><div class="text-sm flex-1">${q}</div><div class="flex gap-1">`;
-                    [1,2,3,4,5].map(v => html += `<button onclick="setScore('s1-${group.id}', ${i}, ${v}, this)" class="score-btn w-8 h-8 rounded text-sm font-bold ${state.s1[group.id][i]==v?'active':''}" data-val="${v}">${v}</button>`);
+                    [1,2,3,4,5].map(v => {
+                        const isActive = state.s1[group.id][i] == v;
+                        html += `<button onclick="setScore('s1-${group.id}', ${i}, ${v}, this)" class="score-btn s1-s2-btn w-8 h-8 rounded text-sm font-bold ${isActive?'active':''}" data-val="${v}">
+                            <span class="btn-num">${v}</span><span class="report-label">${GRADE_LABELS[v]}</span>
+                        </button>`;
+                    });
                     html += `</div></div>`;
                 });
                 container.innerHTML = html + `</div>`;
@@ -335,9 +367,11 @@
             container.innerHTML = S2_QUESTIONS.map((q, i) => {
                 let btns = [1,2,3,4,5].map(v => {
                     const isActive = state.s2[i] == v;
-                    return `<button onclick="setScore('s2', ${i}, ${v}, this)" class="score-btn w-8 h-8 rounded text-xs font-bold ${isActive?'active':''}" data-val="${v}">${v}<span class="report-s2-text hidden">${S2_LABELS[v]}</span></button>`;
+                    return `<button onclick="setScore('s2', ${i}, ${v}, this)" class="score-btn s1-s2-btn w-8 h-8 rounded text-xs font-bold ${isActive?'active':''}" data-val="${v}">
+                        <span class="btn-num">${v}</span><span class="report-label">${GRADE_LABELS[v]}</span>
+                    </button>`;
                 }).join('');
-                return `<div class="flex justify-between items-center border-b border-slate-100 py-2"><span class="text-sm">${i+1}. ${q}</span><div class="flex gap-1">${btns}</div></div>`;
+                return `<div class="flex justify-between items-center border-b border-slate-100 py-2 px-1"><span class="text-sm">${i+1}. ${q}</span><div class="flex gap-1">${btns}</div></div>`;
             }).join('');
         }
 
@@ -346,7 +380,6 @@
             const d = S3_LEVELS[state.level];
             let html = '';
             
-            // Core
             S3_BARS_CORE.forEach((item, i) => {
                 html += `<tr class="border-b border-slate-200"><td class="p-2 border-r bg-blue-50 font-bold text-center text-sm">核心<br><span class="text-xs text-blue-600">(${d.c[i]}%)</span></td><td class="p-2 border-r font-bold text-sm text-center">${item.name}</td><td class="bg-blue-50/10 p-1 border-r"><textarea class="input-cell" rows="1"></textarea></td><td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell" rows="1"></textarea></td><td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell" rows="1"></textarea></td><td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell" rows="1"></textarea></td><td class="p-2 text-center"><div class="flex gap-1 justify-center">`;
                 [1,2,3,4,5].map(v => {
@@ -354,13 +387,10 @@
                     html += `<button onclick="setScore('s3-core', ${i}, ${v}, this)" class="score-btn w-7 h-7 rounded text-xs font-bold ${isActive?'active':''}" data-val="${v}">${v}<span class="tooltip-text">${item.levels[v-1]}</span></button>`;
                 });
                 html += `</div></td></tr>`;
-                
-                // 行為描述展開區 (點擊後顯示，或報告模式展開)
                 const desc = state.s3.core[i] > 0 ? item.descs[state.s3.core[i]-1] : '';
                 html += `<tr id="desc-core-${i}" class="bg-slate-50 text-xs text-slate-600 ${state.s3.core[i]>0?'':'hidden'}"><td colspan="7" class="p-2 border-b"><span class="font-bold text-blue-700">行為描述：</span> <span id="desc-text-core-${i}">${desc}</span></td></tr>`;
             });
 
-            // Mgmt
             S3_BARS_MGMT.forEach((item, i) => {
                 html += `<tr class="border-b border-slate-200"><td class="p-2 border-r bg-green-50 font-bold text-center text-sm">管理<br><span class="text-xs text-green-600">(${d.m[i]}%)</span></td><td class="p-2 border-r font-bold text-sm text-center">${item.name}</td><td class="bg-blue-50/10 p-1 border-r"><textarea class="input-cell" rows="1"></textarea></td><td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell" rows="1"></textarea></td><td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell" rows="1"></textarea></td><td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell" rows="1"></textarea></td><td class="p-2 text-center"><div class="flex gap-1 justify-center">`;
                 [1,2,3,4,5].map(v => {
@@ -368,7 +398,6 @@
                     html += `<button onclick="setScore('s3-mgmt', ${i}, ${v}, this)" class="score-btn w-7 h-7 rounded text-xs font-bold ${isActive?'active':''}" data-val="${v}">${v}<span class="tooltip-text">${item.levels[v-1]}</span></button>`;
                 });
                 html += `</div></td></tr>`;
-                
                 const desc = state.s3.mgmt[i] > 0 ? item.descs[state.s3.mgmt[i]-1] : '';
                 html += `<tr id="desc-mgmt-${i}" class="bg-slate-50 text-xs text-slate-600 ${state.s3.mgmt[i]>0?'':'hidden'}"><td colspan="7" class="p-2 border-b"><span class="font-bold text-green-700">行為描述：</span> <span id="desc-text-mgmt-${i}">${desc}</span></td></tr>`;
             });
@@ -386,8 +415,6 @@
             else if(group.startsWith('s3-')) {
                 const type = group.split('-')[1];
                 state.s3[type][idx] = val;
-                
-                // 動態更新 BARS 描述
                 const BARS = type === 'core' ? S3_BARS_CORE : S3_BARS_MGMT;
                 document.getElementById(`desc-${type}-${idx}`).classList.remove('hidden');
                 document.getElementById(`desc-text-${type}-${idx}`).innerText = BARS[idx].descs[val-1];
@@ -402,11 +429,9 @@
             if(type==='fail') document.getElementById('btn-fail').classList.add('active-fail');
         }
 
-        // ================= 決策運算引擎 =================
         function calculateScores() {
             const sumArr = arr => arr.reduce((a,b)=>a+b, 0);
 
-            // S1 筆試
             let s1PctTotal = 0, s1RawTotal = 0, motScore = 0; 
             S1_DATA.forEach(g => {
                 const raw = sumArr(state.s1[g.id]); s1RawTotal += raw;
@@ -415,12 +440,10 @@
             });
             const s1Final = (s1PctTotal/100)*30; document.getElementById('s1-final').innerText = s1Final.toFixed(2);
 
-            // S2 外顯
             const s2Raw = sumArr(state.s2);
             const s2Final = (s2Raw > 0 ? (s2Raw/85)*100 : 0) * 0.10;
             document.getElementById('s2-final').innerText = s2Final.toFixed(2);
 
-            // S3 職能
             const d = S3_LEVELS[state.level];
             let coreScore = 0, mgmtScore = 0;
             state.s3.core.forEach((v,i) => coreScore += v*(d.c[i]/100));
@@ -428,7 +451,6 @@
             const s3Final = (((coreScore/5)*100*(d.ratio.c/100)) + ((mgmtScore/5)*100*(d.ratio.m/100))) * 0.60;
             document.getElementById('s3-final').innerText = s3Final.toFixed(2);
 
-            // 總分
             const grandTotal = s1Final + s2Final + s3Final;
             document.getElementById('header-total').innerText = grandTotal.toFixed(2);
             document.getElementById('report-grand-total').innerText = grandTotal.toFixed(2);
@@ -436,7 +458,6 @@
 
             if(grandTotal === 0) return;
 
-            // 級距判定
             let finalStatusIndex = 5, baseDesc = "";
             if (grandTotal >= 90) { finalStatusIndex = 0; baseDesc = "面試與筆試表現皆出色，具高度文化契合度與執行潛力。"; }
             else if (grandTotal >= 80) { finalStatusIndex = 1; baseDesc = "穩定且具培育潛力，文化契合良好，能快速上線。"; }
@@ -447,7 +468,6 @@
 
             let vetoReasons = [], vetoHints = [];
             
-            // 地雷判斷
             if (s1RawTotal > 0 && s1RawTotal < 30) {
                 vetoReasons.push("筆試總分 < 30分");
                 vetoHints.push("確認該低分項目未來是否有機會提高分數？方法？");
@@ -471,7 +491,6 @@
                 finalStatusIndex = Math.max(finalStatusIndex, 2);
             }
 
-            // 更新 UI
             const STATUS = ["優先錄取", "建議錄取", "可培養 / 備取", "條件式錄取（限缺時）", "不建議錄取", "不錄取"];
             const statusDiv = document.getElementById('ideal-status-text');
             const expDiv = document.getElementById('ideal-status-exp');
@@ -487,7 +506,8 @@
                 hintArea.classList.remove('hidden');
                 inputArea.classList.remove('rounded-t-lg');
             } else {
-                expDiv.innerHTML = `<span class="text-blue-300 font-bold">${grandTotal.toFixed(2)}分</span> 落在 ${Math.floor(grandTotal/10)*10} 分級距，${baseDesc}`;
+                let rangeText = grandTotal>=90?"90~100分":grandTotal>=80?"80~89分":grandTotal>=70?"70~79分":grandTotal>=60?"60~69分":grandTotal>=50?"50~59分":"小於50分";
+                expDiv.innerHTML = `<span class="text-blue-300 font-bold">${grandTotal.toFixed(2)}分</span> 落在 ${rangeText} 級距，${baseDesc}`;
                 hintArea.classList.add('hidden');
                 inputArea.classList.add('rounded-t-lg');
             }
