@@ -105,6 +105,82 @@
     <!-- 系統通知 -->
     <div id="toast">✅ 操作成功！</div>
 
+    <!-- 檢核表 (Checklist) Modal -->
+    <div id="checklist-modal" class="fixed inset-0 items-center justify-center modal-overlay no-print z-[99999]">
+        <div class="bg-white w-11/12 max-w-2xl max-h-[90vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-small-pop">
+            <div class="bg-slate-800 p-4 flex justify-between items-center">
+                <h2 class="text-white font-bold text-lg flex items-center gap-2">📝 【主任/主管面試規範 Checklist】</h2>
+                <button onclick="toggleChecklist()" class="text-slate-400 hover:text-white text-xl leading-none">✕</button>
+            </div>
+            <div class="p-6 overflow-auto bg-slate-50 space-y-6 flex-1">
+                <p class="text-sm text-slate-600 leading-relaxed font-medium">
+                    各位主任好，為因應從「逗點集團」出發的面試能夠標準且一致化，我們需拿出相同的品質來對待所有面試者，再請您確認以下面試準備清單，確保面試能夠有好的開始與結尾，感謝您
+                </p>
+
+                <!-- 一、面試前 -->
+                <div>
+                    <h3 class="font-bold text-base text-slate-800 mb-2 border-l-4 border-blue-500 pl-2">一、面試前（準備階段）</h3>
+                    <div class="space-y-2 pl-2">
+                        <label class="flex items-start gap-2 cursor-pointer text-sm text-slate-700 hover:bg-slate-200 p-1 rounded transition-colors"><input type="checkbox" class="chk-item mt-1" onchange="syncState()"> <span>已完整閱讀面試者履歷（工作經歷、離職原因、自我介紹）</span></label>
+                        <label class="flex items-start gap-2 cursor-pointer text-sm text-slate-700 hover:bg-slate-200 p-1 rounded transition-colors"><input type="checkbox" class="chk-item mt-1" onchange="syncState()"> <span>已瀏覽及評分面試者填寫之應徵表單（筆試資料）</span></label>
+                        <label class="flex items-start gap-2 cursor-pointer text-sm text-slate-700 hover:bg-red-50 p-1 rounded transition-colors border border-red-200 bg-white shadow-sm">
+                            <input type="checkbox" id="chk-must-fill" class="chk-item mt-1" onchange="syncState()"> 
+                            <span class="text-red-600 font-black">已於三、職能面試中填上要詢問的問題 (※ 必勾選才能暫存)</span>
+                        </label>
+                        <label class="flex items-start gap-2 cursor-pointer text-sm text-slate-700 hover:bg-slate-200 p-1 rounded transition-colors"><input type="checkbox" class="chk-item mt-1" onchange="syncState()"> <span>若有題目疑慮，已提前與人資確認</span></label>
+                        <label class="flex items-start gap-2 cursor-pointer text-sm text-slate-700 hover:bg-slate-200 p-1 rounded transition-colors"><input type="checkbox" class="chk-item mt-1" onchange="syncState()"> <span>已確認面試職位之職能需求（確保問對問題）</span></label>
+                    </div>
+                </div>
+
+                <!-- 二、面試中 -->
+                <div>
+                    <h3 class="font-bold text-base text-slate-800 mb-2 border-l-4 border-emerald-500 pl-2">二、面試中（執行階段）</h3>
+                    <div class="space-y-2 pl-2">
+                        <label class="flex items-start gap-2 cursor-pointer text-sm text-slate-700 hover:bg-slate-200 p-1 rounded transition-colors"><input type="checkbox" class="chk-item mt-1" onchange="syncState()"> <span>已保留至少 1 小時進行面試</span></label>
+                        <label class="flex items-start gap-2 cursor-pointer text-sm text-slate-700 hover:bg-slate-200 p-1 rounded transition-colors"><input type="checkbox" class="chk-item mt-1" onchange="syncState()"> <span>已安排第二位面試官共同參與面談</span></label>
+                        <label class="flex items-start gap-2 cursor-pointer text-sm text-slate-700 hover:bg-slate-200 p-1 rounded transition-colors"><input type="checkbox" class="chk-item mt-1" onchange="syncState()"> <span>面試地點安靜、不受干擾，並已提前預約</span></label>
+                        <label class="flex items-start gap-2 cursor-pointer text-sm text-slate-700 hover:bg-slate-200 p-1 rounded transition-colors"><input type="checkbox" class="chk-item mt-1" onchange="syncState()"> <span>全程使用行為事例（BEI/CAR）提問法</span></label>
+                        <label class="flex items-start gap-2 cursor-pointer text-sm text-slate-700 hover:bg-slate-200 p-1 rounded transition-colors"><input type="checkbox" class="chk-item mt-1" onchange="syncState()"> <span>無做出任何錄取、薪資或福利承諾</span></label>
+                    </div>
+                </div>
+
+                <!-- 三、面試後 -->
+                <div>
+                    <h3 class="font-bold text-base text-slate-800 mb-2 border-l-4 border-orange-500 pl-2">三、面試後（紀錄與回報階段）</h3>
+                    <div class="space-y-2 pl-2">
+                        <label class="flex items-start gap-2 cursor-pointer text-sm text-slate-700 hover:bg-slate-200 p-1 rounded transition-colors"><input type="checkbox" class="chk-item mt-1" onchange="syncState()"> <span>已於當日或隔日中午前完成「面試評分系統」</span></label>
+                        <label class="flex items-start gap-2 cursor-pointer text-sm text-slate-700 hover:bg-slate-200 p-1 rounded transition-colors"><input type="checkbox" class="chk-item mt-1" onchange="syncState()"> <span>評分內容有依據、填寫完整（無空白、無僅寫印象）</span></label>
+                        <label class="flex items-start gap-2 cursor-pointer text-sm text-slate-700 hover:bg-slate-200 p-1 rounded transition-colors"><input type="checkbox" class="chk-item mt-1" onchange="syncState()"> <span>已與人資討論並確認錄用建議</span></label>
+                        <label class="flex items-start gap-2 cursor-pointer text-sm text-slate-700 hover:bg-slate-200 p-1 rounded transition-colors"><input type="checkbox" class="chk-item mt-1" onchange="syncState()"> <span>未自行通知面試者，由人資統一通知</span></label>
+                        <label class="flex items-start gap-2 cursor-pointer text-sm text-slate-700 hover:bg-slate-200 p-1 rounded transition-colors"><input type="checkbox" class="chk-item mt-1" onchange="syncState()"> <span>若需安排二面或觀課，已告知人資協助安排</span></label>
+                    </div>
+                </div>
+
+                <!-- 四、自我檢查 -->
+                <div>
+                    <h3 class="font-bold text-base text-slate-800 mb-2 border-l-4 border-purple-500 pl-2">四、主任自我檢查（可於每次面試後自省）</h3>
+                    <div class="space-y-2 pl-2">
+                        <label class="flex items-start gap-2 cursor-pointer text-sm text-slate-700 hover:bg-slate-200 p-1 rounded transition-colors"><input type="checkbox" class="chk-item mt-1" onchange="syncState()"> <span>我是否有確實閱讀完整履歷與表單？</span></label>
+                        <label class="flex items-start gap-2 cursor-pointer text-sm text-slate-700 hover:bg-slate-200 p-1 rounded transition-colors"><input type="checkbox" class="chk-item mt-1" onchange="syncState()"> <span>今天的提問是否扣合該職位核心與管理職能？</span></label>
+                        <label class="flex items-start gap-2 cursor-pointer text-sm text-slate-700 hover:bg-slate-200 p-1 rounded transition-colors"><input type="checkbox" class="chk-item mt-1" onchange="syncState()"> <span>是否有第二位面試官共同參與？</span></label>
+                        <label class="flex items-start gap-2 cursor-pointer text-sm text-slate-700 hover:bg-slate-200 p-1 rounded transition-colors"><input type="checkbox" class="chk-item mt-1" onchange="syncState()"> <span>面試是否留足時間、無匆忙結束？</span></label>
+                        <label class="flex items-start gap-2 cursor-pointer text-sm text-slate-700 hover:bg-slate-200 p-1 rounded transition-colors"><input type="checkbox" class="chk-item mt-1" onchange="syncState()"> <span>評分回傳是否客觀、有事例支撐？</span></label>
+                    </div>
+                </div>
+
+                <!-- 五、面試官筆記 -->
+                <div class="bg-indigo-50 p-4 rounded-xl border border-indigo-200 shadow-sm">
+                    <h3 class="font-bold text-base text-indigo-900 mb-2">五、面試官記錄本次好的或下次想要改善的文字內容</h3>
+                    <textarea id="interview-note-input" rows="3" onchange="syncState()" class="w-full border border-slate-300 rounded-lg p-3 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-300 transition-colors" placeholder="請填寫您對本次面試的自我檢討、收穫或改善方向..."></textarea>
+                </div>
+            </div>
+            <div class="p-4 bg-white border-t border-slate-200 text-right flex justify-between items-center">
+                <span class="text-xs text-slate-400 font-bold ml-2">※ 此檢核表內容會隨評分進度自動儲存</span>
+                <button onclick="toggleChecklist()" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-700 transition-colors shadow-md">確認並縮小</button>
+            </div>
+        </div>
+    </div>
+
     <!-- 漏填警告 Modal -->
     <div id="missing-modal" class="fixed inset-0 items-center justify-center modal-overlay no-print z-[99999]">
         <div class="bg-white w-11/12 max-w-md rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-small-pop">
@@ -157,7 +233,7 @@
                     <div class="text-[10px] text-blue-100 font-bold mt-1" id="header-user-info">載入中...</div>
                 </div>
             </div>
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-2 md:gap-3">
                 <button onclick="switchView('hr_search')" id="nav-front-btn" class="bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded text-sm font-bold transition-colors hidden">前台作業</button>
                 <button onclick="switchView('backend')" id="nav-back-btn" class="bg-black/30 hover:bg-black/50 px-3 py-1.5 rounded text-sm font-bold border border-white/20 transition-colors hidden shadow-inner">進入後台</button>
                 <button onclick="logout()" class="text-xs text-white/70 hover:text-white underline ml-2">登出</button>
@@ -239,6 +315,7 @@
                             <th class="p-3 border-b text-center text-blue-700">總得分</th>
                             <th class="p-3 border-b text-center">進度狀態</th>
                             <th class="p-3 border-b text-center">結果</th>
+                            <th class="p-3 border-b text-center">面試官備註</th>
                             <th class="p-3 border-b w-40 text-center">操作</th>
                         </tr>
                     </thead>
@@ -253,7 +330,13 @@
         
         <!-- 基本資訊 -->
         <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <div class="bg-slate-800 p-2.5 border-b border-slate-700"><h2 class="text-white font-bold flex items-center gap-2 text-base">面試基本資訊</h2></div>
+            <div class="bg-slate-800 p-2.5 border-b border-slate-700 flex justify-between items-center">
+                <h2 class="text-white font-bold flex items-center gap-2 text-base">面試基本資訊</h2>
+                <!-- 新增：檢核表按鈕移至此處 -->
+                <button onclick="toggleChecklist()" class="bg-indigo-500 hover:bg-indigo-600 text-white px-3 py-1 rounded text-xs font-bold shadow-md transition-all border border-indigo-400 flex items-center gap-1">
+                    ☑️ 檢核表
+                </button>
+            </div>
             <div class="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div>
                     <label class="block text-xs font-bold text-slate-400 mb-1">應徵者姓名</label>
@@ -419,6 +502,8 @@
     <div id="action-bar" class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-2.5 shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.1)] z-50 no-print">
         <div class="container mx-auto max-w-[1400px] flex justify-between items-center">
             <div class="text-base font-black text-slate-800 flex items-center">
+                <!-- HR 專屬按鈕，透過 JS 控制顯示隱藏 -->
+                <button id="btn-to-hr-backend" onclick="switchView('backend')" class="text-[10px] bg-slate-200 hover:bg-slate-300 px-2 py-1 rounded text-slate-500 mr-3 transition-colors hidden">⚙️ 進入人資後台</button>
                 總得分：<span id="footer-total" class="text-blue-700 text-xl ml-1">0.00</span>
             </div>
             <div class="flex gap-2">
@@ -461,6 +546,17 @@
         const setTxt = (id, text) => { const el = document.getElementById(id); if(el) el.innerText = text; };
         const setHtml = (id, html) => { const el = document.getElementById(id); if(el) el.innerHTML = html; };
 
+        // ================= Toggle Checklist Modal =================
+        function toggleChecklist(forceShow = false) {
+            const modal = document.getElementById('checklist-modal');
+            if (!modal) return;
+            if (forceShow === true || !modal.classList.contains('show')) {
+                modal.classList.add('show');
+            } else {
+                modal.classList.remove('show');
+            }
+        }
+
         // ================= 登入與路由 =================
         function handleLogin() {
             const acc = document.getElementById('login-acc')?.value.trim().toUpperCase();
@@ -495,7 +591,7 @@
             const navFrontBtn = document.getElementById('nav-front-btn');
             const navBackBtn = document.getElementById('nav-back-btn');
 
-            // 確保一登入是「全空白狀態」
+            // 初始化全空白狀態
             state = getEmptyState();
             hydrateUI();
             calculateScores();
@@ -503,11 +599,11 @@
             if(currentUser.role === 'HR') {
                 if(navFrontBtn) { navFrontBtn.innerText = "前台作業"; navFrontBtn.classList.remove('hidden'); navFrontBtn.onclick = () => switchView('hr_search'); }
                 if(navBackBtn) { navBackBtn.classList.remove('hidden'); navBackBtn.onclick = () => switchView('backend'); }
-                switchView('mgr_front'); 
+                switchView('mgr_front'); // 不論進入前後台，都從面試評分系統開始
             } else {
                 if(navFrontBtn) { navFrontBtn.innerText = "前台評分"; navFrontBtn.classList.remove('hidden'); navFrontBtn.onclick = () => switchView('mgr_front'); }
                 if(navBackBtn) { navBackBtn.classList.remove('hidden'); navBackBtn.onclick = () => switchView('backend'); }
-                switchView('mgr_front'); 
+                switchView('mgr_front'); // 不論進入前後台，都從面試評分系統開始
             }
         }
 
@@ -559,7 +655,7 @@
                     else if(r.docStatus === 'completed') statusBadge = '<span class="bg-emerald-100 text-emerald-700 px-2 py-1 rounded text-xs">✅ 面試完成</span>';
 
                     return `
-                    <tr class="border-b hover:bg-blue-50/50 transition-colors">
+                    <tr class="border-b hover:bg-blue-50/50 transition-colors cursor-pointer" onclick="viewDetailFromHR(${db.indexOf(r)})">
                         <td class="p-3 text-slate-500">${r.date || '-'}</td>
                         <td class="p-3 font-black text-blue-700">${r.name}</td>
                         <td class="p-3 text-slate-600 font-medium">${r.branch}</td>
@@ -568,7 +664,7 @@
                         <td class="p-3 text-center font-bold text-slate-600 text-xs">${statusBadge}</td>
                         <td class="p-3 text-center font-bold ${r.finalDecision==='pass'?'text-emerald-600':r.finalDecision==='fail'?'text-red-600':'text-slate-400'}">${r.finalDecision==='pass'?'錄取':r.finalDecision==='fail'?'不錄取':'-'}</td>
                         <td class="p-3 text-center">
-                            <button onclick="viewDetailFromHR(${db.indexOf(r)})" class="bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm transition-colors">🔍 查看</button>
+                            <button onclick="event.stopPropagation(); viewDetailFromHR(${db.indexOf(r)})" class="bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm transition-colors">🔍 查看</button>
                         </td>
                     </tr>
                 `;}).join('');
@@ -610,7 +706,7 @@
 
             const tbody = document.getElementById('db-list-tbody');
             if(viewDb.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="11" class="p-8 text-center text-slate-400 font-bold">目前尚無歷史評分紀錄</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="12" class="p-8 text-center text-slate-400 font-bold">目前尚無歷史評分紀錄</td></tr>`;
                 return;
             }
 
@@ -635,6 +731,7 @@
                     <td class="p-3 text-center font-black text-lg text-blue-600">${r.grandTotal || '0.00'}</td>
                     <td class="p-3 text-center font-bold text-slate-600 text-xs">${statusText}</td>
                     <td class="p-3 text-center font-bold ${r.finalDecision==='pass'?'text-emerald-600':r.finalDecision==='fail'?'text-red-600':'text-slate-400'}">${decText}</td>
+                    <td class="p-3 text-slate-600 text-xs max-w-[150px] truncate" title="${r.interviewNote||''}">${r.interviewNote || '-'}</td>
                     <td class="p-3 text-center flex justify-center gap-2">
                         <button onclick="editRecord(${originalIdx})" class="bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm transition-colors">查看/編輯</button>
                         <button onclick="deleteRecord(${originalIdx})" class="bg-red-50 border border-red-200 hover:bg-red-100 text-red-600 px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm transition-colors">刪除</button>
@@ -702,6 +799,8 @@
                 level: 1, finalDecision: null, bonusMethod: "", idealStatus: "", grandTotal: "",
                 s1Final: "0.00", s2Final: "0.00", s3Final: "0.00",
                 docStatus: "new", 
+                checklist: Array(20).fill(false),
+                interviewNote: "",
                 s1: { exp: [0], mot: [0,0], sty: [0,0], sal: [0,0,0], bon: [0], bonText: "" },
                 s2: Array(S2_QUESTIONS.length).fill(0), 
                 s3: { core: Array(6).fill(0), mgmt: Array(3).fill(0) },
@@ -728,38 +827,12 @@
             
             const bonTextEl = document.getElementById('s1-bon-text');
             if(bonTextEl) state.s1.bonText = bonTextEl.value;
-        }
 
-        function checkExistingRecord() {
-            const elName = document.getElementById('ipt-name');
-            if(!elName) return;
-            let name = elName.value.trim();
-            if(!name) return;
-
-            let db = JSON.parse(localStorage.getItem('interview_db') || '[]');
-            let existing = db.find(r => r.name === name);
-
-            if(existing) {
-                if(existing.docStatus !== 'completed' && existing.docStatus !== 'stage_done') {
-                    if(confirm(`已找到未完成的暫存人才，要讀取嗎？`)) {
-                        state = existing;
-                        hydrateUI(); 
-                        calculateScores(); 
-                        showToast('✅ 已載入未完成資料');
-                    } else {
-                        let currentBranch = state.branch;
-                        state = getEmptyState();
-                        state.name = name;
-                        state.branch = currentBranch;
-                        hydrateUI();
-                        calculateScores();
-                    }
-                } else {
-                     if(confirm(`已找到評分完成人才，要查看嗎？`)) {
-                         state = existing; hydrateUI(); calculateScores();
-                     }
-                }
-            }
+            // 儲存檢核表與筆記
+            const noteEl = document.getElementById('interview-note-input');
+            if (noteEl) state.interviewNote = noteEl.value;
+            const chks = document.querySelectorAll('.chk-item');
+            if(chks.length > 0) state.checklist = Array.from(chks).map(chk => chk.checked);
         }
 
         function hydrateUI() {
@@ -767,7 +840,6 @@
             
             const elBranch = document.getElementById('sel-branch'); 
             if(elBranch) {
-                // 執行長、高階主管與人資解鎖選單
                 if (currentUser && (currentUser.role === 'HR' || ['F00001', 'F00004', 'F00005'].includes(currentUser.id))) {
                     elBranch.disabled = false;
                     elBranch.classList.remove('cursor-not-allowed', 'bg-slate-100');
@@ -782,7 +854,6 @@
                 }
             }
 
-            // 自動帶入主面試官
             const mainIntInput = document.querySelector('.ipt-interviewer');
             if (mainIntInput && !mainIntInput.value && currentUser) {
                 mainIntInput.value = currentUser.name;
@@ -806,6 +877,12 @@
                 btnFail.className = 'decision-btn flex-1 bg-slate-700 text-slate-300 py-2 rounded-xl font-black text-base hover:bg-slate-600 shadow-md';
                 if(state.finalDecision === 'fail') btnFail.classList.add('active-fail');
             }
+
+            // 恢復檢核表
+            const noteEl = document.getElementById('interview-note-input');
+            if(noteEl) noteEl.value = state.interviewNote || "";
+            const chks = document.querySelectorAll('.chk-item');
+            chks.forEach((chk, i) => { chk.checked = state.checklist ? !!state.checklist[i] : false; });
             
             updateThemeManual(state.branch); updateDateTimeDisplay();
             renderS1(); renderS2(); renderS3();
@@ -846,6 +923,16 @@
 
         function handleSaveDraft() {
             if(!state.name.trim()) return alert('請先輸入「應徵者姓名」才能暫存！');
+            syncState();
+            
+            // 檢核表防呆檢查 (第3個checkbox，index為2)
+            const chkMustFill = document.getElementById('chk-must-fill');
+            if (chkMustFill && !chkMustFill.checked) {
+                alert("無法暫存：請先在右上角「檢核表」中，確認並勾選「已於三、職能面試中填上要詢問的問題」！");
+                toggleChecklist(true); // 強制顯示檢核表
+                return;
+            }
+
             saveToDB('draft');
             showToast(`✅ 已暫存人才評分進度！`);
         }
@@ -901,7 +988,6 @@
                 if(!container) return;
                 let html = `<div class="bg-white p-2.5 rounded-xl border border-slate-200 shadow-sm mb-2"><div class="flex justify-between border-b-2 border-slate-100 pb-1"><h3 class="font-bold text-sm text-slate-800">${group.title}</h3></div><div class="space-y-1.5 mt-1.5">`;
                 if (group.id === 'bon') {
-                    // 加寬加分題格子
                     html += `<div class="bg-slate-50 p-2.5 rounded flex flex-col gap-2"><div class="text-[13px] font-medium text-slate-700 w-full">${group.qs[0]} <span class="text-[10px] text-slate-400 font-normal">(選填)</span></div><textarea id="s1-bon-text" onchange="syncState()" rows="2" class="input-cell w-full text-sm" placeholder="請填寫加分項目說明...">${state.s1.bonText||''}</textarea><div class="flex gap-1.5 self-end">`;
                     [1,2,3,4,5].map(v => { html += `<button onclick="setScore('s1-${group.id}', 0, ${v}, this)" class="score-btn w-7 h-7 rounded text-xs font-bold text-slate-600 ${state.s1[group.id][0]==v?'active':''}" data-val="${v}">${v}</button>`; });
                     html += `</div></div>`;
@@ -919,7 +1005,6 @@
         function renderS2() {
             const container = document.getElementById('s2-container');
             if(!container) return;
-            // 變更為一橫條一題
             container.className = "p-3 space-y-1.5";
             container.innerHTML = S2_QUESTIONS.map((q, i) => {
                 let btns = [1,2,3,4,5].map(v => `<button onclick="setScore('s2', ${i}, ${v}, this)" class="score-btn s1-s2-btn w-7 h-7 rounded text-xs font-bold text-slate-600 ${state.s2[i]==v?'active':''}" data-val="${v}"><span class="btn-num">${v}</span><span class="report-label">${GRADE_LABELS[v]}</span></button>`).join('');
@@ -932,7 +1017,6 @@
             if(!tbody) return;
             const d = S3_LEVELS[state.level] || S3_LEVELS[1]; let html = '';
             
-            // 確保 state.s3Texts 存在 (防呆)
             if(!state.s3Texts) {
                 state.s3Texts = {
                     core: Array(6).fill(null).map(()=>({bei:'', c:'', a:'', r:''})),
