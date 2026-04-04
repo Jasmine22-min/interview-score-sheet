@@ -122,39 +122,8 @@
         </div>
     </div>
 
-    <!-- 人資後台 Modal -->
-    <div id="backend-modal" class="fixed inset-0 items-center justify-center modal-overlay no-print z-[99998]">
-        <div class="bg-white w-11/12 max-w-5xl max-h-[85vh] rounded-xl shadow-2xl flex flex-col overflow-hidden">
-            <div class="bg-slate-900 p-4 flex justify-between items-center">
-                <h2 class="text-white font-bold text-lg flex items-center gap-2">⚙️ 人資後台數據庫 (已結案名單)</h2>
-                <button onclick="closeBackendModal()" class="text-slate-400 hover:text-white text-xl leading-none">✕</button>
-            </div>
-            <div class="p-4 flex-1 overflow-auto bg-slate-50">
-                <table class="w-full text-sm text-left border-collapse bg-white shadow-sm rounded-lg overflow-hidden min-w-[1000px]">
-                    <thead class="bg-slate-200 text-slate-700">
-                        <tr>
-                            <th class="p-2 border">面試日期</th><th class="p-2 border">姓名</th><th class="p-2 border">單位/職位</th>
-                            <th class="p-2 border text-center text-indigo-700">階段一</th>
-                            <th class="p-2 border text-center text-emerald-700">階段二</th>
-                            <th class="p-2 border text-center text-orange-700">階段三</th>
-                            <th class="p-2 border text-center text-blue-700">總得分</th>
-                            <th class="p-2 border text-center">進度狀態</th><th class="p-2 border text-center">結果</th>
-                            <th class="p-2 border w-28 text-center">操作</th>
-                        </tr>
-                    </thead>
-                    <tbody id="db-tbody"></tbody>
-                </table>
-            </div>
-            <div class="p-4 bg-white border-t border-slate-200 flex justify-end gap-3">
-                <button onclick="syncToGoogleSheet()" class="bg-emerald-600 text-white px-5 py-2 rounded-lg font-bold hover:bg-emerald-700 shadow-md transition-colors flex items-center gap-2">
-                    <span>📥 同步/匯出至 Google Sheet</span>
-                </button>
-            </div>
-        </div>
-    </div>
-
     <!-- ==================== 頁面 0: 登入頁 ==================== -->
-    <div id="view-login" class="page-view active min-h-screen flex items-center justify-center bg-slate-900">
+    <div id="view-login" class="page-view active h-screen w-full flex items-center justify-center bg-slate-900">
         <div class="bg-white p-8 rounded-2xl shadow-2xl w-96 max-w-[90%] text-center">
             <div class="bg-slate-100 p-3 rounded-xl mb-6 inline-block mx-auto border border-slate-200">
                 <img src="逗點教室LOGO-直-co -去背.png" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\' fill=\'%23333\'><rect width=\'100\' height=\'100\' rx=\'20\' fill=\'%23e2e8f0\'/><text x=\'50\' y=\'55\' font-size=\'16\' font-weight=\'bold\' text-anchor=\'middle\' fill=\'%2364748b\'>COMMA</text></svg>'" class="h-16 object-contain">
@@ -168,6 +137,7 @@
             </div>
             <div class="mt-4 text-xs text-slate-400 text-left">
                 💡 測試帳號提示：<br>
+                執行長：F00001<br>
                 人資(HR)：F00035、F00054<br>
                 主管(MGR)：F00007 (青園)、F00070 (青埔)
             </div>
@@ -187,8 +157,8 @@
                 </div>
             </div>
             <div class="flex items-center gap-3">
-                <button onclick="switchView('front')" id="nav-front-btn" class="bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded text-sm font-bold transition-colors hidden">返回作業</button>
-                <button onclick="switchView('back')" id="nav-back-btn" class="bg-black/30 hover:bg-black/50 px-3 py-1.5 rounded text-sm font-bold border border-white/20 transition-colors hidden shadow-inner">進入後台</button>
+                <button onclick="switchView('hr_search')" id="nav-front-btn" class="bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded text-sm font-bold transition-colors hidden">前台作業</button>
+                <button onclick="switchView('backend')" id="nav-back-btn" class="bg-black/30 hover:bg-black/50 px-3 py-1.5 rounded text-sm font-bold border border-white/20 transition-colors hidden shadow-inner">進入後台</button>
                 <button onclick="logout()" class="text-xs text-white/70 hover:text-white underline ml-2">登出</button>
             </div>
         </div>
@@ -205,7 +175,11 @@
     <!-- ==================== 頁面 1: 人資前台 (搜尋) ==================== -->
     <div id="view-hr-front" class="page-view container mx-auto p-4 max-w-5xl mt-6">
         <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-            <h2 class="text-xl font-black text-slate-800 mb-4 border-b pb-2 flex items-center gap-2">🔍 應徵者管理 (查閱已評分資料)</h2>
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 border-b pb-3 gap-3">
+                <h2 class="text-xl font-black text-slate-800 flex items-center gap-2">🔍 應徵者管理 (查閱已評分資料)</h2>
+                <button onclick="startNewRating()" class="bg-indigo-600 text-white px-5 py-2 rounded-lg font-bold hover:bg-indigo-700 shadow-md text-sm transition-colors">+ 新增面試評分</button>
+            </div>
+            
             <div class="flex flex-col md:flex-row gap-4 mb-6">
                 <input type="text" id="search-name" placeholder="輸入應徵者姓名" class="flex-1 border-2 border-slate-200 p-2.5 rounded-lg focus:border-blue-500 outline-none font-bold">
                 <select id="search-branch" class="flex-1 border-2 border-slate-200 p-2.5 rounded-lg focus:border-blue-500 outline-none font-bold bg-white">
@@ -229,7 +203,7 @@
         <section class="bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden">
             <div class="bg-slate-800 p-4 flex justify-between items-center">
                 <h2 class="text-white font-bold text-lg flex items-center gap-2">📊 逗點面試資料分析</h2>
-                <button onclick="syncToGoogleSheet()" class="bg-emerald-600 text-white px-4 py-1.5 rounded-lg font-bold hover:bg-emerald-700 shadow-sm text-sm">📥 匯出並前往 Google Sheet</button>
+                <button onclick="syncToGoogleSheet()" class="bg-emerald-600 text-white px-4 py-1.5 rounded-lg font-bold hover:bg-emerald-700 shadow-sm text-sm transition-colors flex items-center gap-2">📥 同步/匯出至 Google Sheet</button>
             </div>
             <div class="p-0 overflow-x-auto">
                 <table class="w-full text-left border-collapse min-w-[1000px]">
@@ -245,7 +219,7 @@
                             <th class="p-3 border-b text-center text-blue-700">總得分</th>
                             <th class="p-3 border-b text-center">進度狀態</th>
                             <th class="p-3 border-b text-center">結果</th>
-                            <th class="p-3 border-b w-28 text-center">操作</th>
+                            <th class="p-3 border-b w-40 text-center">操作</th>
                         </tr>
                     </thead>
                     <tbody id="db-list-tbody" class="text-sm"></tbody>
@@ -263,7 +237,7 @@
             <div class="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div>
                     <label class="block text-xs font-bold text-slate-400 mb-1">應徵者姓名</label>
-                    <input type="text" id="ipt-name" onblur="checkExistingRecord()" onchange="syncState()" class="w-full border-b-2 border-slate-200 p-1.5 outline-none bg-slate-50 transition-all text-base font-bold" placeholder="輸入姓名 (離開欄位自動搜尋紀錄)">
+                    <input type="text" id="ipt-name" onblur="checkExistingRecord()" onchange="syncState()" class="w-full border-b-2 border-slate-200 p-1.5 outline-none bg-slate-50 transition-all text-base font-bold focus:border-blue-500" placeholder="輸入姓名 (離開欄位自動搜尋紀錄)">
                 </div>
                 <div class="row-span-2">
                     <label class="block text-xs font-bold text-slate-400 mb-1 flex justify-between items-center">
@@ -271,30 +245,41 @@
                         <button onclick="addInterviewer()" class="hide-in-report bg-blue-50 text-blue-600 hover:bg-blue-100 px-2 py-0.5 rounded text-xs flex items-center gap-1 font-bold transition-colors">增加人員點我</button>
                     </label>
                     <div id="interviewer-list" class="space-y-2">
-                        <div class="flex gap-2"><input type="text" class="ipt-interviewer flex-1 border-b-2 border-slate-200 p-1.5 text-base outline-none bg-slate-50" onchange="syncState()"></div>
+                        <div class="flex gap-2"><input type="text" class="ipt-interviewer flex-1 border-b-2 border-slate-200 p-1.5 text-base outline-none bg-slate-50 focus:border-blue-500 transition-all" onchange="syncState()"></div>
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-400 mb-1">應徵分校/單位 (依權限自動鎖定)</label>
-                    <input type="text" id="sel-branch" disabled class="w-full border-b-2 border-slate-200 p-1.5 outline-none bg-slate-100 text-base font-bold text-slate-600 cursor-not-allowed">
+                    <label class="block text-xs font-bold text-slate-400 mb-1">應徵分校/單位 (最高權限可選)</label>
+                    <select id="sel-branch" onchange="syncState(); updateThemeManual(this.value);" class="w-full border-b-2 border-slate-200 p-1.5 outline-none bg-slate-50 text-base font-bold text-slate-600 transition-colors focus:border-blue-500">
+                        <option value="">請選擇...</option>
+                        <optgroup label="各分校單位">
+                            <option>青埔升大校</option><option>青埔翱翔校</option><option>青園展翅校</option><option>大園晨光校</option>
+                            <option>內壢森耀校</option><option>竹北知行校</option><option>文化極光校</option><option>快樂騰雲校</option>
+                            <option>大園參天校</option><option>園中方舟校</option><option>青埔旭日校</option><option>中壢心夢想校</option>
+                        </optgroup>
+                        <optgroup label="總部處室">
+                            <option>行政溝通處</option><option>人力資源處</option><option>財務會計處</option><option>國小事業處</option>
+                            <option>國高中事業處</option><option>產品研發處</option><option>品牌行銷處</option><option>行銷辦公室</option><option>國小英文管理科</option>
+                        </optgroup>
+                    </select>
                 </div>
                 <div class="flex gap-3">
                     <div class="flex-1">
                         <label class="block text-xs font-bold text-slate-400 mb-1">階段狀態</label>
-                        <select id="sel-stage" onchange="syncState()" class="w-full border-b-2 border-slate-200 p-1.5 outline-none bg-slate-50 text-base font-bold text-blue-700 cursor-pointer">
+                        <select id="sel-stage" onchange="syncState()" class="w-full border-b-2 border-slate-200 p-1.5 outline-none bg-slate-50 text-base font-bold text-blue-700 cursor-pointer focus:border-blue-500">
                             <option>階段一筆試</option><option>其他階段</option>
                         </select>
                     </div>
                     <div class="flex-1">
                         <label class="block text-xs font-bold text-slate-400 mb-1">應徵職位</label>
-                        <select id="sel-position" onchange="syncState()" class="w-full border-b-2 border-slate-200 p-1.5 outline-none bg-slate-50 text-base font-bold">
+                        <select id="sel-position" onchange="syncState()" class="w-full border-b-2 border-slate-200 p-1.5 outline-none bg-slate-50 text-base font-bold focus:border-blue-500">
                             <option value="">選擇...</option><option>班級導師</option><option>行政導師</option><option>授課師</option><option>主任</option><option>處長</option><option>總部</option>
                         </select>
                     </div>
                 </div>
                 <div class="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-3 th-light-box p-3 rounded-xl transition-all duration-300">
-                    <div><label class="block text-xs font-bold th-text mb-1">面試日期</label><input type="date" id="interview-date" onchange="updateDateTimeDisplay(); syncState();" class="w-full border border-white/50 rounded p-1 text-sm outline-none bg-white/80"></div>
-                    <div><label class="block text-xs font-bold th-text mb-1">開始時間</label><input type="time" id="interview-time" onchange="updateDateTimeDisplay(); syncState();" class="w-full border border-white/50 rounded p-1 text-sm outline-none bg-white/80"></div>
+                    <div><label class="block text-xs font-bold th-text mb-1">面試日期</label><input type="date" id="interview-date" onchange="updateDateTimeDisplay(); syncState();" class="w-full border border-white/50 rounded p-1 text-sm outline-none bg-white/80 focus:border-blue-500 transition-all"></div>
+                    <div><label class="block text-xs font-bold th-text mb-1">開始時間</label><input type="time" id="interview-time" onchange="updateDateTimeDisplay(); syncState();" class="w-full border border-white/50 rounded p-1 text-sm outline-none bg-white/80 focus:border-blue-500 transition-all"></div>
                     <div class="sm:col-span-2"><div id="datetime-preview" class="text-sm font-black th-text tracking-wide"></div></div>
                 </div>
             </div>
@@ -336,7 +321,7 @@
             <div class="bg-orange-50 p-2.5 border-b border-orange-200 flex justify-between items-center">
                 <h2 class="text-base font-bold text-orange-900">3. 階段三：職能評估 <span class="text-xs font-normal text-orange-600 ml-1">(60%)</span></h2>
                 <div class="flex items-center gap-3">
-                    <select id="job-level-select" class="border rounded outline-none font-bold text-xs p-1 hide-in-report" onchange="updateLevelLogic()">
+                    <select id="job-level-select" class="border rounded outline-none font-bold text-xs p-1 hide-in-report focus:ring-2 focus:ring-orange-500" onchange="updateLevelLogic()">
                         <option value="1">職等 1 (核心90% / 管理10%)</option>
                         <option value="2">職等 2 (核心85% / 管理15%)</option>
                         <option value="3">職等 3 (核心70% / 管理30%)</option>
@@ -390,7 +375,7 @@
                 <div class="space-y-3 bg-slate-800/80 p-4 rounded-xl border border-slate-700">
                     <label class="block text-slate-400 text-sm font-bold">系統建議理想狀態</label>
                     <div id="ideal-status-text" class="text-xl font-black text-white mb-2">等待評分...</div>
-                    <label class="block text-slate-400 text-sm font-bold">理想狀態判定說明</label>
+                    <label class="block text-slate-400 text-sm font-bold">判定原因</label>
                     <div id="ideal-status-exp" class="text-sm font-medium text-amber-300 bg-amber-900/30 p-2.5 rounded-lg border border-amber-700/50">-</div>
                 </div>
 
@@ -410,15 +395,16 @@
 
     </main>
 
-    <!-- 底部操作列 -->
+    <!-- 底部操作列 (極簡化版) -->
     <div id="action-bar" class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-2.5 shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.1)] z-50 no-print">
         <div class="container mx-auto max-w-[1400px] flex justify-between items-center">
             <div class="text-base font-black text-slate-800 flex items-center">
-                <button onclick="openBackend()" class="text-[10px] bg-slate-200 hover:bg-slate-300 px-2 py-1 rounded text-slate-500 mr-3 transition-colors">⚙️ 進入人資後台</button>
+                <!-- HR 專屬按鈕，透過 JS 控制顯示隱藏 -->
+                <button id="btn-to-hr-backend" onclick="switchView('backend')" class="text-[10px] bg-slate-200 hover:bg-slate-300 px-2 py-1 rounded text-slate-500 mr-3 transition-colors hidden">⚙️ 進入人資後台</button>
                 總得分：<span id="footer-total" class="text-blue-700 text-xl ml-1">0.00</span>
             </div>
             <div class="flex gap-2">
-                <button onclick="toggleReportMode(true)" class="px-6 py-1.5 bg-slate-800 rounded-lg text-white hover:bg-slate-700 text-sm font-black shadow-md">📄 產出成績單</button>
+                <button onclick="toggleReportMode(true)" class="px-6 py-1.5 bg-slate-800 rounded-lg text-white hover:bg-slate-700 text-sm font-black shadow-md transition-colors">📄 產出成績單</button>
             </div>
         </div>
     </div>
@@ -488,20 +474,23 @@
             
             const navFrontBtn = document.getElementById('nav-front-btn');
             const navBackBtn = document.getElementById('nav-back-btn');
+            const btnHrBackend = document.getElementById('btn-to-hr-backend');
 
-            // 確保一登入是「全空白狀態」
+            // 初始化全空白狀態
             state = getEmptyState();
             hydrateUI();
             calculateScores();
 
             if(currentUser.role === 'HR') {
-                if(navFrontBtn) { navFrontBtn.innerText = "前台作業"; navFrontBtn.classList.remove('hidden'); }
-                if(navBackBtn) navBackBtn.classList.remove('hidden');
-                switchView('front');
+                if(navFrontBtn) { navFrontBtn.innerText = "前台作業"; navFrontBtn.classList.remove('hidden'); navFrontBtn.onclick = () => switchView('hr_search'); }
+                if(navBackBtn) { navBackBtn.classList.remove('hidden'); navBackBtn.onclick = () => switchView('backend'); }
+                if(btnHrBackend) btnHrBackend.classList.remove('hidden');
+                switchView('hr_search');
             } else {
-                if(navFrontBtn) { navFrontBtn.innerText = "前台評分"; navFrontBtn.classList.remove('hidden'); }
-                if(navBackBtn) navBackBtn.classList.remove('hidden');
-                switchView('front');
+                if(navFrontBtn) { navFrontBtn.innerText = "前台評分"; navFrontBtn.classList.remove('hidden'); navFrontBtn.onclick = () => switchView('mgr_front'); }
+                if(navBackBtn) { navBackBtn.classList.remove('hidden'); navBackBtn.onclick = () => switchView('backend'); }
+                if(btnHrBackend) btnHrBackend.classList.add('hidden');
+                switchView('mgr_front');
             }
         }
 
@@ -520,29 +509,15 @@
             document.getElementById('action-bar')?.classList.add('hidden');
             document.body.setAttribute('data-theme', 'blue'); 
 
-            if(currentUser.role === 'HR') {
-                if(target === 'front') {
-                    document.getElementById('view-hr-front')?.classList.add('active');
-                } else {
-                    document.getElementById('view-backend')?.classList.add('active');
-                    loadBackendData();
-                }
-            } else {
-                if(target === 'front') {
-                    document.getElementById('view-mgr-front')?.classList.add('active');
-                    document.getElementById('action-bar')?.classList.remove('hidden');
-                    
-                    const selBranch = document.getElementById('sel-branch');
-                    if(selBranch) {
-                        selBranch.value = currentUser.dept;
-                        state.branch = currentUser.dept;
-                    }
-                    updateThemeManual(currentUser.dept);
-                    
-                } else {
-                    document.getElementById('view-backend')?.classList.add('active');
-                    loadBackendData();
-                }
+            if(target === 'hr_search') {
+                document.getElementById('view-hr-front')?.classList.add('active');
+            } else if (target === 'mgr_front') {
+                document.getElementById('view-mgr-front')?.classList.add('active');
+                document.getElementById('action-bar')?.classList.remove('hidden');
+                updateThemeManual(state.branch || currentUser.dept);
+            } else if (target === 'backend') {
+                document.getElementById('view-backend')?.classList.add('active');
+                loadBackendData();
             }
         }
 
@@ -576,7 +551,7 @@
                                 <div class="text-2xl font-black text-slate-700 leading-none">${r.grandTotal}</div>
                                 <div class="mt-1 font-bold">${statusBadge}</div>
                             </div>
-                            <button onclick="editRecord(${db.indexOf(r)})" class="bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-200 px-4 py-2 rounded-lg font-bold text-sm transition-colors flex items-center gap-1 shadow-sm">
+                            <button onclick="event.stopPropagation(); viewDetailFromHR(${db.indexOf(r)})" class="bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-200 px-4 py-2 rounded-lg font-bold text-sm transition-colors flex items-center gap-1 shadow-sm">
                                 🔍 查看
                             </button>
                         </div>
@@ -584,19 +559,28 @@
                 `;}).join('');
             }
         }
+
+        // 人資前台 新增評分
+        function startNewRating() {
+            state = getEmptyState();
+            hydrateUI();
+            calculateScores();
+            switchView('mgr_front');
+            window.scrollTo(0,0);
+        }
         
         function viewDetailFromHR(originalIdx) { 
             const db = JSON.parse(localStorage.getItem('interview_db') || '[]');
             const r = db[originalIdx];
             if(r.docStatus === 'draft') {
-                if(!confirm(`已找到應徵者「${r.name}」未完成的評分，要讀取嗎？`)) return;
+                if(!confirm(`已找到未完成的暫存人才，要讀取嗎？`)) return;
             } else if (r.docStatus === 'stage_done' || r.docStatus === 'completed') {
-                if(!confirm(`面試已到最終決策，要查看嗎？`)) return;
+                if(!confirm(`已找到評分完成人才，要查看嗎？`)) return;
             }
             state = r;
             hydrateUI();
             calculateScores();
-            switchView('front');
+            switchView('mgr_front');
             window.scrollTo(0,0);
             showToast('✅ 已載入面試紀錄');
         }
@@ -605,7 +589,7 @@
         function loadBackendData() {
             const db = JSON.parse(localStorage.getItem('interview_db') || '[]');
             let viewDb = db;
-            if(currentUser.role === 'MGR') viewDb = db.filter(r => r.branch === currentUser.dept);
+            if(currentUser.role === 'MGR' && currentUser.id !== 'F00001') viewDb = db.filter(r => r.branch === currentUser.dept);
 
             const tbody = document.getElementById('db-list-tbody');
             if(viewDb.length === 0) {
@@ -630,8 +614,9 @@
                     <td class="p-3 text-center font-black text-lg text-blue-600">${r.grandTotal || '0.00'}</td>
                     <td class="p-3 text-center font-bold text-slate-600">${statusText}</td>
                     <td class="p-3 text-center font-bold ${r.finalDecision==='pass'?'text-emerald-600':r.finalDecision==='fail'?'text-red-600':'text-slate-400'}">${decText}</td>
-                    <td class="p-3 text-center">
-                        <button onclick="editRecord(${originalIdx})" class="bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm transition-colors">查看 / 編輯</button>
+                    <td class="p-3 text-center flex justify-center gap-2">
+                        <button onclick="editRecord(${originalIdx})" class="bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm transition-colors">查看/編輯</button>
+                        <button onclick="deleteRecord(${originalIdx})" class="bg-red-50 border border-red-200 hover:bg-red-100 text-red-600 px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm transition-colors">刪除</button>
                     </td>
                 </tr>
                 `;
@@ -646,9 +631,19 @@
             
             const modal = document.getElementById('backend-modal');
             if (modal) modal.classList.remove('show');
-            switchView('front');
+            switchView('mgr_front');
             window.scrollTo(0,0);
             showToast('✅ 已載入紀錄，您可以繼續編輯');
+        }
+
+        function deleteRecord(originalIdx) {
+            if(confirm('確定要刪除此應徵者的資料嗎？此操作無法復原。')) {
+                let db = JSON.parse(localStorage.getItem('interview_db') || '[]');
+                db.splice(originalIdx, 1);
+                localStorage.setItem('interview_db', JSON.stringify(db));
+                loadBackendData(); // 重新載入列表
+                showToast('🗑️ 資料已成功刪除');
+            }
         }
 
         function closeMissingModal() {
@@ -697,17 +692,11 @@
             };
         }
 
-        window.onload = () => {
-            document.getElementById('interview-date').value = new Date().toISOString().split('T')[0];
-            updateDateTimeDisplay();
-            hydrateUI(); 
-            renderS1(); renderS2(); renderS3(); calculateScores();
-        };
-
+        // ================= UI 綁定與智慧讀取 =================
         function syncState() {
             const elName = document.getElementById('ipt-name'); if(elName) state.name = elName.value.trim();
             const elBranch = document.getElementById('sel-branch');
-            if(currentUser && currentUser.role === 'MGR') {
+            if(currentUser && currentUser.role === 'MGR' && currentUser.id !== 'F00001') {
                 state.branch = currentUser.dept;
             } else if(elBranch) {
                 state.branch = elBranch.value;
@@ -722,6 +711,7 @@
             if(bonTextEl) state.s1.bonText = bonTextEl.value;
         }
 
+        // 離開姓名欄位時檢查資料庫
         function checkExistingRecord() {
             const elName = document.getElementById('ipt-name');
             if(!elName) return;
@@ -732,8 +722,8 @@
             let existing = db.find(r => r.name === name);
 
             if(existing) {
-                if(existing.docStatus !== 'completed') {
-                    if(confirm(`已找到應徵者「${name}」未完成的評分，要讀取嗎？`)) {
+                if(existing.docStatus !== 'completed' && existing.docStatus !== 'stage_done') {
+                    if(confirm(`已找到未完成的暫存人才，要讀取嗎？`)) {
                         state = existing;
                         hydrateUI(); 
                         calculateScores(); 
@@ -747,7 +737,7 @@
                         calculateScores();
                     }
                 } else {
-                     if(confirm(`應徵者「${name}」已完成最終決策，是否載入查看？`)) {
+                     if(confirm(`已找到評分完成人才，要查看嗎？`)) {
                          state = existing; hydrateUI(); calculateScores();
                      }
                 }
@@ -756,7 +746,23 @@
 
         function hydrateUI() {
             const elName = document.getElementById('ipt-name'); if(elName) elName.value = state.name;
-            const elBranch = document.getElementById('sel-branch'); if(elBranch && currentUser && currentUser.role === 'HR') elBranch.value = state.branch;
+            
+            const elBranch = document.getElementById('sel-branch'); 
+            if(elBranch) {
+                if (currentUser && (currentUser.role === 'HR' || currentUser.id === 'F00001')) {
+                    elBranch.disabled = false;
+                    elBranch.classList.remove('cursor-not-allowed', 'bg-slate-100');
+                    elBranch.classList.add('bg-slate-50', 'cursor-pointer');
+                    elBranch.value = state.branch || "";
+                } else if (currentUser) {
+                    elBranch.disabled = true;
+                    elBranch.classList.remove('bg-slate-50', 'cursor-pointer');
+                    elBranch.classList.add('cursor-not-allowed', 'bg-slate-100');
+                    elBranch.value = currentUser.dept;
+                    state.branch = currentUser.dept;
+                }
+            }
+
             const elPos = document.getElementById('sel-position'); if(elPos) elPos.value = state.position;
             const elStage = document.getElementById('sel-stage'); if(elStage) elStage.value = state.stage || "階段一筆試";
             const elDate = document.getElementById('interview-date'); if(elDate && state.date) elDate.value = state.date;
@@ -861,16 +867,9 @@
             showToast('☁️ 最終決策已儲存！資料已完整覆蓋更新。');
         }
 
-        function showToast(msg) { const t = document.getElementById('toast'); if(t) { t.innerText = msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 2000); } }
+        function showToast(msg) { const t = document.getElementById('toast'); if(t) { t.innerText = msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 1500); } }
         
         // ================= 渲染邏輯 =================
-        function addInterviewer() {
-            const container = document.getElementById('interviewer-list');
-            const div = document.createElement('div'); div.className = 'flex gap-2 animate-small-pop';
-            div.innerHTML = `<input type="text" class="ipt-interviewer flex-1 border-b-2 border-slate-200 p-1.5 text-base outline-none bg-slate-50 focus:border-blue-500 transition-all"><button onclick="this.parentElement.remove()" class="text-red-500 font-bold px-2">✕</button>`;
-            container.appendChild(div);
-        }
-
         function renderS1() {
             S1_DATA.forEach(group => {
                 const container = document.getElementById(`s1-${group.id}-section`);
@@ -1055,7 +1054,7 @@
             const db = JSON.parse(localStorage.getItem('interview_db') || '[]');
             if(db.length === 0) return alert('目前無資料可匯出或同步！');
             
-            let viewDb = currentUser && currentUser.role === 'MGR' ? db.filter(r => r.branch === currentUser.dept) : db;
+            let viewDb = currentUser && currentUser.role === 'MGR' && currentUser.id !== 'F00001' ? db.filter(r => r.branch === currentUser.dept) : db;
 
             let csv = "\uFEFF面試日期,應徵者姓名,單位,職位,系統總得分,建議狀態,最終決策,加分與培訓計畫\n";
             viewDb.forEach(r => { csv += `"${r.date}","${r.name}","${r.branch}","${r.position}","${r.grandTotal}","${r.idealStatus}","${r.finalDecision==='pass'?'錄取':r.finalDecision==='fail'?'不錄取':'-'}","${(r.bonusMethod||'').replace(/\n/g, ' ')}"\n`; });
