@@ -203,7 +203,9 @@
         <section class="bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden">
             <div class="bg-slate-800 p-4 flex justify-between items-center">
                 <h2 class="text-white font-bold text-lg flex items-center gap-2">📊 逗點面試資料分析</h2>
-                <button onclick="syncToGoogleSheet()" class="bg-emerald-600 text-white px-4 py-1.5 rounded-lg font-bold hover:bg-emerald-700 shadow-sm text-sm transition-colors flex items-center gap-2">📥 同步/匯出至 Google Sheet</button>
+                <button onclick="syncToGoogleSheet()" class="bg-emerald-600 text-white px-5 py-2 rounded-lg font-bold hover:bg-emerald-700 shadow-md transition-colors flex items-center gap-2">
+                    <span>📥 同步/匯出至 Google Sheet</span>
+                </button>
             </div>
             <div class="p-0 overflow-x-auto">
                 <table class="w-full text-left border-collapse min-w-[1000px]">
@@ -439,7 +441,6 @@
 
         let currentUser = null; 
 
-        // 安全設定元素的文字與HTML
         const setTxt = (id, text) => { const el = document.getElementById(id); if(el) el.innerText = text; };
         const setHtml = (id, html) => { const el = document.getElementById(id); if(el) el.innerHTML = html; };
 
@@ -629,8 +630,6 @@
             hydrateUI();
             calculateScores();
             
-            const modal = document.getElementById('backend-modal');
-            if (modal) modal.classList.remove('show');
             switchView('mgr_front');
             window.scrollTo(0,0);
             showToast('✅ 已載入紀錄，您可以繼續編輯');
@@ -649,10 +648,6 @@
         function closeMissingModal() {
             const mm = document.getElementById('missing-modal');
             if (mm) mm.classList.remove('show');
-        }
-        function closeBackendModal() {
-            const bm = document.getElementById('backend-modal');
-            if (bm) bm.classList.remove('show');
         }
 
         // ================= 面試系統核心資料與邏輯 =================
@@ -692,7 +687,13 @@
             };
         }
 
-        // ================= UI 綁定與智慧讀取 =================
+        window.onload = () => {
+            document.getElementById('interview-date').value = new Date().toISOString().split('T')[0];
+            updateDateTimeDisplay();
+            hydrateUI(); 
+            renderS1(); renderS2(); renderS3(); calculateScores();
+        };
+
         function syncState() {
             const elName = document.getElementById('ipt-name'); if(elName) state.name = elName.value.trim();
             const elBranch = document.getElementById('sel-branch');
@@ -711,7 +712,6 @@
             if(bonTextEl) state.s1.bonText = bonTextEl.value;
         }
 
-        // 離開姓名欄位時檢查資料庫
         function checkExistingRecord() {
             const elName = document.getElementById('ipt-name');
             if(!elName) return;
@@ -1051,24 +1051,11 @@
 
         // ================= 後台資料匯出 & Google Sheet =================
         function syncToGoogleSheet() {
-            const db = JSON.parse(localStorage.getItem('interview_db') || '[]');
-            if(db.length === 0) return alert('目前無資料可匯出或同步！');
-            
-            let viewDb = currentUser && currentUser.role === 'MGR' && currentUser.id !== 'F00001' ? db.filter(r => r.branch === currentUser.dept) : db;
-
-            let csv = "\uFEFF面試日期,應徵者姓名,單位,職位,系統總得分,建議狀態,最終決策,加分與培訓計畫\n";
-            viewDb.forEach(r => { csv += `"${r.date}","${r.name}","${r.branch}","${r.position}","${r.grandTotal}","${r.idealStatus}","${r.finalDecision==='pass'?'錄取':r.finalDecision==='fail'?'不錄取':'-'}","${(r.bonusMethod||'').replace(/\n/g, ' ')}"\n`; });
-
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement("a"); link.href = URL.createObjectURL(blob);
-            link.download = `逗點面試資料庫匯出_${new Date().toISOString().split('T')[0]}.csv`;
-            document.body.appendChild(link); link.click(); document.body.removeChild(link);
-
             // 自動開啟指定的 Google Sheet 網址
             const sheetUrl = "https://docs.google.com/spreadsheets/d/1oOWz1wtntQ2LAMIUbmyTYBEke1sbJRA_VuUcR71jH10/edit?gid=0#gid=0";
             window.open(sheetUrl, '_blank');
             
-            showToast('✅ CSV 已下載！已為您開啟 Google Sheet。');
+            showToast('✅ 已為您開啟 Google Sheet，請直接將資料貼上或匯入。');
         }
     </script>
 </body>
