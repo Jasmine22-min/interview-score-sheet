@@ -123,7 +123,7 @@
     </div>
 
     <!-- ==================== 頁面 0: 登入頁 ==================== -->
-    <div id="view-login" class="page-view active h-screen w-full flex items-center justify-center bg-slate-900">
+    <div id="view-login" class="page-view active min-h-screen flex items-center justify-center bg-slate-900">
         <div class="bg-white p-8 rounded-2xl shadow-2xl w-96 max-w-[90%] text-center">
             <div class="bg-slate-100 p-3 rounded-xl mb-6 inline-block mx-auto border border-slate-200">
                 <img src="逗點教室LOGO-直-co -去背.png" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\' fill=\'%23333\'><rect width=\'100\' height=\'100\' rx=\'20\' fill=\'%23e2e8f0\'/><text x=\'50\' y=\'55\' font-size=\'16\' font-weight=\'bold\' text-anchor=\'middle\' fill=\'%2364748b\'>COMMA</text></svg>'" class="h-16 object-contain">
@@ -138,8 +138,9 @@
             <div class="mt-4 text-xs text-slate-400 text-left">
                 💡 測試帳號提示：<br>
                 執行長：F00001<br>
+                高階主管：F00004、F00005<br>
                 人資(HR)：F00035、F00054<br>
-                主管(MGR)：F00007 (青園)、F00070 (青埔)
+                分校主管：F00007 (青園)、F00070 (青埔)
             </div>
         </div>
     </div>
@@ -203,12 +204,12 @@
         <section class="bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden">
             <div class="bg-slate-800 p-4 flex justify-between items-center">
                 <h2 class="text-white font-bold text-lg flex items-center gap-2">📊 逗點面試資料分析</h2>
-                <button onclick="syncToGoogleSheet()" class="bg-emerald-600 text-white px-5 py-2 rounded-lg font-bold hover:bg-emerald-700 shadow-md transition-colors flex items-center gap-2">
-                    <span>📥 同步/匯出至 Google Sheet</span>
+                <button onclick="exportCSV()" class="bg-emerald-600 text-white px-5 py-2 rounded-lg font-bold hover:bg-emerald-700 shadow-md transition-colors flex items-center gap-2">
+                    <span>📥 匯出報表</span>
                 </button>
             </div>
             <div class="p-0 overflow-x-auto">
-                <table class="w-full text-left border-collapse min-w-[1000px]">
+                <table class="w-full text-left border-collapse min-w-[1100px]">
                     <thead class="bg-slate-100 text-slate-700 text-sm">
                         <tr>
                             <th class="p-3 border-b w-24">面試日期</th>
@@ -299,7 +300,7 @@
                 <div class="mt-5 text-center border-t border-slate-200 pt-4 pb-2 hide-in-report">
                     <button onclick="handleSaveDraft()" class="bg-white border-2 border-slate-300 text-slate-700 px-8 py-2 rounded-xl font-black hover:bg-slate-100 transition-colors flex items-center justify-center gap-2 mx-auto shadow-sm">
                         <svg class="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" /></svg>
-                        暫存人才
+                        暫存人才及職能題目
                     </button>
                     <p class="text-[11px] text-slate-400 mt-2">主管可於此暫存評分記憶，下次於「基本資訊」輸入相同應徵者姓名，將自動提示帶入已填項目。</p>
                 </div>
@@ -315,7 +316,7 @@
                 </div>
                 <div class="text-xs font-bold text-indigo-700">得分: <span id="s2-final" class="text-lg">0.00</span>/10</div>
             </div>
-            <div class="p-3 grid grid-cols-1 lg:grid-cols-2 gap-x-6 gap-y-0.5" id="s2-container"></div>
+            <div class="p-3 space-y-1" id="s2-container"></div>
         </section>
 
         <!-- 階段三 -->
@@ -337,12 +338,12 @@
             </div>
 
             <div class="p-0 overflow-x-auto no-scrollbar">
-                <table class="w-full text-left border-collapse min-w-[900px]">
+                <table class="w-full text-left border-collapse min-w-[1200px]">
                     <thead>
                         <tr class="bg-slate-100 text-slate-700 text-[11px] text-center">
                             <th class="p-1 border border-slate-200 w-16">維度</th>
                             <th class="p-1 border border-slate-200 w-24">職能項目</th>
-                            <th class="p-1 border border-slate-200 text-blue-800" width="140">BEI (問題描述)</th>
+                            <th class="p-1 border border-slate-200 text-blue-800" width="250">BEI (問題描述)</th>
                             <th class="p-1 border border-slate-200 text-indigo-800" colspan="3">CAR (狀況 / 行動 / 結果)</th>
                             <th class="p-1 border border-slate-200 w-36">給分 (放置滑鼠看提示)</th>
                         </tr>
@@ -441,29 +442,30 @@
 
         let currentUser = null; 
 
+        // 安全設定元素的文字與HTML
         const setTxt = (id, text) => { const el = document.getElementById(id); if(el) el.innerText = text; };
         const setHtml = (id, html) => { const el = document.getElementById(id); if(el) el.innerHTML = html; };
 
         // ================= 登入與路由 =================
         function handleLogin() {
-            const acc = document.getElementById('login-acc').value.trim().toUpperCase();
-            const pwd = document.getElementById('login-pwd').value.trim();
+            const acc = document.getElementById('login-acc')?.value.trim().toUpperCase();
+            const pwd = document.getElementById('login-pwd')?.value.trim();
             if(!acc || pwd !== "0000") return alert("帳號不存在或密碼錯誤 (測試密碼: 0000)");
             if(!EMP_DB[acc]) return alert("查無此員工編號權限");
 
             currentUser = EMP_DB[acc];
             currentUser.id = acc;
             
-            // 決定稱呼
+            // 決定專屬登入稱呼
             let greeting = "";
             if (acc === "F00001") {
-                greeting = `${currentUser.name} 執行長您好`;
+                greeting = `徐暘智 執行長您好`;
             } else if (acc === "F00035" || acc === "F00054") {
-                greeting = `歡迎人資 ${currentUser.name} 處長來了❤️`;
+                greeting = `歡迎人資來了！！ 茉莉花仙子系統開發師敏敏`;
             } else if (currentUser.dept.includes("校")) {
-                greeting = `${currentUser.name} 主任您好`;
+                greeting = `歡迎 ${currentUser.name} 主任來了！`;
             } else {
-                greeting = `${currentUser.name} 處長您好`;
+                greeting = `歡迎 ${currentUser.name} 處長來了！`;
             }
             
             alert(greeting); 
@@ -538,8 +540,9 @@
             } else {
                 resDiv.innerHTML = filtered.map((r, i) => {
                     let statusBadge = '';
-                    if(r.docStatus === 'draft') statusBadge = '<span class="bg-slate-100 text-slate-600 px-2 py-1 rounded text-xs">📝 暫存中</span>';
-                    else if(r.docStatus === 'stage_done' || r.docStatus === 'completed') statusBadge = '<span class="bg-emerald-100 text-emerald-700 px-2 py-1 rounded text-xs">✅ 面試完成</span>';
+                    if(r.docStatus === 'draft') statusBadge = '<span class="bg-slate-100 text-slate-600 px-2 py-1 rounded text-xs">📝 筆試及職能面試題目暫存</span>';
+                    else if(r.docStatus === 'stage_done') statusBadge = '<span class="bg-amber-100 text-amber-700 px-2 py-1 rounded text-xs">⏳ 面試最終決策中</span>';
+                    else if(r.docStatus === 'completed') statusBadge = '<span class="bg-emerald-100 text-emerald-700 px-2 py-1 rounded text-xs">✅ 面試完成</span>';
 
                     return `
                     <div class="bg-white p-4 rounded-xl border border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center shadow-sm gap-4 hover:border-blue-300 transition-colors cursor-pointer" onclick="viewDetailFromHR(${db.indexOf(r)})">
@@ -561,7 +564,6 @@
             }
         }
 
-        // 人資前台 新增評分
         function startNewRating() {
             state = getEmptyState();
             hydrateUI();
@@ -590,7 +592,10 @@
         function loadBackendData() {
             const db = JSON.parse(localStorage.getItem('interview_db') || '[]');
             let viewDb = db;
-            if(currentUser.role === 'MGR' && currentUser.id !== 'F00001') viewDb = db.filter(r => r.branch === currentUser.dept);
+            // 非執行長且非人資的主管，只能看自己單位
+            if(currentUser.role === 'MGR' && !['F00001', 'F00004', 'F00005'].includes(currentUser.id)) {
+                viewDb = db.filter(r => r.branch === currentUser.dept);
+            }
 
             const tbody = document.getElementById('db-list-tbody');
             if(viewDb.length === 0) {
@@ -600,7 +605,11 @@
 
             tbody.innerHTML = viewDb.slice().reverse().map((r, revI) => {
                 const originalIdx = viewDb.length - 1 - revI; 
-                let statusText = r.docStatus === 'draft' ? '📝 暫存中' : '✅ 面試完成';
+                let statusText = '';
+                if(r.docStatus === 'draft') statusText = '筆試及職能面試題目暫存';
+                else if(r.docStatus === 'stage_done') statusText = '面試最終決策中';
+                else statusText = '面試完成';
+                
                 let decText = r.finalDecision === 'pass' ? '錄取' : r.finalDecision === 'fail' ? '不錄取' : '-';
                 
                 return `
@@ -613,7 +622,7 @@
                     <td class="p-3 text-center font-bold text-emerald-500">${r.s2Final || '0.00'}</td>
                     <td class="p-3 text-center font-bold text-orange-500">${r.s3Final || '0.00'}</td>
                     <td class="p-3 text-center font-black text-lg text-blue-600">${r.grandTotal || '0.00'}</td>
-                    <td class="p-3 text-center font-bold text-slate-600">${statusText}</td>
+                    <td class="p-3 text-center font-bold text-slate-600 text-xs">${statusText}</td>
                     <td class="p-3 text-center font-bold ${r.finalDecision==='pass'?'text-emerald-600':r.finalDecision==='fail'?'text-red-600':'text-slate-400'}">${decText}</td>
                     <td class="p-3 text-center flex justify-center gap-2">
                         <button onclick="editRecord(${originalIdx})" class="bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm transition-colors">查看/編輯</button>
@@ -640,7 +649,7 @@
                 let db = JSON.parse(localStorage.getItem('interview_db') || '[]');
                 db.splice(originalIdx, 1);
                 localStorage.setItem('interview_db', JSON.stringify(db));
-                loadBackendData(); // 重新載入列表
+                loadBackendData(); 
                 showToast('🗑️ 資料已成功刪除');
             }
         }
@@ -697,7 +706,7 @@
         function syncState() {
             const elName = document.getElementById('ipt-name'); if(elName) state.name = elName.value.trim();
             const elBranch = document.getElementById('sel-branch');
-            if(currentUser && currentUser.role === 'MGR' && currentUser.id !== 'F00001') {
+            if(currentUser && currentUser.role === 'MGR' && !['F00001', 'F00004', 'F00005'].includes(currentUser.id)) {
                 state.branch = currentUser.dept;
             } else if(elBranch) {
                 state.branch = elBranch.value;
@@ -749,7 +758,8 @@
             
             const elBranch = document.getElementById('sel-branch'); 
             if(elBranch) {
-                if (currentUser && (currentUser.role === 'HR' || currentUser.id === 'F00001')) {
+                // 執行長、高階主管與人資解鎖選單
+                if (currentUser && (currentUser.role === 'HR' || ['F00001', 'F00004', 'F00005'].includes(currentUser.id))) {
                     elBranch.disabled = false;
                     elBranch.classList.remove('cursor-not-allowed', 'bg-slate-100');
                     elBranch.classList.add('bg-slate-50', 'cursor-pointer');
@@ -761,6 +771,12 @@
                     elBranch.value = currentUser.dept;
                     state.branch = currentUser.dept;
                 }
+            }
+
+            // 自動帶入主面試官
+            const mainIntInput = document.querySelector('.ipt-interviewer');
+            if (mainIntInput && !mainIntInput.value && currentUser) {
+                mainIntInput.value = currentUser.name;
             }
 
             const elPos = document.getElementById('sel-position'); if(elPos) elPos.value = state.position;
@@ -876,12 +892,12 @@
                 if(!container) return;
                 let html = `<div class="bg-white p-2.5 rounded-xl border border-slate-200 shadow-sm mb-2"><div class="flex justify-between border-b-2 border-slate-100 pb-1"><h3 class="font-bold text-sm text-slate-800">${group.title}</h3></div><div class="space-y-1.5 mt-1.5">`;
                 if (group.id === 'bon') {
-                    html += `<div class="bg-slate-50 p-2.5 rounded flex flex-col gap-1.5"><div class="text-[13px] font-medium text-slate-700">${group.qs[0]} <span class="text-[10px] text-slate-400 font-normal">(選填)</span></div><textarea id="s1-bon-text" onchange="syncState()" rows="1" class="input-cell" placeholder="請填寫加分項目說明...">${state.s1.bonText||''}</textarea><div class="flex gap-1.5 self-end">`;
+                    html += `<div class="bg-slate-50 p-2.5 rounded flex items-center justify-start gap-4"><div class="text-[13px] font-medium text-slate-700 w-1/2">${group.qs[0]} <span class="text-[10px] text-slate-400 font-normal">(選填)</span></div><textarea id="s1-bon-text" onchange="syncState()" rows="1" class="input-cell flex-1" placeholder="請填寫加分項目說明...">${state.s1.bonText||''}</textarea><div class="flex gap-1.5">`;
                     [1,2,3,4,5].map(v => { html += `<button onclick="setScore('s1-${group.id}', 0, ${v}, this)" class="score-btn s1-s2-btn w-7 h-7 rounded text-xs font-bold text-slate-600 ${state.s1[group.id][0]==v?'active':''}" data-val="${v}"><span class="btn-num">${v}</span><span class="report-label">${GRADE_LABELS[v]}</span></button>`; });
                     html += `</div></div>`;
                 } else {
                     group.qs.forEach((q, i) => {
-                        html += `<div class="bg-slate-50 p-2 rounded flex justify-between items-center"><div class="text-[13px] flex-1 text-slate-700 pr-2">${q}</div><div class="flex gap-1">`;
+                        html += `<div class="bg-slate-50 p-2 rounded flex items-center justify-start gap-4 hover:bg-slate-100 transition-colors"><div class="text-[13px] text-slate-700 w-[55%] md:w-1/2 font-medium">${q}</div><div class="flex gap-1">`;
                         [1,2,3,4,5].map(v => { html += `<button onclick="setScore('s1-${group.id}', ${i}, ${v}, this)" class="score-btn s1-s2-btn w-7 h-7 rounded text-xs font-bold text-slate-600 ${state.s1[group.id][i]==v?'active':''}" data-val="${v}"><span class="btn-num">${v}</span><span class="report-label">${GRADE_LABELS[v]}</span></button>`; });
                         html += `</div></div>`;
                     });
@@ -893,9 +909,11 @@
         function renderS2() {
             const container = document.getElementById('s2-container');
             if(!container) return;
+            // 變更為一橫條一題 (grid-cols-1)
+            container.className = "p-3 space-y-1";
             container.innerHTML = S2_QUESTIONS.map((q, i) => {
                 let btns = [1,2,3,4,5].map(v => `<button onclick="setScore('s2', ${i}, ${v}, this)" class="score-btn s1-s2-btn w-7 h-7 rounded text-xs font-bold text-slate-600 ${state.s2[i]==v?'active':''}" data-val="${v}"><span class="btn-num">${v}</span><span class="report-label">${GRADE_LABELS[v]}</span></button>`).join('');
-                return `<div class="flex justify-between items-center border-b border-slate-100 py-2 px-1"><span class="text-[13px] text-slate-700">${i+1}. ${q}</span><div class="flex gap-1">${btns}</div></div>`;
+                return `<div class="flex items-center justify-start gap-4 border-b border-slate-100 py-2 hover:bg-slate-50 px-2 rounded"><span class="text-[13px] text-slate-700 font-medium w-[55%] md:w-1/2">${i+1}. ${q}</span><div class="flex gap-1">${btns}</div></div>`;
             }).join('');
         }
 
@@ -904,7 +922,7 @@
             if(!tbody) return;
             const d = S3_LEVELS[state.level] || S3_LEVELS[1]; let html = '';
             S3_BARS_CORE.forEach((item, i) => {
-                html += `<tr class="border-b border-slate-200"><td class="p-1.5 border-r bg-blue-50 font-bold text-center text-xs">核心<br><span class="text-[10px] text-blue-600">(${d.c[i]}%)</span></td><td class="p-1.5 border-r font-bold text-xs text-center">${item.name}</td><td class="bg-blue-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="1"></textarea></td><td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="1"></textarea></td><td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="1"></textarea></td><td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="1"></textarea></td><td class="p-1.5 text-center"><div class="flex gap-1 justify-center">`;
+                html += `<tr class="border-b border-slate-200"><td class="p-1.5 border-r bg-blue-50 font-bold text-center text-xs w-[60px]">核心<br><span class="text-[10px] text-blue-600">(${d.c[i]}%)</span></td><td class="p-1.5 border-r font-bold text-xs text-center w-[100px]">${item.name}</td><td class="bg-blue-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="2"></textarea></td><td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="2"></textarea></td><td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="2"></textarea></td><td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="2"></textarea></td><td class="p-1 text-center"><div class="flex gap-1 justify-center">`;
                 [1,2,3,4,5].map(v => { html += `<button onclick="setScore('s3-core', ${i}, ${v}, this)" class="score-btn w-6 h-6 rounded text-[11px] font-bold text-slate-600 ${state.s3.core[i]==v?'active':''}" data-val="${v}">${v}<span class="tooltip-text">${item.levels[v-1]}</span></button>`; });
                 html += `</div></td></tr>`;
                 const desc = state.s3.core[i] > 0 ? item.descs[state.s3.core[i]-1] : '';
@@ -912,7 +930,7 @@
             });
 
             S3_BARS_MGMT.forEach((item, i) => {
-                html += `<tr class="border-b border-slate-200"><td class="p-1.5 border-r bg-green-50 font-bold text-center text-xs">管理<br><span class="text-[10px] text-green-600">(${d.m[i]}%)</span></td><td class="p-1.5 border-r font-bold text-xs text-center">${item.name}</td><td class="bg-blue-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="1"></textarea></td><td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="1"></textarea></td><td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="1"></textarea></td><td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="1"></textarea></td><td class="p-1.5 text-center"><div class="flex gap-1 justify-center">`;
+                html += `<tr class="border-b border-slate-200"><td class="p-1.5 border-r bg-green-50 font-bold text-center text-xs w-[60px]">管理<br><span class="text-[10px] text-green-600">(${d.m[i]}%)</span></td><td class="p-1.5 border-r font-bold text-xs text-center w-[100px]">${item.name}</td><td class="bg-blue-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="2"></textarea></td><td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="2"></textarea></td><td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="2"></textarea></td><td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="2"></textarea></td><td class="p-1 text-center"><div class="flex gap-1 justify-center">`;
                 [1,2,3,4,5].map(v => { html += `<button onclick="setScore('s3-mgmt', ${i}, ${v}, this)" class="score-btn w-6 h-6 rounded text-[11px] font-bold text-slate-600 ${state.s3.mgmt[i]==v?'active':''}" data-val="${v}">${v}<span class="tooltip-text">${item.levels[v-1]}</span></button>`; });
                 html += `</div></td></tr>`;
                 const desc = state.s3.mgmt[i] > 0 ? item.descs[state.s3.mgmt[i]-1] : '';
@@ -1051,6 +1069,9 @@
 
         // ================= 後台資料匯出 & Google Sheet =================
         function syncToGoogleSheet() {
+            let csv = "\uFEFF面試日期,應徵者姓名,單位,職位,系統總得分,建議狀態,最終決策,加分與培訓計畫\n";
+            // 這裡可以繼續執行 CSV 相關邏輯
+            
             // 自動開啟指定的 Google Sheet 網址
             const sheetUrl = "https://docs.google.com/spreadsheets/d/1oOWz1wtntQ2LAMIUbmyTYBEke1sbJRA_VuUcR71jH10/edit?gid=0#gid=0";
             window.open(sheetUrl, '_blank');
