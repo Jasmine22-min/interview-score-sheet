@@ -572,7 +572,7 @@
             if (acc === "F00035") {
                 greeting = `歡迎人資長Sherry~~來了❤️`;
             } else if (acc === "F00054") {
-                greeting = `歡迎人資 ${currentUser.name} 處長來了❤️`;
+                greeting = `歡迎～～～系統開發師茉莉花仙子 敏敏登場！！`;
             } else if (acc === "F00001") {
                 greeting = `歡迎 徐暘智 執行長來了～～❤️`;
             } else if (currentUser.dept.includes("校")) {
@@ -591,7 +591,7 @@
             const navFrontBtn = document.getElementById('nav-front-btn');
             const navBackBtn = document.getElementById('nav-back-btn');
 
-            // 初始化全空白狀態
+            // 確保一登入是「全空白狀態」
             state = getEmptyState();
             hydrateUI();
             calculateScores();
@@ -833,6 +833,38 @@
             if (noteEl) state.interviewNote = noteEl.value;
             const chks = document.querySelectorAll('.chk-item');
             if(chks.length > 0) state.checklist = Array.from(chks).map(chk => chk.checked);
+        }
+
+        function checkExistingRecord() {
+            const elName = document.getElementById('ipt-name');
+            if(!elName) return;
+            let name = elName.value.trim();
+            if(!name) return;
+
+            let db = JSON.parse(localStorage.getItem('interview_db') || '[]');
+            let existing = db.find(r => r.name === name);
+
+            if(existing) {
+                if(existing.docStatus !== 'completed' && existing.docStatus !== 'stage_done') {
+                    if(confirm(`已找到未完成的暫存人才，要讀取嗎？`)) {
+                        state = existing;
+                        hydrateUI(); 
+                        calculateScores(); 
+                        showToast('✅ 已載入未完成資料');
+                    } else {
+                        let currentBranch = state.branch;
+                        state = getEmptyState();
+                        state.name = name;
+                        state.branch = currentBranch;
+                        hydrateUI();
+                        calculateScores();
+                    }
+                } else {
+                     if(confirm(`已找到評分完成人才，要查看嗎？`)) {
+                         state = existing; hydrateUI(); calculateScores();
+                     }
+                }
+            }
         }
 
         function hydrateUI() {
