@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>面試評分系統 - 雲端資料庫版</title>
-    <!-- Tailwind CSS -->
+    <title>面試評分系統 - 企業分流版</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <style>
@@ -44,8 +43,8 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         /* 評分按鈕 */
-        .score-btn { transition: all 0.15s ease-in-out; cursor: pointer; border: 1px solid #cbd5e1; background-color: white; position: relative; }
-        .score-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        .score-btn { transition: all 0.1s; cursor: pointer; border: 1px solid #cbd5e1; background-color: white; position: relative; }
+        .score-btn:hover { transform: translateY(-1px); box-shadow: 0 2px 4px -1px rgba(0,0,0,0.1); }
         .score-btn.active { transform: scale(1.05); border-width: 2px; }
         .score-btn.active[data-val="1"] { background-color: #ef4444; color: white; border-color: #b91c1c; }
         .score-btn.active[data-val="2"] { background-color: #f97316; color: white; border-color: #c2410c; }
@@ -55,7 +54,7 @@
         
         .tooltip-text { visibility: hidden; opacity: 0; position: absolute; bottom: 120%; left: 50%; transform: translateX(-50%); background-color: #1e293b; color: white; text-align: center; padding: 4px 8px; border-radius: 6px; font-size: 11px; white-space: nowrap; z-index: 10; pointer-events: none; }
         .score-btn:hover .tooltip-text { visibility: visible; opacity: 1; }
-        .input-cell { @apply w-full border border-slate-300 rounded p-1.5 text-sm focus:ring-2 focus:ring-blue-400 outline-none resize-none transition-all; }
+        .input-cell { @apply w-full border border-slate-300 rounded p-1.5 text-sm focus:border-slate-500 outline-none resize-none transition-all; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         
         .decision-btn { transition: all 0.2s; border: 2px solid transparent; }
@@ -89,7 +88,7 @@
         @media print {
             .no-print { display: none !important; }
             body { font-size: 9px !important; line-height: 1.1 !important; color: #000; -webkit-print-color-adjust: exact; print-color-adjust: exact;}
-            @page { size: A4 landscape; margin: 10mm; } 
+            @page { size: A4 landscape; margin: 10mm; } /* A4橫式列印 */
             main { padding: 0 !important; margin: 0 !important; max-width: 100% !important; }
             section { border: 1px solid #94a3b8 !important; margin-bottom: 3px !important; border-radius: 4px !important; break-inside: avoid; }
             table { width: 100% !important; table-layout: fixed !important; }
@@ -333,7 +332,7 @@
         <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
             <div class="bg-slate-800 p-2.5 border-b border-slate-700 flex justify-between items-center">
                 <h2 class="text-white font-bold flex items-center gap-2 text-base">面試基本資訊</h2>
-                <!-- 檢核表按鈕 -->
+                <!-- 新增：檢核表按鈕移至此處 -->
                 <button onclick="toggleChecklist()" class="bg-indigo-500 hover:bg-indigo-600 text-white px-3 py-1 rounded text-xs font-bold shadow-md transition-all border border-indigo-400 flex items-center gap-1">
                     ☑️ 檢核表
                 </button>
@@ -438,8 +437,8 @@
                 </div>
             </div>
 
-            <div class="p-0 overflow-x-auto no-scrollbar pt-6 pb-2">
-                <table class="w-full text-left border-collapse min-w-[900px]">
+            <div class="p-0 overflow-x-auto no-scrollbar">
+                <table class="w-full text-left border-collapse min-w-[1200px]">
                     <thead>
                         <tr class="bg-slate-100 text-slate-700 text-[11px] text-center">
                             <th class="p-1 border border-slate-200 w-16">維度</th>
@@ -503,6 +502,8 @@
     <div id="action-bar" class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-2.5 shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.1)] z-50 no-print">
         <div class="container mx-auto max-w-[1400px] flex justify-between items-center">
             <div class="text-base font-black text-slate-800 flex items-center">
+                <!-- HR 專屬按鈕，透過 JS 控制顯示隱藏 -->
+                <button id="btn-to-hr-backend" onclick="switchView('backend')" class="text-[10px] bg-slate-200 hover:bg-slate-300 px-2 py-1 rounded text-slate-500 mr-3 transition-colors hidden">⚙️ 進入人資後台</button>
                 總得分：<span id="footer-total" class="text-blue-700 text-xl ml-1">0.00</span>
             </div>
             <div class="flex gap-2">
@@ -510,127 +511,6 @@
             </div>
         </div>
     </div>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // ============================================================================
-        // ⚠️ 雲端資料庫設定 (Firebase Firestore) ⚠️
-        // ============================================================================
-        // 若您將此檔案部署至個人的 GitHub Pages，且希望達到「跨設備、跨人員儲存與讀取資料」的功能，
-        // 請至 Firebase 申請免費專案，並將您的配置物件 (Config) 取代下方的空物件。
-        const YOUR_FIREBASE_CONFIG = {
-            // apiKey: "AIzaSy...",
-            // authDomain: "your-project.firebaseapp.com",
-            // projectId: "your-project",
-            // storageBucket: "your-project.appspot.com",
-            // messagingSenderId: "123456",
-            // appId: "1:123456:web:abcd"
-        };
-
-        let db, auth;
-        let appId = 'comma-interview-system';
-        window.dbCache = [];
-        window.isDbReady = false;
-
-        async function initFirebase() {
-            try {
-                let firebaseConfig = {};
-                if (Object.keys(YOUR_FIREBASE_CONFIG).length > 0) {
-                    firebaseConfig = YOUR_FIREBASE_CONFIG;
-                } else if (typeof __firebase_config !== 'undefined') {
-                    firebaseConfig = JSON.parse(__firebase_config);
-                    appId = typeof __app_id !== 'undefined' ? __app_id : appId;
-                }
-
-                if (Object.keys(firebaseConfig).length > 0) {
-                    const app = initializeApp(firebaseConfig);
-                    auth = getAuth(app);
-                    db = getFirestore(app);
-                    
-                    const initAuth = async () => {
-                        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                            await signInWithCustomToken(auth, __initial_auth_token);
-                        } else {
-                            await signInAnonymously(auth);
-                        }
-                    };
-                    await initAuth();
-                    
-                    onAuthStateChanged(auth, (user) => {
-                        if (user) {
-                            window.isDbReady = true;
-                            setupRealtimeListener();
-                        }
-                    });
-                } else {
-                    console.warn("⚠️ 尚未設定 Firebase 雲端資料庫，資料無法跨設備保存。");
-                }
-            } catch (e) {
-                console.error("Firebase 初始化失敗:", e);
-            }
-        }
-        
-        function setupRealtimeListener() {
-            if (!auth || !auth.currentUser) return;
-            const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'interviews');
-            onSnapshot(colRef, (snapshot) => {
-                window.dbCache = [];
-                snapshot.forEach(docSnap => {
-                    window.dbCache.push({ _docId: docSnap.id, ...docSnap.data() });
-                });
-                if(document.getElementById('view-backend').classList.contains('active')) window.loadBackendData();
-                if(document.getElementById('view-hr-front').classList.contains('active')) window.searchHRFront();
-            }, (error) => {
-                console.error("即時監聽失敗:", error);
-            });
-        }
-
-        initFirebase();
-
-        // 綁定儲存函式到全域
-        window.saveToDB = async function(status) {
-            window.syncState();
-            if(!state.name.trim()) return false;
-            
-            state.docStatus = status;
-
-            if (window.isDbReady && db && auth.currentUser) {
-                try {
-                    const docId = "candidate_" + btoa(encodeURIComponent(state.name)).replace(/=/g, '');
-                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'interviews', docId);
-                    await setDoc(docRef, state);
-                    return true;
-                } catch (e) {
-                    console.error("儲存失敗:", e);
-                    alert("雲端儲存失敗，請檢查網路連線或資料庫權限。");
-                    return false;
-                }
-            } else {
-                alert("【系統警告】雲端資料庫尚未連線！\n若您正在使用個人網址 (如 GitHub Pages)，請先至原始碼中設定您的 Firebase Config，否則資料無法儲存。");
-                return false;
-            }
-        }
-
-        window.deleteRecord = async function(docId) {
-            if(confirm('確定要刪除此應徵者的資料嗎？此操作無法復原。')) {
-                if (window.isDbReady && db && auth.currentUser) {
-                    try {
-                        const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'interviews', docId);
-                        await deleteDoc(docRef);
-                        window.showToast('🗑️ 資料已成功刪除');
-                    } catch(e) {
-                        console.error("刪除失敗:", e);
-                        alert("刪除失敗，請檢查權限。");
-                    }
-                } else {
-                    alert("資料庫未連線，無法刪除。");
-                }
-            }
-        }
-    </script>
 
     <script>
         // ================= 企業帳號與權限資料庫 =================
@@ -660,25 +540,14 @@
             "F00092": { name: "蔡玉晴", dept: "快樂騰雲校", role: "MGR" }
         };
 
-        window.currentUser = null; 
+        let currentUser = null; 
 
-        // 確保結構完整的狀態，避免舊版紀錄導致 undefined 錯誤
-        window.ensureStateStructure = function() {
-            if(!state.s3Texts) {
-                state.s3Texts = {
-                    core: Array(6).fill(null).map(()=>({bei:'', c:'', a:'', r:''})),
-                    mgmt: Array(3).fill(null).map(()=>({bei:'', c:'', a:'', r:''}))
-                };
-            }
-            if(!state.checklist) state.checklist = Array(20).fill(false);
-            if(typeof state.interviewNote === 'undefined') state.interviewNote = "";
-        }
-
+        // 安全設定元素的文字與HTML
         const setTxt = (id, text) => { const el = document.getElementById(id); if(el) el.innerText = text; };
         const setHtml = (id, html) => { const el = document.getElementById(id); if(el) el.innerHTML = html; };
 
         // ================= Toggle Checklist Modal =================
-        window.toggleChecklist = function(forceShow = false) {
+        function toggleChecklist(forceShow = false) {
             const modal = document.getElementById('checklist-modal');
             if (!modal) return;
             if (forceShow === true || !modal.classList.contains('show')) {
@@ -689,7 +558,7 @@
         }
 
         // ================= 登入與路由 =================
-        window.handleLogin = function() {
+        function handleLogin() {
             const acc = document.getElementById('login-acc')?.value.trim().toUpperCase();
             const pwd = document.getElementById('login-pwd')?.value.trim();
             if(!acc || pwd !== "0000") return alert("帳號不存在或密碼錯誤 (測試密碼: 0000)");
@@ -730,15 +599,15 @@
             if(currentUser.role === 'HR') {
                 if(navFrontBtn) { navFrontBtn.innerText = "前台作業"; navFrontBtn.classList.remove('hidden'); navFrontBtn.onclick = () => switchView('hr_search'); }
                 if(navBackBtn) { navBackBtn.classList.remove('hidden'); navBackBtn.onclick = () => switchView('backend'); }
-                switchView('mgr_front'); 
+                switchView('mgr_front'); // 不論進入前後台，都從面試評分系統開始
             } else {
                 if(navFrontBtn) { navFrontBtn.innerText = "前台評分"; navFrontBtn.classList.remove('hidden'); navFrontBtn.onclick = () => switchView('mgr_front'); }
                 if(navBackBtn) { navBackBtn.classList.remove('hidden'); navBackBtn.onclick = () => switchView('backend'); }
-                switchView('mgr_front'); 
+                switchView('mgr_front'); // 不論進入前後台，都從面試評分系統開始
             }
         }
 
-        window.logout = function() {
+        function logout() {
             currentUser = null;
             document.getElementById('main-header')?.classList.add('hidden');
             document.getElementById('action-bar')?.classList.add('hidden');
@@ -748,7 +617,7 @@
             if(pwdInput) pwdInput.value = "";
         }
 
-        window.switchView = function(target) {
+        function switchView(target) {
             document.querySelectorAll('.page-view').forEach(el => el.classList.remove('active'));
             document.getElementById('action-bar')?.classList.add('hidden');
             document.body.setAttribute('data-theme', 'blue'); 
@@ -765,31 +634,13 @@
             }
         }
 
-        // ================= 取得過濾後的資料庫 =================
-        window.getFilteredDB = function() {
-            const dbData = window.dbCache || [];
-            if (!currentUser) return dbData;
-
-            if (['F00035', 'F00054', 'F00001'].includes(currentUser.id)) {
-                return dbData; 
-            } else if (currentUser.id === 'F00004') {
-                const allowedDepts = ['大園參天校', '園中方舟校', '青埔旭日校', '中壢心夢想校', '國高中事業處'];
-                return dbData.filter(r => allowedDepts.includes(r.branch));
-            } else if (currentUser.id === 'F00005') {
-                const allowedDepts = ['青埔翱翔校', '青園展翅校', '大園晨光校', '內壢森耀校', '竹北知行校', '文化極光校', '快樂騰雲校', '國小事業處'];
-                return dbData.filter(r => allowedDepts.includes(r.branch));
-            } else {
-                return dbData.filter(r => r.branch === currentUser.dept);
-            }
-        }
-
         // ================= 人資前台搜尋邏輯 =================
-        window.searchHRFront = function() {
+        function searchHRFront() {
             const sName = document.getElementById('search-name').value.trim();
             const sBranch = document.getElementById('search-branch').value;
-            const dbData = window.dbCache || [];
+            const db = JSON.parse(localStorage.getItem('interview_db') || '[]');
             
-            let filtered = dbData;
+            let filtered = db;
             if(sName) filtered = filtered.filter(r => r.name.includes(sName));
             if(sBranch) filtered = filtered.filter(r => r.branch === sBranch);
 
@@ -804,7 +655,7 @@
                     else if(r.docStatus === 'completed') statusBadge = '<span class="bg-emerald-100 text-emerald-700 px-2 py-1 rounded text-xs">✅ 面試完成</span>';
 
                     return `
-                    <tr class="border-b hover:bg-blue-50/50 transition-colors cursor-pointer" onclick="viewDetailFromHR('${r._docId}')">
+                    <tr class="border-b hover:bg-blue-50/50 transition-colors cursor-pointer" onclick="viewDetailFromHR(${db.indexOf(r)})">
                         <td class="p-3 text-slate-500">${r.date || '-'}</td>
                         <td class="p-3 font-black text-blue-700">${r.name}</td>
                         <td class="p-3 text-slate-600 font-medium">${r.branch}</td>
@@ -813,14 +664,14 @@
                         <td class="p-3 text-center font-bold text-slate-600 text-xs">${statusBadge}</td>
                         <td class="p-3 text-center font-bold ${r.finalDecision==='pass'?'text-emerald-600':r.finalDecision==='fail'?'text-red-600':'text-slate-400'}">${r.finalDecision==='pass'?'錄取':r.finalDecision==='fail'?'不錄取':'-'}</td>
                         <td class="p-3 text-center">
-                            <button onclick="event.stopPropagation(); viewDetailFromHR('${r._docId}')" class="bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm transition-colors">🔍 查看</button>
+                            <button onclick="event.stopPropagation(); viewDetailFromHR(${db.indexOf(r)})" class="bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm transition-colors">🔍 查看</button>
                         </td>
                     </tr>
                 `;}).join('');
             }
         }
 
-        window.startNewRating = function() {
+        function startNewRating() {
             state = getEmptyState();
             hydrateUI();
             calculateScores();
@@ -828,11 +679,9 @@
             window.scrollTo(0,0);
         }
         
-        window.viewDetailFromHR = function(docId) { 
-            const dbData = window.dbCache || [];
-            const r = dbData.find(item => item._docId === docId);
-            if(!r) return;
-            
+        function viewDetailFromHR(originalIdx) { 
+            const db = JSON.parse(localStorage.getItem('interview_db') || '[]');
+            const r = db[originalIdx];
             if(r.docStatus === 'draft') {
                 if(!confirm(`已找到未完成的暫存人才，要讀取嗎？`)) return;
             } else if (r.docStatus === 'stage_done' || r.docStatus === 'completed') {
@@ -847,9 +696,13 @@
         }
 
         // ================= 後台資料載入 (分權限) =================
-        window.loadBackendData = function() {
-            const viewDb = getFilteredDB();
-            const canDelete = currentUser && ['F00035', 'F00054', 'F00001'].includes(currentUser.id);
+        function loadBackendData() {
+            const db = JSON.parse(localStorage.getItem('interview_db') || '[]');
+            let viewDb = db;
+            // 非執行長、人資、高階處長的主管，只能看自己單位
+            if(currentUser.role === 'MGR' && !['F00001', 'F00004', 'F00005'].includes(currentUser.id)) {
+                viewDb = db.filter(r => r.branch === currentUser.dept);
+            }
 
             const tbody = document.getElementById('db-list-tbody');
             if(viewDb.length === 0) {
@@ -858,6 +711,7 @@
             }
 
             tbody.innerHTML = viewDb.slice().reverse().map((r, revI) => {
+                const originalIdx = viewDb.length - 1 - revI; 
                 let statusText = '';
                 if(r.docStatus === 'draft') statusText = '筆試及職能面試題目暫存';
                 else if(r.docStatus === 'stage_done') statusText = '面試最終決策中';
@@ -879,29 +733,36 @@
                     <td class="p-3 text-center font-bold ${r.finalDecision==='pass'?'text-emerald-600':r.finalDecision==='fail'?'text-red-600':'text-slate-400'}">${decText}</td>
                     <td class="p-3 text-slate-600 text-xs max-w-[150px] truncate" title="${r.interviewNote||''}">${r.interviewNote || '-'}</td>
                     <td class="p-3 text-center flex justify-center gap-2">
-                        <button onclick="editRecord('${r._docId}')" class="bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm transition-colors">查看/編輯</button>
-                        ${canDelete ? `<button onclick="deleteRecord('${r._docId}')" class="bg-red-50 border border-red-200 hover:bg-red-100 text-red-600 px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm transition-colors">刪除</button>` : ''}
+                        <button onclick="editRecord(${originalIdx})" class="bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm transition-colors">查看/編輯</button>
+                        <button onclick="deleteRecord(${originalIdx})" class="bg-red-50 border border-red-200 hover:bg-red-100 text-red-600 px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm transition-colors">刪除</button>
                     </td>
                 </tr>
                 `;
             }).join('');
         }
         
-        window.editRecord = function(docId) {
-            const dbData = window.dbCache || [];
-            const r = dbData.find(item => item._docId === docId);
-            if(r) {
-                state = r;
-                hydrateUI();
-                calculateScores();
-                
-                switchView('mgr_front');
-                window.scrollTo(0,0);
-                showToast('✅ 已載入紀錄，您可以繼續編輯');
+        function editRecord(originalIdx) {
+            const db = JSON.parse(localStorage.getItem('interview_db') || '[]');
+            state = db[originalIdx];
+            hydrateUI();
+            calculateScores();
+            
+            switchView('mgr_front');
+            window.scrollTo(0,0);
+            showToast('✅ 已載入紀錄，您可以繼續編輯');
+        }
+
+        function deleteRecord(originalIdx) {
+            if(confirm('確定要刪除此應徵者的資料嗎？此操作無法復原。')) {
+                let db = JSON.parse(localStorage.getItem('interview_db') || '[]');
+                db.splice(originalIdx, 1);
+                localStorage.setItem('interview_db', JSON.stringify(db));
+                loadBackendData(); 
+                showToast('🗑️ 資料已成功刪除');
             }
         }
 
-        window.closeMissingModal = function() {
+        function closeMissingModal() {
             const mm = document.getElementById('missing-modal');
             if (mm) mm.classList.remove('show');
         }
@@ -950,7 +811,7 @@
             };
         }
 
-        window.syncState = function() {
+        function syncState() {
             const elName = document.getElementById('ipt-name'); if(elName) state.name = elName.value.trim();
             const elBranch = document.getElementById('sel-branch');
             if(currentUser && currentUser.role === 'MGR' && !['F00001', 'F00004', 'F00005'].includes(currentUser.id)) {
@@ -974,14 +835,14 @@
             if(chks.length > 0) state.checklist = Array.from(chks).map(chk => chk.checked);
         }
 
-        window.checkExistingRecord = function() {
+        function checkExistingRecord() {
             const elName = document.getElementById('ipt-name');
             if(!elName) return;
             let name = elName.value.trim();
             if(!name) return;
 
-            const dbData = window.dbCache || [];
-            let existing = dbData.find(r => r.name === name);
+            let db = JSON.parse(localStorage.getItem('interview_db') || '[]');
+            let existing = db.find(r => r.name === name);
 
             if(existing) {
                 if(existing.docStatus !== 'completed' && existing.docStatus !== 'stage_done') {
@@ -1007,12 +868,10 @@
         }
 
         function hydrateUI() {
-            ensureStateStructure(); // 強制修復缺少的新資料結構
             const elName = document.getElementById('ipt-name'); if(elName) elName.value = state.name;
             
             const elBranch = document.getElementById('sel-branch'); 
             if(elBranch) {
-                // 執行長、高階主管與人資解鎖選單
                 if (currentUser && (currentUser.role === 'HR' || ['F00001', 'F00004', 'F00005'].includes(currentUser.id))) {
                     elBranch.disabled = false;
                     elBranch.classList.remove('cursor-not-allowed', 'bg-slate-100');
@@ -1027,7 +886,6 @@
                 }
             }
 
-            // 自動帶入主面試官
             const mainIntInput = document.querySelector('.ipt-interviewer');
             if (mainIntInput && !mainIntInput.value && currentUser) {
                 mainIntInput.value = currentUser.name;
@@ -1062,7 +920,7 @@
             renderS1(); renderS2(); renderS3();
         }
 
-        window.updateThemeManual = function(branch) {
+        function updateThemeManual(branch) {
             const b = document.body;
             if (["青埔升大校"].includes(branch)) b.setAttribute("data-theme", "green");
             else if (["青埔翱翔校", "青園展翅校", "大園晨光校", "內壢森耀校", "竹北知行校", "文化極光校", "快樂騰雲校"].includes(branch)) b.setAttribute("data-theme", "yellow");
@@ -1070,14 +928,32 @@
             else b.setAttribute("data-theme", "blue");
         }
 
-        window.updateDateTimeDisplay = function() {
+        function updateDateTimeDisplay() {
             const dInput = document.getElementById('interview-date')?.value;
             const tInput = document.getElementById('interview-time')?.value;
             if(!dInput) return; const d = new Date(dInput);
             setTxt('datetime-preview', `${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()} (${["日","一","二","三","四","五","六"][d.getDay()]}) ${tInput ? '/ '+tInput+' 開始':''}`);
         }
 
-        window.handleSaveDraft = async function() {
+        // ================= 資料庫儲存引擎 =================
+        function saveToDB(status) {
+            syncState();
+            if(!state.name.trim()) return false;
+            
+            state.docStatus = status;
+
+            let db = JSON.parse(localStorage.getItem('interview_db') || '[]');
+            let existingIdx = db.findIndex(r => r.name === state.name);
+            if(existingIdx >= 0) {
+                db[existingIdx] = state; // 迭代更新覆蓋
+            } else {
+                db.push(state); 
+            }
+            localStorage.setItem('interview_db', JSON.stringify(db));
+            return true;
+        }
+
+        function handleSaveDraft() {
             if(!state.name.trim()) return alert('請先輸入「應徵者姓名」才能暫存！');
             syncState();
             
@@ -1089,11 +965,11 @@
                 return;
             }
 
-            const success = await saveToDB('draft');
-            if(success) showToast(`✅ 已暫存人才評分進度！`);
+            saveToDB('draft');
+            showToast(`✅ 已暫存人才評分進度！`);
         }
 
-        window.handleStageComplete = async function() {
+        function handleStageComplete() {
             if(!state.name.trim()) return alert('請先輸入「應徵者姓名」！');
             let missing = [];
             S1_DATA.forEach(g => { if (g.id !== 'bon') g.qs.forEach((q, i) => { if (state.s1[g.id][i] === 0) missing.push(`[階段一] ${g.title}`); }); });
@@ -1114,15 +990,13 @@
                 return;
             } 
 
-            const success = await saveToDB('stage_done');
-            if(success) {
-                showToast('✅ 階段評分已更新！請進行最終決策。');
-                const rc = document.getElementById('report-card-section');
-                if(rc) rc.scrollIntoView({behavior: 'smooth'});
-            }
+            saveToDB('stage_done');
+            showToast('✅ 階段評分已更新！請進行最終決策。');
+            const rc = document.getElementById('report-card-section');
+            if(rc) rc.scrollIntoView({behavior: 'smooth'});
         }
 
-        window.handleFinalDecision = async function(type) {
+        function handleFinalDecision(type) {
             if(!state.name.trim()) return alert('請先輸入「應徵者姓名」！');
             
             const btnPass = document.getElementById('btn-pass');
@@ -1133,11 +1007,11 @@
             if(type==='pass' && btnPass) { btnPass.classList.add('active-pass'); state.finalDecision = 'pass'; }
             if(type==='fail' && btnFail) { btnFail.classList.add('active-fail'); state.finalDecision = 'fail'; }
 
-            const success = await saveToDB('completed');
-            if(success) showToast('☁️ 最終決策已儲存！資料已完整覆蓋更新。');
+            saveToDB('completed');
+            showToast('☁️ 最終決策已儲存！資料已完整覆蓋更新。');
         }
 
-        window.showToast = function(msg) { const t = document.getElementById('toast'); if(t) { t.innerText = msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 1500); } }
+        function showToast(msg) { const t = document.getElementById('toast'); if(t) { t.innerText = msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 1500); } }
         
         // ================= 渲染邏輯 =================
         function renderS1() {
@@ -1175,7 +1049,12 @@
             if(!tbody) return;
             const d = S3_LEVELS[state.level] || S3_LEVELS[1]; let html = '';
             
-            ensureStateStructure();
+            if(!state.s3Texts) {
+                state.s3Texts = {
+                    core: Array(6).fill(null).map(()=>({bei:'', c:'', a:'', r:''})),
+                    mgmt: Array(3).fill(null).map(()=>({bei:'', c:'', a:'', r:''}))
+                };
+            }
 
             S3_BARS_CORE.forEach((item, i) => {
                 html += `<tr class="border-b border-slate-200"><td class="p-1.5 border-r bg-blue-50 font-bold text-center text-xs w-[60px]">核心<br><span class="text-[10px] text-blue-600">(${d.c[i]}%)</span></td><td class="p-1.5 border-r font-bold text-xs text-center w-[100px]">${item.name}</td>
@@ -1183,7 +1062,7 @@
                 <td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="2" onchange="state.s3Texts.core[${i}].c=this.value">${state.s3Texts.core[i].c}</textarea></td>
                 <td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="2" onchange="state.s3Texts.core[${i}].a=this.value">${state.s3Texts.core[i].a}</textarea></td>
                 <td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="2" onchange="state.s3Texts.core[${i}].r=this.value">${state.s3Texts.core[i].r}</textarea></td>
-                <td class="p-1.5 text-center relative"><div class="flex gap-1 justify-center">`;
+                <td class="p-1.5 text-center"><div class="flex gap-1 justify-center">`;
                 [1,2,3,4,5].map(v => { html += `<button onclick="setScore('s3-core', ${i}, ${v}, this)" class="score-btn w-6 h-6 rounded text-[11px] font-bold text-slate-600 ${state.s3.core[i]==v?'active':''}" data-val="${v}">${v}<span class="tooltip-text">${item.levels[v-1]}</span></button>`; });
                 html += `</div></td></tr>`;
                 const desc = state.s3.core[i] > 0 ? item.descs[state.s3.core[i]-1] : '';
@@ -1196,7 +1075,7 @@
                 <td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="2" onchange="state.s3Texts.mgmt[${i}].c=this.value">${state.s3Texts.mgmt[i].c}</textarea></td>
                 <td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="2" onchange="state.s3Texts.mgmt[${i}].a=this.value">${state.s3Texts.mgmt[i].a}</textarea></td>
                 <td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="2" onchange="state.s3Texts.mgmt[${i}].r=this.value">${state.s3Texts.mgmt[i].r}</textarea></td>
-                <td class="p-1.5 text-center relative"><div class="flex gap-1 justify-center">`;
+                <td class="p-1.5 text-center"><div class="flex gap-1 justify-center">`;
                 [1,2,3,4,5].map(v => { html += `<button onclick="setScore('s3-mgmt', ${i}, ${v}, this)" class="score-btn w-6 h-6 rounded text-[11px] font-bold text-slate-600 ${state.s3.mgmt[i]==v?'active':''}" data-val="${v}">${v}<span class="tooltip-text">${item.levels[v-1]}</span></button>`; });
                 html += `</div></td></tr>`;
                 const desc = state.s3.mgmt[i] > 0 ? item.descs[state.s3.mgmt[i]-1] : '';
@@ -1205,7 +1084,7 @@
             tbody.innerHTML = html;
         }
 
-        window.updateLevelLogic = function() { 
+        function updateLevelLogic() { 
             const selectEl = document.getElementById('job-level-select');
             if(selectEl) state.level = parseInt(selectEl.value); 
             renderS3(); calculateScores(); 
@@ -1244,7 +1123,7 @@
             calculateScores();
         }
 
-        window.calculateScores = function() {
+        function calculateScores() {
             const sumArr = arr => arr.reduce((a,b)=>a+b, 0);
 
             let s1PctTotal = 0, s1RawTotal = 0, motScore = 0; 
@@ -1332,7 +1211,7 @@
             }
         }
 
-        window.toggleReportMode = function(isReport) {
+        function toggleReportMode(isReport) {
             const reportBar = document.getElementById('report-exit-bar');
             const actionBar = document.getElementById('action-bar');
             
@@ -1351,10 +1230,10 @@
         }
 
         // ================= 後台資料匯出 =================
-        window.exportCSV = function() {
+        function exportCSV() {
             let csv = "\uFEFF面試日期,應徵者姓名,單位,職位,一、筆試和綜合面談,二、外顯特質,三、職能面試,總得分,進度狀態,結果\n";
-            const dbData = window.dbCache || [];
-            let viewDb = currentUser && currentUser.role === 'MGR' && !['F00001', 'F00004', 'F00005'].includes(currentUser.id) ? dbData.filter(r => r.branch === currentUser.dept) : dbData;
+            const db = JSON.parse(localStorage.getItem('interview_db') || '[]');
+            let viewDb = currentUser && currentUser.role === 'MGR' && !['F00001', 'F00004', 'F00005'].includes(currentUser.id) ? db.filter(r => r.branch === currentUser.dept) : db;
 
             viewDb.forEach(r => { 
                 let statusText = r.docStatus === 'draft' ? '筆試及職能面試題目暫存' : r.docStatus === 'stage_done' ? '面試最終決策中' : '面試完成';
