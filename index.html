@@ -87,17 +87,17 @@
         
         @media print {
             .no-print { display: none !important; }
-            body { font-size: 9px !important; line-height: 1.1 !important; color: #000; -webkit-print-color-adjust: exact; print-color-adjust: exact;}
-            @page { size: A4 portrait; margin: 5mm; }
+            body { font-size: 10px !important; line-height: 1.2 !important; color: #000; -webkit-print-color-adjust: exact; print-color-adjust: exact;}
+            @page { size: A4 landscape; margin: 10mm; } /* A4橫式列印 */
             main { padding: 0 !important; margin: 0 !important; max-width: 100% !important; }
             section { border: 1px solid #94a3b8 !important; margin-bottom: 3px !important; border-radius: 4px !important; break-inside: avoid; }
             table { width: 100% !important; table-layout: fixed !important; }
-            table th, table td { padding: 1px 2px !important; border: 1px solid #cbd5e1 !important; font-size: 7px !important; word-wrap: break-word !important;}
-            .overflow-x-auto { overflow: hidden !important; }
+            table th, table td { padding: 2px 4px !important; border: 1px solid #cbd5e1 !important; font-size: 9px !important; word-wrap: break-word !important;}
+            .overflow-x-auto { overflow: visible !important; }
             .bg-slate-900, .bg-slate-800, .bg-emerald-50, .bg-indigo-50, .bg-orange-50 { background-color: #f1f5f9 !important; color: #000 !important; border: none !important; }
             .text-white, .text-slate-200, .text-slate-400 { color: #0f172a !important; }
             .text-blue-400, .text-emerald-400, .text-orange-400, .text-amber-300, .text-red-400, .text-red-500 { color: #000 !important; font-weight: 900 !important; }
-            textarea { min-height: unset !important; height: auto !important; border-bottom: 1px dashed #ccc !important; }
+            textarea { min-height: unset !important; height: auto !important; border-bottom: 1px dashed #ccc !important; font-size: 10px !important; }
         }
     </style>
 </head>
@@ -123,8 +123,8 @@
     </div>
 
     <!-- ==================== 頁面 0: 登入頁 ==================== -->
-    <div id="view-login" class="page-view active min-h-screen flex items-center justify-center bg-slate-900">
-        <div class="bg-white p-8 rounded-2xl shadow-2xl w-96 max-w-[90%] text-center">
+    <div id="view-login" class="page-view active min-h-screen flex flex-col items-center justify-center bg-slate-900">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-sm text-center">
             <div class="bg-slate-100 p-3 rounded-xl mb-6 inline-block mx-auto border border-slate-200">
                 <img src="逗點教室LOGO-直-co -去背.png" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\' fill=\'%23333\'><rect width=\'100\' height=\'100\' rx=\'20\' fill=\'%23e2e8f0\'/><text x=\'50\' y=\'55\' font-size=\'16\' font-weight=\'bold\' text-anchor=\'middle\' fill=\'%2364748b\'>COMMA</text></svg>'" class="h-16 object-contain">
             </div>
@@ -166,7 +166,7 @@
     </header>
 
     <div id="report-exit-bar" class="hidden fixed top-0 left-0 w-full bg-blue-600 text-white p-2 z-[60] flex justify-between items-center no-print shadow-lg">
-        <span class="font-bold ml-4 text-sm">📄 成績單列印模式 (建議列印設定：A4 直式)</span>
+        <span class="font-bold ml-4 text-sm">📄 成績單列印模式 (列印已預設為 A4 橫式)</span>
         <div class="flex gap-2 mr-4">
             <button onclick="window.print()" class="bg-white text-blue-600 px-4 py-1.5 rounded-lg font-bold hover:bg-blue-50 text-sm shadow-sm transition-colors flex items-center gap-1">🖨️ 下載 / 列印</button>
             <button onclick="toggleReportMode(false)" class="bg-slate-800 text-white px-4 py-1.5 rounded-lg font-bold hover:bg-slate-700 text-sm shadow-sm transition-colors">返回編輯</button>
@@ -193,8 +193,25 @@
                 </select>
                 <button onclick="searchHRFront()" class="bg-blue-600 text-white px-8 py-2.5 rounded-lg font-black hover:bg-blue-700 shadow-md">查詢資料</button>
             </div>
-            <div id="hr-search-results" class="space-y-3">
-                <div class="text-center text-slate-400 py-10 font-bold">請輸入條件並點擊查詢</div>
+            
+            <div class="p-0 overflow-x-auto">
+                <table class="w-full text-left border-collapse min-w-[900px]">
+                    <thead class="bg-slate-100 text-slate-700 text-sm">
+                        <tr>
+                            <th class="p-3 border-b">面試日期</th>
+                            <th class="p-3 border-b">應徵者</th>
+                            <th class="p-3 border-b">分校/單位</th>
+                            <th class="p-3 border-b">職位</th>
+                            <th class="p-3 border-b text-center text-blue-700">總得分</th>
+                            <th class="p-3 border-b text-center">進度狀態</th>
+                            <th class="p-3 border-b text-center">結果</th>
+                            <th class="p-3 border-b w-32 text-center">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="hr-search-results" class="text-sm">
+                        <tr><td colspan="8" class="text-center text-slate-400 py-10 font-bold">請輸入條件並點擊查詢</td></tr>
+                    </tbody>
+                </table>
             </div>
         </section>
     </div>
@@ -204,7 +221,7 @@
         <section class="bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden">
             <div class="bg-slate-800 p-4 flex justify-between items-center">
                 <h2 class="text-white font-bold text-lg flex items-center gap-2">📊 逗點面試資料分析</h2>
-                <button onclick="exportCSV()" class="bg-emerald-600 text-white px-5 py-2 rounded-lg font-bold hover:bg-emerald-700 shadow-md transition-colors flex items-center gap-2">
+                <button onclick="exportCSV()" class="bg-emerald-600 text-white px-4 py-1.5 rounded-lg font-bold hover:bg-emerald-700 shadow-sm text-sm transition-colors flex items-center gap-2">
                     <span>📥 匯出報表</span>
                 </button>
             </div>
@@ -216,9 +233,9 @@
                             <th class="p-3 border-b">應徵者</th>
                             <th class="p-3 border-b">分校/單位</th>
                             <th class="p-3 border-b">職位</th>
-                            <th class="p-3 border-b text-center text-indigo-700">階段一</th>
-                            <th class="p-3 border-b text-center text-emerald-700">階段二</th>
-                            <th class="p-3 border-b text-center text-orange-700">階段三</th>
+                            <th class="p-3 border-b text-center text-indigo-700">一、筆試和綜合面談</th>
+                            <th class="p-3 border-b text-center text-emerald-700">二、外顯特質</th>
+                            <th class="p-3 border-b text-center text-orange-700">三、職能面試</th>
                             <th class="p-3 border-b text-center text-blue-700">總得分</th>
                             <th class="p-3 border-b text-center">進度狀態</th>
                             <th class="p-3 border-b text-center">結果</th>
@@ -240,7 +257,7 @@
             <div class="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div>
                     <label class="block text-xs font-bold text-slate-400 mb-1">應徵者姓名</label>
-                    <input type="text" id="ipt-name" onblur="checkExistingRecord()" onchange="syncState()" class="w-full border-b-2 border-slate-200 p-1.5 outline-none bg-slate-50 transition-all text-base font-bold focus:border-blue-500" placeholder="輸入姓名 (離開欄位自動搜尋紀錄)">
+                    <input type="text" id="ipt-name" onblur="checkExistingRecord()" oninput="syncState()" class="w-full border-b-2 border-slate-200 p-1.5 outline-none bg-slate-50 transition-all text-base font-bold focus:border-blue-500" placeholder="輸入姓名 (離開欄位自動搜尋紀錄)">
                 </div>
                 <div class="row-span-2">
                     <label class="block text-xs font-bold text-slate-400 mb-1 flex justify-between items-center">
@@ -248,7 +265,7 @@
                         <button onclick="addInterviewer()" class="hide-in-report bg-blue-50 text-blue-600 hover:bg-blue-100 px-2 py-0.5 rounded text-xs flex items-center gap-1 font-bold transition-colors">增加人員點我</button>
                     </label>
                     <div id="interviewer-list" class="space-y-2">
-                        <div class="flex gap-2"><input type="text" class="ipt-interviewer flex-1 border-b-2 border-slate-200 p-1.5 text-base outline-none bg-slate-50 focus:border-blue-500 transition-all" onchange="syncState()"></div>
+                        <div class="flex gap-2"><input type="text" class="ipt-interviewer flex-1 border-b-2 border-slate-200 p-1.5 text-base outline-none bg-slate-50 focus:border-blue-500 transition-all" oninput="syncState()"></div>
                     </div>
                 </div>
                 <div>
@@ -342,8 +359,8 @@
                     <thead>
                         <tr class="bg-slate-100 text-slate-700 text-[11px] text-center">
                             <th class="p-1 border border-slate-200 w-16">維度</th>
-                            <th class="p-1 border border-slate-200 w-24">職能項目</th>
-                            <th class="p-1 border border-slate-200 text-blue-800" width="250">BEI (問題描述)</th>
+                            <th class="p-1 border border-slate-200 w-28">職能項目</th>
+                            <th class="p-1 border border-slate-200 text-blue-800" width="300">BEI (問題描述)</th>
                             <th class="p-1 border border-slate-200 text-indigo-800" colspan="3">CAR (狀況 / 行動 / 結果)</th>
                             <th class="p-1 border border-slate-200 w-36">給分 (放置滑鼠看提示)</th>
                         </tr>
@@ -385,7 +402,7 @@
                 <div class="space-y-3 bg-slate-800/80 p-4 rounded-xl border border-slate-700 flex flex-col">
                     <label class="block text-slate-300 text-sm font-bold">加分方式 / 補救培訓計畫 (必填)</label>
                     <div id="bonus-hint-area" class="text-xs text-amber-400 bg-amber-900/20 px-3 py-2 rounded-t-lg hidden hide-in-report"></div>
-                    <textarea id="bonus-method-input" onchange="syncState()" rows="2" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2.5 text-white text-sm focus:border-slate-500 outline-none mb-2 placeholder-slate-500 flex-1 transition-colors" placeholder="請填寫..."></textarea>
+                    <textarea id="bonus-method-input" oninput="syncState()" rows="2" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2.5 text-white text-sm focus:border-slate-500 outline-none mb-2 placeholder-slate-500 flex-1 transition-colors" placeholder="請填寫..."></textarea>
                     
                     <label class="block text-slate-300 text-sm font-bold hide-in-report">最終錄取結果</label>
                     <div class="flex gap-4">
@@ -402,8 +419,6 @@
     <div id="action-bar" class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-2.5 shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.1)] z-50 no-print">
         <div class="container mx-auto max-w-[1400px] flex justify-between items-center">
             <div class="text-base font-black text-slate-800 flex items-center">
-                <!-- HR 專屬按鈕，透過 JS 控制顯示隱藏 -->
-                <button id="btn-to-hr-backend" onclick="switchView('backend')" class="text-[10px] bg-slate-200 hover:bg-slate-300 px-2 py-1 rounded text-slate-500 mr-3 transition-colors hidden">⚙️ 進入人資後台</button>
                 總得分：<span id="footer-total" class="text-blue-700 text-xl ml-1">0.00</span>
             </div>
             <div class="flex gap-2">
@@ -463,7 +478,7 @@
             } else if (acc === "F00035" || acc === "F00054") {
                 greeting = `歡迎人資來了！！ 茉莉花仙子系統開發師敏敏`;
             } else if (currentUser.dept.includes("校")) {
-                greeting = `歡迎 ${currentUser.name} 主任來了！`;
+                greeting = `歡迎 ${currentUser.name} 分校主任來了！`;
             } else {
                 greeting = `歡迎 ${currentUser.name} 處長來了！`;
             }
@@ -477,9 +492,8 @@
             
             const navFrontBtn = document.getElementById('nav-front-btn');
             const navBackBtn = document.getElementById('nav-back-btn');
-            const btnHrBackend = document.getElementById('btn-to-hr-backend');
 
-            // 初始化全空白狀態
+            // 確保一登入是「全空白狀態」
             state = getEmptyState();
             hydrateUI();
             calculateScores();
@@ -487,13 +501,11 @@
             if(currentUser.role === 'HR') {
                 if(navFrontBtn) { navFrontBtn.innerText = "前台作業"; navFrontBtn.classList.remove('hidden'); navFrontBtn.onclick = () => switchView('hr_search'); }
                 if(navBackBtn) { navBackBtn.classList.remove('hidden'); navBackBtn.onclick = () => switchView('backend'); }
-                if(btnHrBackend) btnHrBackend.classList.remove('hidden');
-                switchView('hr_search');
+                switchView('mgr_front'); // 不論進入前後台，都從面試評分系統開始
             } else {
                 if(navFrontBtn) { navFrontBtn.innerText = "前台評分"; navFrontBtn.classList.remove('hidden'); navFrontBtn.onclick = () => switchView('mgr_front'); }
                 if(navBackBtn) { navBackBtn.classList.remove('hidden'); navBackBtn.onclick = () => switchView('backend'); }
-                if(btnHrBackend) btnHrBackend.classList.add('hidden');
-                switchView('mgr_front');
+                switchView('mgr_front'); // 不論進入前後台，都從面試評分系統開始
             }
         }
 
@@ -536,7 +548,7 @@
 
             const resDiv = document.getElementById('hr-search-results');
             if(filtered.length === 0) {
-                resDiv.innerHTML = '<div class="text-center text-slate-400 py-10 font-bold">查無符合條件的已評分資料</div>';
+                resDiv.innerHTML = `<tr><td colspan="8" class="text-center text-slate-400 py-10 font-bold">查無符合條件的已評分資料</td></tr>`;
             } else {
                 resDiv.innerHTML = filtered.map((r, i) => {
                     let statusBadge = '';
@@ -545,21 +557,18 @@
                     else if(r.docStatus === 'completed') statusBadge = '<span class="bg-emerald-100 text-emerald-700 px-2 py-1 rounded text-xs">✅ 面試完成</span>';
 
                     return `
-                    <div class="bg-white p-4 rounded-xl border border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center shadow-sm gap-4 hover:border-blue-300 transition-colors cursor-pointer" onclick="viewDetailFromHR(${db.indexOf(r)})">
-                        <div>
-                            <div class="font-black text-lg text-blue-800 flex items-center gap-2">${r.name} <span class="text-[10px] bg-slate-100 text-slate-500 px-2 py-1 rounded-md border border-slate-200">${r.date}</span></div>
-                            <div class="text-sm text-slate-600 mt-1 font-medium">${r.branch} / ${r.position}</div>
-                        </div>
-                        <div class="flex items-center gap-4 mt-3 md:mt-0 w-full md:w-auto border-t md:border-t-0 pt-3 md:pt-0 border-slate-100 justify-end">
-                            <div class="text-right">
-                                <div class="text-2xl font-black text-slate-700 leading-none">${r.grandTotal}</div>
-                                <div class="mt-1 font-bold">${statusBadge}</div>
-                            </div>
-                            <button onclick="event.stopPropagation(); viewDetailFromHR(${db.indexOf(r)})" class="bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-200 px-4 py-2 rounded-lg font-bold text-sm transition-colors flex items-center gap-1 shadow-sm">
-                                🔍 查看
-                            </button>
-                        </div>
-                    </div>
+                    <tr class="border-b hover:bg-blue-50/50 transition-colors">
+                        <td class="p-3 text-slate-500">${r.date || '-'}</td>
+                        <td class="p-3 font-black text-blue-700">${r.name}</td>
+                        <td class="p-3 text-slate-600 font-medium">${r.branch}</td>
+                        <td class="p-3 text-slate-600">${r.position}</td>
+                        <td class="p-3 text-center font-black text-lg text-blue-600">${r.grandTotal || '0.00'}</td>
+                        <td class="p-3 text-center font-bold text-slate-600 text-xs">${statusBadge}</td>
+                        <td class="p-3 text-center font-bold ${r.finalDecision==='pass'?'text-emerald-600':r.finalDecision==='fail'?'text-red-600':'text-slate-400'}">${r.finalDecision==='pass'?'錄取':r.finalDecision==='fail'?'不錄取':'-'}</td>
+                        <td class="p-3 text-center">
+                            <button onclick="viewDetailFromHR(${db.indexOf(r)})" class="bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm transition-colors">🔍 查看</button>
+                        </td>
+                    </tr>
                 `;}).join('');
             }
         }
@@ -592,7 +601,7 @@
         function loadBackendData() {
             const db = JSON.parse(localStorage.getItem('interview_db') || '[]');
             let viewDb = db;
-            // 非執行長且非人資的主管，只能看自己單位
+            // 非執行長、人資、高階處長的主管，只能看自己單位
             if(currentUser.role === 'MGR' && !['F00001', 'F00004', 'F00005'].includes(currentUser.id)) {
                 viewDb = db.filter(r => r.branch === currentUser.dept);
             }
@@ -692,16 +701,14 @@
                 s1Final: "0.00", s2Final: "0.00", s3Final: "0.00",
                 docStatus: "new", 
                 s1: { exp: [0], mot: [0,0], sty: [0,0], sal: [0,0,0], bon: [0], bonText: "" },
-                s2: Array(S2_QUESTIONS.length).fill(0), s3: { core: Array(6).fill(0), mgmt: Array(3).fill(0) }
+                s2: Array(S2_QUESTIONS.length).fill(0), 
+                s3: { core: Array(6).fill(0), mgmt: Array(3).fill(0) },
+                s3Texts: {
+                    core: Array(6).fill(null).map(()=>({bei:'', c:'', a:'', r:''})),
+                    mgmt: Array(3).fill(null).map(()=>({bei:'', c:'', a:'', r:''}))
+                }
             };
         }
-
-        window.onload = () => {
-            document.getElementById('interview-date').value = new Date().toISOString().split('T')[0];
-            updateDateTimeDisplay();
-            hydrateUI(); 
-            renderS1(); renderS2(); renderS3(); calculateScores();
-        };
 
         function syncState() {
             const elName = document.getElementById('ipt-name'); if(elName) state.name = elName.value.trim();
@@ -892,12 +899,13 @@
                 if(!container) return;
                 let html = `<div class="bg-white p-2.5 rounded-xl border border-slate-200 shadow-sm mb-2"><div class="flex justify-between border-b-2 border-slate-100 pb-1"><h3 class="font-bold text-sm text-slate-800">${group.title}</h3></div><div class="space-y-1.5 mt-1.5">`;
                 if (group.id === 'bon') {
-                    html += `<div class="bg-slate-50 p-2.5 rounded flex items-center justify-start gap-4"><div class="text-[13px] font-medium text-slate-700 w-1/2">${group.qs[0]} <span class="text-[10px] text-slate-400 font-normal">(選填)</span></div><textarea id="s1-bon-text" onchange="syncState()" rows="1" class="input-cell flex-1" placeholder="請填寫加分項目說明...">${state.s1.bonText||''}</textarea><div class="flex gap-1.5">`;
+                    // 加寬加分題格子
+                    html += `<div class="bg-slate-50 p-2.5 rounded flex flex-col gap-2"><div class="text-[13px] font-medium text-slate-700 w-full">${group.qs[0]} <span class="text-[10px] text-slate-400 font-normal">(選填)</span></div><textarea id="s1-bon-text" onchange="syncState()" rows="2" class="input-cell w-full text-sm" placeholder="請填寫加分項目說明...">${state.s1.bonText||''}</textarea><div class="flex gap-1.5 self-end">`;
                     [1,2,3,4,5].map(v => { html += `<button onclick="setScore('s1-${group.id}', 0, ${v}, this)" class="score-btn s1-s2-btn w-7 h-7 rounded text-xs font-bold text-slate-600 ${state.s1[group.id][0]==v?'active':''}" data-val="${v}"><span class="btn-num">${v}</span><span class="report-label">${GRADE_LABELS[v]}</span></button>`; });
                     html += `</div></div>`;
                 } else {
                     group.qs.forEach((q, i) => {
-                        html += `<div class="bg-slate-50 p-2 rounded flex items-center justify-start gap-4 hover:bg-slate-100 transition-colors"><div class="text-[13px] text-slate-700 w-[55%] md:w-1/2 font-medium">${q}</div><div class="flex gap-1">`;
+                        html += `<div class="bg-slate-50 p-2 rounded-lg border border-slate-100 flex items-center gap-4 hover:bg-slate-100 transition-colors"><div class="text-[13px] text-slate-700 font-medium flex-1 pl-2">${q}</div><div class="flex gap-1.5 shrink-0 pr-2">`;
                         [1,2,3,4,5].map(v => { html += `<button onclick="setScore('s1-${group.id}', ${i}, ${v}, this)" class="score-btn s1-s2-btn w-7 h-7 rounded text-xs font-bold text-slate-600 ${state.s1[group.id][i]==v?'active':''}" data-val="${v}"><span class="btn-num">${v}</span><span class="report-label">${GRADE_LABELS[v]}</span></button>`; });
                         html += `</div></div>`;
                     });
@@ -909,11 +917,11 @@
         function renderS2() {
             const container = document.getElementById('s2-container');
             if(!container) return;
-            // 變更為一橫條一題 (grid-cols-1)
-            container.className = "p-3 space-y-1";
+            // 變更為一橫條一題
+            container.className = "p-3 space-y-1.5";
             container.innerHTML = S2_QUESTIONS.map((q, i) => {
                 let btns = [1,2,3,4,5].map(v => `<button onclick="setScore('s2', ${i}, ${v}, this)" class="score-btn s1-s2-btn w-7 h-7 rounded text-xs font-bold text-slate-600 ${state.s2[i]==v?'active':''}" data-val="${v}"><span class="btn-num">${v}</span><span class="report-label">${GRADE_LABELS[v]}</span></button>`).join('');
-                return `<div class="flex items-center justify-start gap-4 border-b border-slate-100 py-2 hover:bg-slate-50 px-2 rounded"><span class="text-[13px] text-slate-700 font-medium w-[55%] md:w-1/2">${i+1}. ${q}</span><div class="flex gap-1">${btns}</div></div>`;
+                return `<div class="flex items-center justify-between gap-4 border-b border-slate-100 py-2 hover:bg-slate-50 px-3 rounded-lg"><span class="text-[13px] text-slate-700 font-medium flex-1">${i+1}. ${q}</span><div class="flex gap-1.5 shrink-0">${btns}</div></div>`;
             }).join('');
         }
 
@@ -921,17 +929,36 @@
             const tbody = document.getElementById('s3-tbody'); 
             if(!tbody) return;
             const d = S3_LEVELS[state.level] || S3_LEVELS[1]; let html = '';
+            
+            // 確保 state.s3Texts 存在 (防呆)
+            if(!state.s3Texts) {
+                state.s3Texts = {
+                    core: Array(6).fill(null).map(()=>({bei:'', c:'', a:'', r:''})),
+                    mgmt: Array(3).fill(null).map(()=>({bei:'', c:'', a:'', r:''}))
+                };
+            }
+
             S3_BARS_CORE.forEach((item, i) => {
-                html += `<tr class="border-b border-slate-200"><td class="p-1.5 border-r bg-blue-50 font-bold text-center text-xs w-[60px]">核心<br><span class="text-[10px] text-blue-600">(${d.c[i]}%)</span></td><td class="p-1.5 border-r font-bold text-xs text-center w-[100px]">${item.name}</td><td class="bg-blue-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="2"></textarea></td><td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="2"></textarea></td><td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="2"></textarea></td><td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="2"></textarea></td><td class="p-1 text-center"><div class="flex gap-1 justify-center">`;
-                [1,2,3,4,5].map(v => { html += `<button onclick="setScore('s3-core', ${i}, ${v}, this)" class="score-btn w-6 h-6 rounded text-[11px] font-bold text-slate-600 ${state.s3.core[i]==v?'active':''}" data-val="${v}">${v}<span class="tooltip-text">${item.levels[v-1]}</span></button>`; });
+                html += `<tr class="border-b border-slate-200"><td class="p-1.5 border-r bg-blue-50 font-bold text-center text-xs w-[60px]">核心<br><span class="text-[10px] text-blue-600">(${d.c[i]}%)</span></td><td class="p-1.5 border-r font-bold text-xs text-center w-[100px]">${item.name}</td>
+                <td class="bg-blue-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="2" onchange="state.s3Texts.core[${i}].bei=this.value">${state.s3Texts.core[i].bei}</textarea></td>
+                <td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="2" onchange="state.s3Texts.core[${i}].c=this.value">${state.s3Texts.core[i].c}</textarea></td>
+                <td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="2" onchange="state.s3Texts.core[${i}].a=this.value">${state.s3Texts.core[i].a}</textarea></td>
+                <td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="2" onchange="state.s3Texts.core[${i}].r=this.value">${state.s3Texts.core[i].r}</textarea></td>
+                <td class="p-1.5 text-center"><div class="flex gap-1 justify-center">`;
+                [1,2,3,4,5].map(v => { html += `<button onclick="setScore('s3-core', ${i}, ${v}, this)" class="score-btn w-6 h-6 rounded text-[11px] font-bold text-slate-600 ${state.s3.core[i]==v?'active':''}" data-val="${v}">${v}</button>`; });
                 html += `</div></td></tr>`;
                 const desc = state.s3.core[i] > 0 ? item.descs[state.s3.core[i]-1] : '';
                 html += `<tr id="desc-core-${i}" class="bg-slate-50 text-[11px] text-slate-600 ${state.s3.core[i]>0?'':'hidden'}"><td colspan="7" class="p-1.5 border-b"><span class="font-bold text-blue-700">行為描述：</span> <span id="desc-text-core-${i}">${desc}</span></td></tr>`;
             });
 
             S3_BARS_MGMT.forEach((item, i) => {
-                html += `<tr class="border-b border-slate-200"><td class="p-1.5 border-r bg-green-50 font-bold text-center text-xs w-[60px]">管理<br><span class="text-[10px] text-green-600">(${d.m[i]}%)</span></td><td class="p-1.5 border-r font-bold text-xs text-center w-[100px]">${item.name}</td><td class="bg-blue-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="2"></textarea></td><td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="2"></textarea></td><td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="2"></textarea></td><td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="2"></textarea></td><td class="p-1 text-center"><div class="flex gap-1 justify-center">`;
-                [1,2,3,4,5].map(v => { html += `<button onclick="setScore('s3-mgmt', ${i}, ${v}, this)" class="score-btn w-6 h-6 rounded text-[11px] font-bold text-slate-600 ${state.s3.mgmt[i]==v?'active':''}" data-val="${v}">${v}<span class="tooltip-text">${item.levels[v-1]}</span></button>`; });
+                html += `<tr class="border-b border-slate-200"><td class="p-1.5 border-r bg-green-50 font-bold text-center text-xs w-[60px]">管理<br><span class="text-[10px] text-green-600">(${d.m[i]}%)</span></td><td class="p-1.5 border-r font-bold text-xs text-center w-[100px]">${item.name}</td>
+                <td class="bg-blue-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="2" onchange="state.s3Texts.mgmt[${i}].bei=this.value">${state.s3Texts.mgmt[i].bei}</textarea></td>
+                <td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="2" onchange="state.s3Texts.mgmt[${i}].c=this.value">${state.s3Texts.mgmt[i].c}</textarea></td>
+                <td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="2" onchange="state.s3Texts.mgmt[${i}].a=this.value">${state.s3Texts.mgmt[i].a}</textarea></td>
+                <td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="2" onchange="state.s3Texts.mgmt[${i}].r=this.value">${state.s3Texts.mgmt[i].r}</textarea></td>
+                <td class="p-1.5 text-center"><div class="flex gap-1 justify-center">`;
+                [1,2,3,4,5].map(v => { html += `<button onclick="setScore('s3-mgmt', ${i}, ${v}, this)" class="score-btn w-6 h-6 rounded text-[11px] font-bold text-slate-600 ${state.s3.mgmt[i]==v?'active':''}" data-val="${v}">${v}</button>`; });
                 html += `</div></td></tr>`;
                 const desc = state.s3.mgmt[i] > 0 ? item.descs[state.s3.mgmt[i]-1] : '';
                 html += `<tr id="desc-mgmt-${i}" class="bg-slate-50 text-[11px] text-slate-600 ${state.s3.mgmt[i]>0?'':'hidden'}"><td colspan="7" class="p-1.5 border-b"><span class="font-bold text-green-700">行為描述：</span> <span id="desc-text-mgmt-${i}">${desc}</span></td></tr>`;
@@ -945,7 +972,10 @@
             renderS3(); calculateScores(); 
         }
 
+        // 不會觸發 DOM 重繪，僅切換 Class 並更新分數，保留 textarea 內容
         window.setScore = function(group, idx, val, btn) {
+            Array.from(btn.parentElement.children).forEach(b => b.classList.remove('active'));
+            
             let currentVal = 0;
             if(group === 's2') currentVal = state.s2[idx];
             else if(group.startsWith('s1-')) currentVal = state.s1[group.split('-')[1]][idx];
@@ -953,11 +983,25 @@
 
             let newVal = (currentVal === val) ? 0 : val; // 連點取消
 
+            if(newVal > 0) btn.classList.add('active');
+
             if(group === 's2') state.s2[idx] = newVal;
             else if(group.startsWith('s1-')) state.s1[group.split('-')[1]][idx] = newVal;
-            else if(group.startsWith('s3-')) state.s3[group.split('-')[1]][idx] = newVal;
+            else if(group.startsWith('s3-')) {
+                const sub = group.split('-')[1];
+                state.s3[sub][idx] = newVal;
+                // 更新 S3 的行為描述展開
+                const BARS = sub === 'core' ? S3_BARS_CORE : S3_BARS_MGMT;
+                const descRow = document.getElementById(`desc-${sub}-${idx}`);
+                const descText = document.getElementById(`desc-text-${sub}-${idx}`);
+                if(newVal > 0 && descRow && descText) {
+                    descText.innerText = BARS[idx].descs[newVal-1];
+                    descRow.classList.remove('hidden');
+                } else if (descRow) {
+                    descRow.classList.add('hidden');
+                }
+            }
             
-            if(group.startsWith('s1-')) renderS1(); else if(group === 's2') renderS2(); else renderS3();
             calculateScores();
         }
 
@@ -1069,14 +1113,22 @@
 
         // ================= 後台資料匯出 & Google Sheet =================
         function syncToGoogleSheet() {
-            let csv = "\uFEFF面試日期,應徵者姓名,單位,職位,系統總得分,建議狀態,最終決策,加分與培訓計畫\n";
-            // 這裡可以繼續執行 CSV 相關邏輯
+            let csv = "\uFEFF面試日期,應徵者姓名,單位,職位,一、筆試和綜合面談,二、外顯特質,三、職能面試,總得分,進度狀態,結果\n";
+            const db = JSON.parse(localStorage.getItem('interview_db') || '[]');
+            let viewDb = currentUser && currentUser.role === 'MGR' && !['F00001', 'F00004', 'F00005'].includes(currentUser.id) ? db.filter(r => r.branch === currentUser.dept) : db;
+
+            viewDb.forEach(r => { 
+                let statusText = r.docStatus === 'draft' ? '筆試及職能面試題目暫存' : r.docStatus === 'stage_done' ? '面試最終決策中' : '面試完成';
+                let decText = r.finalDecision === 'pass' ? '錄取' : r.finalDecision === 'fail' ? '不錄取' : '-';
+                csv += `"${r.date}","${r.name}","${r.branch}","${r.position}","${r.s1Final}","${r.s2Final}","${r.s3Final}","${r.grandTotal}","${statusText}","${decText}"\n`; 
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a"); link.href = URL.createObjectURL(blob);
+            link.download = `逗點面試資料庫匯出_${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(link); link.click(); document.body.removeChild(link);
             
-            // 自動開啟指定的 Google Sheet 網址
-            const sheetUrl = "https://docs.google.com/spreadsheets/d/1oOWz1wtntQ2LAMIUbmyTYBEke1sbJRA_VuUcR71jH10/edit?gid=0#gid=0";
-            window.open(sheetUrl, '_blank');
-            
-            showToast('✅ 已為您開啟 Google Sheet，請直接將資料貼上或匯入。');
+            showToast('✅ 已下載報表！');
         }
     </script>
 </body>
