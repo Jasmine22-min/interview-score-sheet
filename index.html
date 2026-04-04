@@ -87,12 +87,12 @@
         
         @media print {
             .no-print { display: none !important; }
-            body { font-size: 10px !important; line-height: 1.2 !important; color: #000; -webkit-print-color-adjust: exact; print-color-adjust: exact;}
+            body { font-size: 9px !important; line-height: 1.1 !important; color: #000; -webkit-print-color-adjust: exact; print-color-adjust: exact;}
             @page { size: A4 landscape; margin: 10mm; } /* A4橫式列印 */
             main { padding: 0 !important; margin: 0 !important; max-width: 100% !important; }
             section { border: 1px solid #94a3b8 !important; margin-bottom: 3px !important; border-radius: 4px !important; break-inside: avoid; }
             table { width: 100% !important; table-layout: fixed !important; }
-            table th, table td { padding: 2px 4px !important; border: 1px solid #cbd5e1 !important; font-size: 9px !important; word-wrap: break-word !important;}
+            table th, table td { padding: 1px 2px !important; border: 1px solid #cbd5e1 !important; font-size: 7px !important; word-wrap: break-word !important;}
             .overflow-x-auto { overflow: visible !important; }
             .bg-slate-900, .bg-slate-800, .bg-emerald-50, .bg-indigo-50, .bg-orange-50 { background-color: #f1f5f9 !important; color: #000 !important; border: none !important; }
             .text-white, .text-slate-200, .text-slate-400 { color: #0f172a !important; }
@@ -222,7 +222,7 @@
             <div class="bg-slate-800 p-4 flex justify-between items-center">
                 <h2 class="text-white font-bold text-lg flex items-center gap-2">📊 逗點面試資料分析</h2>
                 <button onclick="exportCSV()" class="bg-emerald-600 text-white px-4 py-1.5 rounded-lg font-bold hover:bg-emerald-700 shadow-sm text-sm transition-colors flex items-center gap-2">
-                    <span>📥 匯出報表</span>
+                    <span>📥 匯出 CSV</span>
                 </button>
             </div>
             <div class="p-0 overflow-x-auto">
@@ -308,7 +308,7 @@
         <!-- 階段一 -->
         <section class="bg-white rounded-2xl shadow-sm border border-slate-200">
             <div class="bg-emerald-50 p-2.5 border-b border-emerald-100 flex justify-between items-center">
-                <h2 class="text-base font-bold text-emerald-900">1. 階段一：筆試與綜合面談 <span class="text-xs font-normal text-emerald-600 ml-1">(30%)</span></h2>
+                <h2 class="text-base font-bold text-emerald-900">1. 一、筆試和綜合面談 <span class="text-xs font-normal text-emerald-600 ml-1">(30%)</span></h2>
                 <div class="text-xs font-bold text-emerald-700">得分: <span id="s1-final" class="text-lg">0.00</span>/30</div>
             </div>
             <div class="p-3 space-y-2.5 bg-slate-50/30">
@@ -328,7 +328,7 @@
         <section class="bg-white rounded-2xl shadow-sm border border-slate-200">
             <div class="bg-indigo-50 p-2.5 border-b border-indigo-100 flex justify-between items-center">
                 <div>
-                    <h2 class="text-base font-bold text-indigo-900">2. 階段二：外顯特質評分 <span class="text-xs font-normal text-indigo-600 ml-1">(10%)</span></h2>
+                    <h2 class="text-base font-bold text-indigo-900">2. 二、外顯特質 <span class="text-xs font-normal text-indigo-600 ml-1">(10%)</span></h2>
                     <p class="text-[10px] text-indigo-700 mt-0.5 hide-in-report">評分基準：[5]優異、[4]良好、[3]佳、[2]尚可、[1]差 (再次點選可取消)</p>
                 </div>
                 <div class="text-xs font-bold text-indigo-700">得分: <span id="s2-final" class="text-lg">0.00</span>/10</div>
@@ -339,7 +339,7 @@
         <!-- 階段三 -->
         <section class="bg-white rounded-2xl shadow-sm border border-slate-200">
             <div class="bg-orange-50 p-2.5 border-b border-orange-200 flex justify-between items-center">
-                <h2 class="text-base font-bold text-orange-900">3. 階段三：職能評估 <span class="text-xs font-normal text-orange-600 ml-1">(60%)</span></h2>
+                <h2 class="text-base font-bold text-orange-900">3. 三、職能面試 <span class="text-xs font-normal text-orange-600 ml-1">(60%)</span></h2>
                 <div class="flex items-center gap-3">
                     <select id="job-level-select" class="border rounded outline-none font-bold text-xs p-1 hide-in-report focus:ring-2 focus:ring-orange-500" onchange="updateLevelLogic()">
                         <option value="1">職等 1 (核心90% / 管理10%)</option>
@@ -473,14 +473,16 @@
             
             // 決定專屬登入稱呼
             let greeting = "";
-            if (acc === "F00001") {
-                greeting = `徐暘智 執行長您好`;
-            } else if (acc === "F00035" || acc === "F00054") {
-                greeting = `歡迎人資來了！！ 茉莉花仙子系統開發師敏敏`;
+            if (acc === "F00035") {
+                greeting = `歡迎人資長Sherry~~來了❤️`;
+            } else if (acc === "F00054") {
+                greeting = `歡迎人資 ${currentUser.name} 處長來了❤️`;
+            } else if (acc === "F00001") {
+                greeting = `歡迎 徐暘智 執行長來了～～❤️`;
             } else if (currentUser.dept.includes("校")) {
-                greeting = `歡迎 ${currentUser.name} 分校主任來了！`;
+                greeting = `歡迎 ${currentUser.name} 主任來了～～❤️`;
             } else {
-                greeting = `歡迎 ${currentUser.name} 處長來了！`;
+                greeting = `歡迎 ${currentUser.name} 處長來了～～❤️`;
             }
             
             alert(greeting); 
@@ -501,11 +503,11 @@
             if(currentUser.role === 'HR') {
                 if(navFrontBtn) { navFrontBtn.innerText = "前台作業"; navFrontBtn.classList.remove('hidden'); navFrontBtn.onclick = () => switchView('hr_search'); }
                 if(navBackBtn) { navBackBtn.classList.remove('hidden'); navBackBtn.onclick = () => switchView('backend'); }
-                switchView('mgr_front'); // 不論進入前後台，都從面試評分系統開始
+                switchView('mgr_front'); 
             } else {
                 if(navFrontBtn) { navFrontBtn.innerText = "前台評分"; navFrontBtn.classList.remove('hidden'); navFrontBtn.onclick = () => switchView('mgr_front'); }
                 if(navBackBtn) { navBackBtn.classList.remove('hidden'); navBackBtn.onclick = () => switchView('backend'); }
-                switchView('mgr_front'); // 不論進入前後台，都從面試評分系統開始
+                switchView('mgr_front'); 
             }
         }
 
@@ -901,7 +903,7 @@
                 if (group.id === 'bon') {
                     // 加寬加分題格子
                     html += `<div class="bg-slate-50 p-2.5 rounded flex flex-col gap-2"><div class="text-[13px] font-medium text-slate-700 w-full">${group.qs[0]} <span class="text-[10px] text-slate-400 font-normal">(選填)</span></div><textarea id="s1-bon-text" onchange="syncState()" rows="2" class="input-cell w-full text-sm" placeholder="請填寫加分項目說明...">${state.s1.bonText||''}</textarea><div class="flex gap-1.5 self-end">`;
-                    [1,2,3,4,5].map(v => { html += `<button onclick="setScore('s1-${group.id}', 0, ${v}, this)" class="score-btn s1-s2-btn w-7 h-7 rounded text-xs font-bold text-slate-600 ${state.s1[group.id][0]==v?'active':''}" data-val="${v}"><span class="btn-num">${v}</span><span class="report-label">${GRADE_LABELS[v]}</span></button>`; });
+                    [1,2,3,4,5].map(v => { html += `<button onclick="setScore('s1-${group.id}', 0, ${v}, this)" class="score-btn w-7 h-7 rounded text-xs font-bold text-slate-600 ${state.s1[group.id][0]==v?'active':''}" data-val="${v}">${v}</button>`; });
                     html += `</div></div>`;
                 } else {
                     group.qs.forEach((q, i) => {
@@ -945,7 +947,7 @@
                 <td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="2" onchange="state.s3Texts.core[${i}].a=this.value">${state.s3Texts.core[i].a}</textarea></td>
                 <td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="2" onchange="state.s3Texts.core[${i}].r=this.value">${state.s3Texts.core[i].r}</textarea></td>
                 <td class="p-1.5 text-center"><div class="flex gap-1 justify-center">`;
-                [1,2,3,4,5].map(v => { html += `<button onclick="setScore('s3-core', ${i}, ${v}, this)" class="score-btn w-6 h-6 rounded text-[11px] font-bold text-slate-600 ${state.s3.core[i]==v?'active':''}" data-val="${v}">${v}</button>`; });
+                [1,2,3,4,5].map(v => { html += `<button onclick="setScore('s3-core', ${i}, ${v}, this)" class="score-btn w-6 h-6 rounded text-[11px] font-bold text-slate-600 ${state.s3.core[i]==v?'active':''}" data-val="${v}">${v}<span class="tooltip-text">${item.levels[v-1]}</span></button>`; });
                 html += `</div></td></tr>`;
                 const desc = state.s3.core[i] > 0 ? item.descs[state.s3.core[i]-1] : '';
                 html += `<tr id="desc-core-${i}" class="bg-slate-50 text-[11px] text-slate-600 ${state.s3.core[i]>0?'':'hidden'}"><td colspan="7" class="p-1.5 border-b"><span class="font-bold text-blue-700">行為描述：</span> <span id="desc-text-core-${i}">${desc}</span></td></tr>`;
@@ -958,7 +960,7 @@
                 <td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="2" onchange="state.s3Texts.mgmt[${i}].a=this.value">${state.s3Texts.mgmt[i].a}</textarea></td>
                 <td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="2" onchange="state.s3Texts.mgmt[${i}].r=this.value">${state.s3Texts.mgmt[i].r}</textarea></td>
                 <td class="p-1.5 text-center"><div class="flex gap-1 justify-center">`;
-                [1,2,3,4,5].map(v => { html += `<button onclick="setScore('s3-mgmt', ${i}, ${v}, this)" class="score-btn w-6 h-6 rounded text-[11px] font-bold text-slate-600 ${state.s3.mgmt[i]==v?'active':''}" data-val="${v}">${v}</button>`; });
+                [1,2,3,4,5].map(v => { html += `<button onclick="setScore('s3-mgmt', ${i}, ${v}, this)" class="score-btn w-6 h-6 rounded text-[11px] font-bold text-slate-600 ${state.s3.mgmt[i]==v?'active':''}" data-val="${v}">${v}<span class="tooltip-text">${item.levels[v-1]}</span></button>`; });
                 html += `</div></td></tr>`;
                 const desc = state.s3.mgmt[i] > 0 ? item.descs[state.s3.mgmt[i]-1] : '';
                 html += `<tr id="desc-mgmt-${i}" class="bg-slate-50 text-[11px] text-slate-600 ${state.s3.mgmt[i]>0?'':'hidden'}"><td colspan="7" class="p-1.5 border-b"><span class="font-bold text-green-700">行為描述：</span> <span id="desc-text-mgmt-${i}">${desc}</span></td></tr>`;
@@ -1111,8 +1113,8 @@
             }
         }
 
-        // ================= 後台資料匯出 & Google Sheet =================
-        function syncToGoogleSheet() {
+        // ================= 後台資料匯出 =================
+        function exportCSV() {
             let csv = "\uFEFF面試日期,應徵者姓名,單位,職位,一、筆試和綜合面談,二、外顯特質,三、職能面試,總得分,進度狀態,結果\n";
             const db = JSON.parse(localStorage.getItem('interview_db') || '[]');
             let viewDb = currentUser && currentUser.role === 'MGR' && !['F00001', 'F00004', 'F00005'].includes(currentUser.id) ? db.filter(r => r.branch === currentUser.dept) : db;
@@ -1128,7 +1130,7 @@
             link.download = `逗點面試資料庫匯出_${new Date().toISOString().split('T')[0]}.csv`;
             document.body.appendChild(link); link.click(); document.body.removeChild(link);
             
-            showToast('✅ 已下載報表！');
+            showToast('✅ 已下載 CSV 報表！');
         }
     </script>
 </body>
