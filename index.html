@@ -105,6 +105,82 @@
     <!-- 系統通知 -->
     <div id="toast">✅ 操作成功！</div>
 
+    <!-- 檢核表 (Checklist) Modal -->
+    <div id="checklist-modal" class="fixed inset-0 items-center justify-center modal-overlay no-print z-[99999]">
+        <div class="bg-white w-11/12 max-w-2xl max-h-[90vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-small-pop">
+            <div class="bg-slate-800 p-4 flex justify-between items-center">
+                <h2 class="text-white font-bold text-lg flex items-center gap-2">📝 【主任/主管面試規範 Checklist】</h2>
+                <button onclick="toggleChecklist()" class="text-slate-400 hover:text-white text-xl leading-none">✕</button>
+            </div>
+            <div class="p-6 overflow-auto bg-slate-50 space-y-6 flex-1">
+                <p class="text-sm text-slate-600 leading-relaxed font-medium">
+                    各位主任好，為因應從「逗點集團」出發的面試能夠標準且一致化，我們需拿出相同的品質來對待所有面試者，再請您確認以下面試準備清單，確保面試能夠有好的開始與結尾，感謝您
+                </p>
+
+                <!-- 一、面試前 -->
+                <div>
+                    <h3 class="font-bold text-base text-slate-800 mb-2 border-l-4 border-blue-500 pl-2">一、面試前（準備階段）</h3>
+                    <div class="space-y-2 pl-2">
+                        <label class="flex items-start gap-2 cursor-pointer text-sm text-slate-700 hover:bg-slate-200 p-1 rounded transition-colors"><input type="checkbox" class="chk-item mt-1" onchange="syncState()"> <span>已完整閱讀面試者履歷（工作經歷、離職原因、自我介紹）</span></label>
+                        <label class="flex items-start gap-2 cursor-pointer text-sm text-slate-700 hover:bg-slate-200 p-1 rounded transition-colors"><input type="checkbox" class="chk-item mt-1" onchange="syncState()"> <span>已瀏覽及評分面試者填寫之應徵表單（筆試資料）</span></label>
+                        <label class="flex items-start gap-2 cursor-pointer text-sm text-slate-700 hover:bg-red-50 p-1 rounded transition-colors border border-red-200 bg-white shadow-sm">
+                            <input type="checkbox" id="chk-must-fill" class="chk-item mt-1" onchange="syncState()"> 
+                            <span class="text-red-600 font-black">已於三、職能面試中填上要詢問的問題 (※ 必勾選才能暫存)</span>
+                        </label>
+                        <label class="flex items-start gap-2 cursor-pointer text-sm text-slate-700 hover:bg-slate-200 p-1 rounded transition-colors"><input type="checkbox" class="chk-item mt-1" onchange="syncState()"> <span>若有題目疑慮，已提前與人資確認</span></label>
+                        <label class="flex items-start gap-2 cursor-pointer text-sm text-slate-700 hover:bg-slate-200 p-1 rounded transition-colors"><input type="checkbox" class="chk-item mt-1" onchange="syncState()"> <span>已確認面試職位之職能需求（確保問對問題）</span></label>
+                    </div>
+                </div>
+
+                <!-- 二、面試中 -->
+                <div>
+                    <h3 class="font-bold text-base text-slate-800 mb-2 border-l-4 border-emerald-500 pl-2">二、面試中（執行階段）</h3>
+                    <div class="space-y-2 pl-2">
+                        <label class="flex items-start gap-2 cursor-pointer text-sm text-slate-700 hover:bg-slate-200 p-1 rounded transition-colors"><input type="checkbox" class="chk-item mt-1" onchange="syncState()"> <span>已保留至少 1 小時進行面試</span></label>
+                        <label class="flex items-start gap-2 cursor-pointer text-sm text-slate-700 hover:bg-slate-200 p-1 rounded transition-colors"><input type="checkbox" class="chk-item mt-1" onchange="syncState()"> <span>已安排第二位面試官共同參與面談</span></label>
+                        <label class="flex items-start gap-2 cursor-pointer text-sm text-slate-700 hover:bg-slate-200 p-1 rounded transition-colors"><input type="checkbox" class="chk-item mt-1" onchange="syncState()"> <span>面試地點安靜、不受干擾，並已提前預約</span></label>
+                        <label class="flex items-start gap-2 cursor-pointer text-sm text-slate-700 hover:bg-slate-200 p-1 rounded transition-colors"><input type="checkbox" class="chk-item mt-1" onchange="syncState()"> <span>全程使用行為事例（BEI/CAR）提問法</span></label>
+                        <label class="flex items-start gap-2 cursor-pointer text-sm text-slate-700 hover:bg-slate-200 p-1 rounded transition-colors"><input type="checkbox" class="chk-item mt-1" onchange="syncState()"> <span>無做出任何錄取、薪資或福利承諾</span></label>
+                    </div>
+                </div>
+
+                <!-- 三、面試後 -->
+                <div>
+                    <h3 class="font-bold text-base text-slate-800 mb-2 border-l-4 border-orange-500 pl-2">三、面試後（紀錄與回報階段）</h3>
+                    <div class="space-y-2 pl-2">
+                        <label class="flex items-start gap-2 cursor-pointer text-sm text-slate-700 hover:bg-slate-200 p-1 rounded transition-colors"><input type="checkbox" class="chk-item mt-1" onchange="syncState()"> <span>已於當日或隔日中午前完成「面試評分系統」</span></label>
+                        <label class="flex items-start gap-2 cursor-pointer text-sm text-slate-700 hover:bg-slate-200 p-1 rounded transition-colors"><input type="checkbox" class="chk-item mt-1" onchange="syncState()"> <span>評分內容有依據、填寫完整（無空白、無僅寫印象）</span></label>
+                        <label class="flex items-start gap-2 cursor-pointer text-sm text-slate-700 hover:bg-slate-200 p-1 rounded transition-colors"><input type="checkbox" class="chk-item mt-1" onchange="syncState()"> <span>已與人資討論並確認錄用建議</span></label>
+                        <label class="flex items-start gap-2 cursor-pointer text-sm text-slate-700 hover:bg-slate-200 p-1 rounded transition-colors"><input type="checkbox" class="chk-item mt-1" onchange="syncState()"> <span>未自行通知面試者，由人資統一通知</span></label>
+                        <label class="flex items-start gap-2 cursor-pointer text-sm text-slate-700 hover:bg-slate-200 p-1 rounded transition-colors"><input type="checkbox" class="chk-item mt-1" onchange="syncState()"> <span>若需安排二面或觀課，已告知人資協助安排</span></label>
+                    </div>
+                </div>
+
+                <!-- 四、自我檢查 -->
+                <div>
+                    <h3 class="font-bold text-base text-slate-800 mb-2 border-l-4 border-purple-500 pl-2">四、主任自我檢查（可於每次面試後自省）</h3>
+                    <div class="space-y-2 pl-2">
+                        <label class="flex items-start gap-2 cursor-pointer text-sm text-slate-700 hover:bg-slate-200 p-1 rounded transition-colors"><input type="checkbox" class="chk-item mt-1" onchange="syncState()"> <span>我是否有確實閱讀完整履歷與表單？</span></label>
+                        <label class="flex items-start gap-2 cursor-pointer text-sm text-slate-700 hover:bg-slate-200 p-1 rounded transition-colors"><input type="checkbox" class="chk-item mt-1" onchange="syncState()"> <span>今天的提問是否扣合該職位核心與管理職能？</span></label>
+                        <label class="flex items-start gap-2 cursor-pointer text-sm text-slate-700 hover:bg-slate-200 p-1 rounded transition-colors"><input type="checkbox" class="chk-item mt-1" onchange="syncState()"> <span>是否有第二位面試官共同參與？</span></label>
+                        <label class="flex items-start gap-2 cursor-pointer text-sm text-slate-700 hover:bg-slate-200 p-1 rounded transition-colors"><input type="checkbox" class="chk-item mt-1" onchange="syncState()"> <span>面試是否留足時間、無匆忙結束？</span></label>
+                        <label class="flex items-start gap-2 cursor-pointer text-sm text-slate-700 hover:bg-slate-200 p-1 rounded transition-colors"><input type="checkbox" class="chk-item mt-1" onchange="syncState()"> <span>評分回傳是否客觀、有事例支撐？</span></label>
+                    </div>
+                </div>
+
+                <!-- 五、面試官筆記 -->
+                <div class="bg-indigo-50 p-4 rounded-xl border border-indigo-200 shadow-sm">
+                    <h3 class="font-bold text-base text-indigo-900 mb-2">五、面試官記錄本次好的或下次想要改善的文字內容</h3>
+                    <textarea id="interview-note-input" rows="3" onchange="syncState()" class="w-full border border-slate-300 rounded-lg p-3 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-300 transition-colors" placeholder="請填寫您對本次面試的自我檢討、收穫或改善方向..."></textarea>
+                </div>
+            </div>
+            <div class="p-4 bg-white border-t border-slate-200 text-right flex justify-between items-center">
+                <span class="text-xs text-slate-400 font-bold ml-2">※ 此檢核表內容會隨評分進度自動儲存</span>
+                <button onclick="toggleChecklist()" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-700 transition-colors shadow-md">確認並縮小</button>
+            </div>
+        </div>
+    </div>
+
     <!-- 漏填警告 Modal -->
     <div id="missing-modal" class="fixed inset-0 items-center justify-center modal-overlay no-print z-[99999]">
         <div class="bg-white w-11/12 max-w-md rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-small-pop">
@@ -157,7 +233,11 @@
                     <div class="text-[10px] text-blue-100 font-bold mt-1" id="header-user-info">載入中...</div>
                 </div>
             </div>
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-2 md:gap-3">
+                <!-- 檢核表按鈕 -->
+                <button onclick="toggleChecklist()" id="nav-checklist-btn" class="bg-indigo-500 hover:bg-indigo-600 text-white px-3 py-1.5 rounded-lg text-xs md:text-sm font-bold shadow-md transition-all border border-indigo-400 hidden">
+                    ☑️ 檢核表
+                </button>
                 <button onclick="switchView('hr_search')" id="nav-front-btn" class="bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded text-sm font-bold transition-colors hidden">前台作業</button>
                 <button onclick="switchView('backend')" id="nav-back-btn" class="bg-black/30 hover:bg-black/50 px-3 py-1.5 rounded text-sm font-bold border border-white/20 transition-colors hidden shadow-inner">進入後台</button>
                 <button onclick="logout()" class="text-xs text-white/70 hover:text-white underline ml-2">登出</button>
@@ -226,7 +306,7 @@
                 </button>
             </div>
             <div class="p-0 overflow-x-auto">
-                <table class="w-full text-left border-collapse min-w-[1100px]">
+                <table class="w-full text-left border-collapse min-w-[1200px]">
                     <thead class="bg-slate-100 text-slate-700 text-sm">
                         <tr>
                             <th class="p-3 border-b w-24">面試日期</th>
@@ -239,6 +319,7 @@
                             <th class="p-3 border-b text-center text-blue-700">總得分</th>
                             <th class="p-3 border-b text-center">進度狀態</th>
                             <th class="p-3 border-b text-center">結果</th>
+                            <th class="p-3 border-b text-center">面試官備註</th>
                             <th class="p-3 border-b w-40 text-center">操作</th>
                         </tr>
                     </thead>
@@ -257,7 +338,7 @@
             <div class="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div>
                     <label class="block text-xs font-bold text-slate-400 mb-1">應徵者姓名</label>
-                    <input type="text" id="ipt-name" onblur="checkExistingRecord()" oninput="syncState()" class="w-full border-b-2 border-slate-200 p-1.5 outline-none bg-slate-50 transition-all text-base font-bold focus:border-blue-500" placeholder="輸入姓名 (離開欄位自動搜尋紀錄)">
+                    <input type="text" id="ipt-name" onblur="checkExistingRecord()" onchange="syncState()" class="w-full border-b-2 border-slate-200 p-1.5 outline-none bg-slate-50 transition-all text-base font-bold focus:border-blue-500" placeholder="輸入姓名 (離開欄位自動搜尋紀錄)">
                 </div>
                 <div class="row-span-2">
                     <label class="block text-xs font-bold text-slate-400 mb-1 flex justify-between items-center">
@@ -265,7 +346,7 @@
                         <button onclick="addInterviewer()" class="hide-in-report bg-blue-50 text-blue-600 hover:bg-blue-100 px-2 py-0.5 rounded text-xs flex items-center gap-1 font-bold transition-colors">增加人員點我</button>
                     </label>
                     <div id="interviewer-list" class="space-y-2">
-                        <div class="flex gap-2"><input type="text" class="ipt-interviewer flex-1 border-b-2 border-slate-200 p-1.5 text-base outline-none bg-slate-50 focus:border-blue-500 transition-all" oninput="syncState()"></div>
+                        <div class="flex gap-2"><input type="text" class="ipt-interviewer flex-1 border-b-2 border-slate-200 p-1.5 text-base outline-none bg-slate-50 focus:border-blue-500 transition-all" onchange="syncState()"></div>
                     </div>
                 </div>
                 <div>
@@ -402,7 +483,7 @@
                 <div class="space-y-3 bg-slate-800/80 p-4 rounded-xl border border-slate-700 flex flex-col">
                     <label class="block text-slate-300 text-sm font-bold">加分方式 / 補救培訓計畫 (必填)</label>
                     <div id="bonus-hint-area" class="text-xs text-amber-400 bg-amber-900/20 px-3 py-2 rounded-t-lg hidden hide-in-report"></div>
-                    <textarea id="bonus-method-input" oninput="syncState()" rows="2" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2.5 text-white text-sm focus:border-slate-500 outline-none mb-2 placeholder-slate-500 flex-1 transition-colors" placeholder="請填寫..."></textarea>
+                    <textarea id="bonus-method-input" onchange="syncState()" rows="2" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2.5 text-white text-sm focus:border-slate-500 outline-none mb-2 placeholder-slate-500 flex-1 transition-colors" placeholder="請填寫..."></textarea>
                     
                     <label class="block text-slate-300 text-sm font-bold hide-in-report">最終錄取結果</label>
                     <div class="flex gap-4">
@@ -461,6 +542,17 @@
         const setTxt = (id, text) => { const el = document.getElementById(id); if(el) el.innerText = text; };
         const setHtml = (id, html) => { const el = document.getElementById(id); if(el) el.innerHTML = html; };
 
+        // ================= Toggle Checklist Modal =================
+        function toggleChecklist(forceShow = false) {
+            const modal = document.getElementById('checklist-modal');
+            if (!modal) return;
+            if (forceShow === true || !modal.classList.contains('show')) {
+                modal.classList.add('show');
+            } else {
+                modal.classList.remove('show');
+            }
+        }
+
         // ================= 登入與路由 =================
         function handleLogin() {
             const acc = document.getElementById('login-acc')?.value.trim().toUpperCase();
@@ -494,6 +586,7 @@
             
             const navFrontBtn = document.getElementById('nav-front-btn');
             const navBackBtn = document.getElementById('nav-back-btn');
+            const navChecklistBtn = document.getElementById('nav-checklist-btn');
 
             // 確保一登入是「全空白狀態」
             state = getEmptyState();
@@ -525,15 +618,19 @@
             document.querySelectorAll('.page-view').forEach(el => el.classList.remove('active'));
             document.getElementById('action-bar')?.classList.add('hidden');
             document.body.setAttribute('data-theme', 'blue'); 
+            const chkBtn = document.getElementById('nav-checklist-btn');
 
             if(target === 'hr_search') {
                 document.getElementById('view-hr-front')?.classList.add('active');
+                if (chkBtn) chkBtn.classList.add('hidden');
             } else if (target === 'mgr_front') {
                 document.getElementById('view-mgr-front')?.classList.add('active');
                 document.getElementById('action-bar')?.classList.remove('hidden');
+                if (chkBtn) chkBtn.classList.remove('hidden');
                 updateThemeManual(state.branch || currentUser.dept);
             } else if (target === 'backend') {
                 document.getElementById('view-backend')?.classList.add('active');
+                if (chkBtn) chkBtn.classList.add('hidden');
                 loadBackendData();
             }
         }
@@ -559,7 +656,7 @@
                     else if(r.docStatus === 'completed') statusBadge = '<span class="bg-emerald-100 text-emerald-700 px-2 py-1 rounded text-xs">✅ 面試完成</span>';
 
                     return `
-                    <tr class="border-b hover:bg-blue-50/50 transition-colors">
+                    <tr class="border-b hover:bg-blue-50/50 transition-colors cursor-pointer" onclick="viewDetailFromHR(${db.indexOf(r)})">
                         <td class="p-3 text-slate-500">${r.date || '-'}</td>
                         <td class="p-3 font-black text-blue-700">${r.name}</td>
                         <td class="p-3 text-slate-600 font-medium">${r.branch}</td>
@@ -568,7 +665,7 @@
                         <td class="p-3 text-center font-bold text-slate-600 text-xs">${statusBadge}</td>
                         <td class="p-3 text-center font-bold ${r.finalDecision==='pass'?'text-emerald-600':r.finalDecision==='fail'?'text-red-600':'text-slate-400'}">${r.finalDecision==='pass'?'錄取':r.finalDecision==='fail'?'不錄取':'-'}</td>
                         <td class="p-3 text-center">
-                            <button onclick="viewDetailFromHR(${db.indexOf(r)})" class="bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm transition-colors">🔍 查看</button>
+                            <button onclick="event.stopPropagation(); viewDetailFromHR(${db.indexOf(r)})" class="bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm transition-colors">🔍 查看</button>
                         </td>
                     </tr>
                 `;}).join('');
@@ -610,7 +707,7 @@
 
             const tbody = document.getElementById('db-list-tbody');
             if(viewDb.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="11" class="p-8 text-center text-slate-400 font-bold">目前尚無歷史評分紀錄</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="12" class="p-8 text-center text-slate-400 font-bold">目前尚無歷史評分紀錄</td></tr>`;
                 return;
             }
 
@@ -635,6 +732,7 @@
                     <td class="p-3 text-center font-black text-lg text-blue-600">${r.grandTotal || '0.00'}</td>
                     <td class="p-3 text-center font-bold text-slate-600 text-xs">${statusText}</td>
                     <td class="p-3 text-center font-bold ${r.finalDecision==='pass'?'text-emerald-600':r.finalDecision==='fail'?'text-red-600':'text-slate-400'}">${decText}</td>
+                    <td class="p-3 text-slate-600 text-xs max-w-[150px] truncate" title="${r.interviewNote||''}">${r.interviewNote || '-'}</td>
                     <td class="p-3 text-center flex justify-center gap-2">
                         <button onclick="editRecord(${originalIdx})" class="bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm transition-colors">查看/編輯</button>
                         <button onclick="deleteRecord(${originalIdx})" class="bg-red-50 border border-red-200 hover:bg-red-100 text-red-600 px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm transition-colors">刪除</button>
@@ -702,6 +800,8 @@
                 level: 1, finalDecision: null, bonusMethod: "", idealStatus: "", grandTotal: "",
                 s1Final: "0.00", s2Final: "0.00", s3Final: "0.00",
                 docStatus: "new", 
+                checklist: Array(20).fill(false),
+                interviewNote: "",
                 s1: { exp: [0], mot: [0,0], sty: [0,0], sal: [0,0,0], bon: [0], bonText: "" },
                 s2: Array(S2_QUESTIONS.length).fill(0), 
                 s3: { core: Array(6).fill(0), mgmt: Array(3).fill(0) },
@@ -728,38 +828,12 @@
             
             const bonTextEl = document.getElementById('s1-bon-text');
             if(bonTextEl) state.s1.bonText = bonTextEl.value;
-        }
 
-        function checkExistingRecord() {
-            const elName = document.getElementById('ipt-name');
-            if(!elName) return;
-            let name = elName.value.trim();
-            if(!name) return;
-
-            let db = JSON.parse(localStorage.getItem('interview_db') || '[]');
-            let existing = db.find(r => r.name === name);
-
-            if(existing) {
-                if(existing.docStatus !== 'completed' && existing.docStatus !== 'stage_done') {
-                    if(confirm(`已找到未完成的暫存人才，要讀取嗎？`)) {
-                        state = existing;
-                        hydrateUI(); 
-                        calculateScores(); 
-                        showToast('✅ 已載入未完成資料');
-                    } else {
-                        let currentBranch = state.branch;
-                        state = getEmptyState();
-                        state.name = name;
-                        state.branch = currentBranch;
-                        hydrateUI();
-                        calculateScores();
-                    }
-                } else {
-                     if(confirm(`已找到評分完成人才，要查看嗎？`)) {
-                         state = existing; hydrateUI(); calculateScores();
-                     }
-                }
-            }
+            // 儲存檢核表與筆記
+            const noteEl = document.getElementById('interview-note-input');
+            if (noteEl) state.interviewNote = noteEl.value;
+            const chks = document.querySelectorAll('.chk-item');
+            if(chks.length > 0) state.checklist = Array.from(chks).map(chk => chk.checked);
         }
 
         function hydrateUI() {
@@ -767,7 +841,6 @@
             
             const elBranch = document.getElementById('sel-branch'); 
             if(elBranch) {
-                // 執行長、高階主管與人資解鎖選單
                 if (currentUser && (currentUser.role === 'HR' || ['F00001', 'F00004', 'F00005'].includes(currentUser.id))) {
                     elBranch.disabled = false;
                     elBranch.classList.remove('cursor-not-allowed', 'bg-slate-100');
@@ -782,7 +855,6 @@
                 }
             }
 
-            // 自動帶入主面試官
             const mainIntInput = document.querySelector('.ipt-interviewer');
             if (mainIntInput && !mainIntInput.value && currentUser) {
                 mainIntInput.value = currentUser.name;
@@ -806,24 +878,15 @@
                 btnFail.className = 'decision-btn flex-1 bg-slate-700 text-slate-300 py-2 rounded-xl font-black text-base hover:bg-slate-600 shadow-md';
                 if(state.finalDecision === 'fail') btnFail.classList.add('active-fail');
             }
+
+            // 恢復檢核表
+            const noteEl = document.getElementById('interview-note-input');
+            if(noteEl) noteEl.value = state.interviewNote || "";
+            const chks = document.querySelectorAll('.chk-item');
+            chks.forEach((chk, i) => { chk.checked = state.checklist ? !!state.checklist[i] : false; });
             
             updateThemeManual(state.branch); updateDateTimeDisplay();
             renderS1(); renderS2(); renderS3();
-        }
-
-        function updateThemeManual(branch) {
-            const b = document.body;
-            if (["青埔升大校"].includes(branch)) b.setAttribute("data-theme", "green");
-            else if (["青埔翱翔校", "青園展翅校", "大園晨光校", "內壢森耀校", "竹北知行校", "文化極光校", "快樂騰雲校"].includes(branch)) b.setAttribute("data-theme", "yellow");
-            else if (["行政溝通處", "人力資源處", "財務會計處", "國小事業處", "國高中事業處", "產品研發處", "品牌行銷處", "行銷辦公室", "國小英文管理科"].includes(branch)) b.setAttribute("data-theme", "black");
-            else b.setAttribute("data-theme", "blue");
-        }
-
-        function updateDateTimeDisplay() {
-            const dInput = document.getElementById('interview-date')?.value;
-            const tInput = document.getElementById('interview-time')?.value;
-            if(!dInput) return; const d = new Date(dInput);
-            setTxt('datetime-preview', `${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()} (${["日","一","二","三","四","五","六"][d.getDay()]}) ${tInput ? '/ '+tInput+' 開始':''}`);
         }
 
         // ================= 資料庫儲存引擎 =================
@@ -846,6 +909,16 @@
 
         function handleSaveDraft() {
             if(!state.name.trim()) return alert('請先輸入「應徵者姓名」才能暫存！');
+            syncState();
+            
+            // 檢核表防呆檢查 (第3個checkbox，index為2)
+            const chkMustFill = document.getElementById('chk-must-fill');
+            if (chkMustFill && !chkMustFill.checked) {
+                alert("無法暫存：請先在右上角「檢核表」中，確認並勾選「已於三、職能面試中填上要詢問的問題」！");
+                toggleChecklist(true); // 強制顯示檢核表
+                return;
+            }
+
             saveToDB('draft');
             showToast(`✅ 已暫存人才評分進度！`);
         }
@@ -877,23 +950,6 @@
             if(rc) rc.scrollIntoView({behavior: 'smooth'});
         }
 
-        function handleFinalDecision(type) {
-            if(!state.name.trim()) return alert('請先輸入「應徵者姓名」！');
-            
-            const btnPass = document.getElementById('btn-pass');
-            const btnFail = document.getElementById('btn-fail');
-            if(btnPass) btnPass.classList.remove('active-pass');
-            if(btnFail) btnFail.classList.remove('active-fail');
-            
-            if(type==='pass' && btnPass) { btnPass.classList.add('active-pass'); state.finalDecision = 'pass'; }
-            if(type==='fail' && btnFail) { btnFail.classList.add('active-fail'); state.finalDecision = 'fail'; }
-
-            saveToDB('completed');
-            showToast('☁️ 最終決策已儲存！資料已完整覆蓋更新。');
-        }
-
-        function showToast(msg) { const t = document.getElementById('toast'); if(t) { t.innerText = msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 1500); } }
-        
         // ================= 渲染邏輯 =================
         function renderS1() {
             S1_DATA.forEach(group => {
@@ -947,7 +1003,7 @@
                 <td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="2" onchange="state.s3Texts.core[${i}].a=this.value">${state.s3Texts.core[i].a}</textarea></td>
                 <td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="2" onchange="state.s3Texts.core[${i}].r=this.value">${state.s3Texts.core[i].r}</textarea></td>
                 <td class="p-1.5 text-center"><div class="flex gap-1 justify-center">`;
-                [1,2,3,4,5].map(v => { html += `<button onclick="setScore('s3-core', ${i}, ${v}, this)" class="score-btn w-6 h-6 rounded text-[11px] font-bold text-slate-600 ${state.s3.core[i]==v?'active':''}" data-val="${v}">${v}<span class="tooltip-text">${item.levels[v-1]}</span></button>`; });
+                [1,2,3,4,5].map(v => { html += `<button onclick="setScore('s3-core', ${i}, ${v}, this)" class="score-btn w-6 h-6 rounded text-[11px] font-bold text-slate-600 ${state.s3.core[i]==v?'active':''}" data-val="${v}"><span class="tooltip-text">${item.levels[v-1]}</span></button>`; });
                 html += `</div></td></tr>`;
                 const desc = state.s3.core[i] > 0 ? item.descs[state.s3.core[i]-1] : '';
                 html += `<tr id="desc-core-${i}" class="bg-slate-50 text-[11px] text-slate-600 ${state.s3.core[i]>0?'':'hidden'}"><td colspan="7" class="p-1.5 border-b"><span class="font-bold text-blue-700">行為描述：</span> <span id="desc-text-core-${i}">${desc}</span></td></tr>`;
@@ -960,7 +1016,7 @@
                 <td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="2" onchange="state.s3Texts.mgmt[${i}].a=this.value">${state.s3Texts.mgmt[i].a}</textarea></td>
                 <td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="2" onchange="state.s3Texts.mgmt[${i}].r=this.value">${state.s3Texts.mgmt[i].r}</textarea></td>
                 <td class="p-1.5 text-center"><div class="flex gap-1 justify-center">`;
-                [1,2,3,4,5].map(v => { html += `<button onclick="setScore('s3-mgmt', ${i}, ${v}, this)" class="score-btn w-6 h-6 rounded text-[11px] font-bold text-slate-600 ${state.s3.mgmt[i]==v?'active':''}" data-val="${v}">${v}<span class="tooltip-text">${item.levels[v-1]}</span></button>`; });
+                [1,2,3,4,5].map(v => { html += `<button onclick="setScore('s3-mgmt', ${i}, ${v}, this)" class="score-btn w-6 h-6 rounded text-[11px] font-bold text-slate-600 ${state.s3.mgmt[i]==v?'active':''}" data-val="${v}"><span class="tooltip-text">${item.levels[v-1]}</span></button>`; });
                 html += `</div></td></tr>`;
                 const desc = state.s3.mgmt[i] > 0 ? item.descs[state.s3.mgmt[i]-1] : '';
                 html += `<tr id="desc-mgmt-${i}" class="bg-slate-50 text-[11px] text-slate-600 ${state.s3.mgmt[i]>0?'':'hidden'}"><td colspan="7" class="p-1.5 border-b"><span class="font-bold text-green-700">行為描述：</span> <span id="desc-text-mgmt-${i}">${desc}</span></td></tr>`;
@@ -968,161 +1024,19 @@
             tbody.innerHTML = html;
         }
 
-        function updateLevelLogic() { 
-            const selectEl = document.getElementById('job-level-select');
-            if(selectEl) state.level = parseInt(selectEl.value); 
-            renderS3(); calculateScores(); 
-        }
-
-        // 不會觸發 DOM 重繪，僅切換 Class 並更新分數，保留 textarea 內容
-        window.setScore = function(group, idx, val, btn) {
-            Array.from(btn.parentElement.children).forEach(b => b.classList.remove('active'));
-            
-            let currentVal = 0;
-            if(group === 's2') currentVal = state.s2[idx];
-            else if(group.startsWith('s1-')) currentVal = state.s1[group.split('-')[1]][idx];
-            else if(group.startsWith('s3-')) currentVal = state.s3[group.split('-')[1]][idx];
-
-            let newVal = (currentVal === val) ? 0 : val; // 連點取消
-
-            if(newVal > 0) btn.classList.add('active');
-
-            if(group === 's2') state.s2[idx] = newVal;
-            else if(group.startsWith('s1-')) state.s1[group.split('-')[1]][idx] = newVal;
-            else if(group.startsWith('s3-')) {
-                const sub = group.split('-')[1];
-                state.s3[sub][idx] = newVal;
-                // 更新 S3 的行為描述展開
-                const BARS = sub === 'core' ? S3_BARS_CORE : S3_BARS_MGMT;
-                const descRow = document.getElementById(`desc-${sub}-${idx}`);
-                const descText = document.getElementById(`desc-text-${sub}-${idx}`);
-                if(newVal > 0 && descRow && descText) {
-                    descText.innerText = BARS[idx].descs[newVal-1];
-                    descRow.classList.remove('hidden');
-                } else if (descRow) {
-                    descRow.classList.add('hidden');
-                }
-            }
-            
-            calculateScores();
-        }
-
-        function calculateScores() {
-            const sumArr = arr => arr.reduce((a,b)=>a+b, 0);
-
-            let s1PctTotal = 0, s1RawTotal = 0, motScore = 0; 
-            S1_DATA.forEach(g => {
-                const raw = sumArr(state.s1[g.id]); s1RawTotal += raw;
-                if(g.id === 'mot') motScore = raw;
-                s1PctTotal += raw > 0 ? (raw/g.max)*100*g.weight : 0;
-            });
-            const s1Final = (s1PctTotal/100)*30; 
-            setTxt('s1-final', s1Final.toFixed(2));
-
-            const s2Raw = sumArr(state.s2);
-            const s2Pct = s2Raw > 0 ? (s2Raw/85)*100 : 0;
-            const s2Final = s2Pct * 0.10;
-            setTxt('s2-final', s2Final.toFixed(2));
-
-            const d = S3_LEVELS[state.level] || S3_LEVELS[1];
-            let coreScore = 0, mgmtScore = 0;
-            state.s3.core.forEach((v,i) => coreScore += v*(d.c[i]/100));
-            state.s3.mgmt.forEach((v,i) => mgmtScore += v*(d.m[i]/100));
-            const s3RawTotal = ((coreScore/5)*100*(d.ratio.c/100)) + ((mgmtScore/5)*100*(d.ratio.m/100));
-            const s3Final = s3RawTotal * 0.60;
-            setTxt('s3-final', s3Final.toFixed(2));
-
-            const grandTotal = s1Final + s2Final + s3Final;
-            
-            // 寫入 state 以便後台呼叫
-            state.s1Final = s1Final.toFixed(2);
-            state.s2Final = s2Final.toFixed(2);
-            state.s3Final = s3Final.toFixed(2);
-            state.grandTotal = grandTotal.toFixed(2);
-
-            setTxt('header-total', state.grandTotal);
-            setTxt('report-grand-total', state.grandTotal);
-            setTxt('footer-total', state.grandTotal);
-
-            const statusDiv = document.getElementById('ideal-status-text');
-            const expDiv = document.getElementById('ideal-status-exp');
-            const hintArea = document.getElementById('bonus-hint-area');
-            const inputArea = document.getElementById('bonus-method-input');
-
-            if(grandTotal === 0) {
-                 if (statusDiv) statusDiv.innerText = "等待評分...";
-                 if (expDiv) expDiv.innerText = "-";
-                 if (hintArea) hintArea.classList.add('hidden');
-                 return;
-            }
-
-            let finalStatusIndex = 5, baseDesc = "";
-            if (grandTotal >= 90) { finalStatusIndex = 0; baseDesc = "面試與筆試表現皆出色，具高度文化契合度與執行潛力。"; }
-            else if (grandTotal >= 80) { finalStatusIndex = 1; baseDesc = "穩定且具培育潛力，文化契合良好，能快速上線。"; }
-            else if (grandTotal >= 70) { finalStatusIndex = 2; baseDesc = "職能或筆試略有不足，但態度正向、文化契合度高。"; }
-            else if (grandTotal >= 60) { finalStatusIndex = 3; baseDesc = "能力或穩定度不足，需進一步觀察。"; }
-            else if (grandTotal >= 50) { finalStatusIndex = 5; baseDesc = "未達職能與文化基準，需大量培訓或文化落差大。"; }
-            else { finalStatusIndex = 5; baseDesc = "明顯不符核心職能與價值觀。"; }
-
-            let vetoReasons = [], vetoHints = [];
-            if (s1RawTotal > 0 && s1RawTotal < 30) { vetoReasons.push("筆試總分 < 30分"); vetoHints.push("確認該低分項目未來是否有機會提高分數？方法？"); finalStatusIndex = Math.max(finalStatusIndex, 2); }
-            if (motScore > 0 && motScore < 7) { vetoReasons.push("動機與價值觀 < 7分"); vetoHints.push("在初衷上需要對頻更多，需提出解決辦法。"); finalStatusIndex = Math.max(finalStatusIndex, 4); }
-            if (s2Raw > 0 && s2Final < 7) { vetoReasons.push("外顯特質得分率 < 70%"); vetoHints.push("找出外顯特質低於3分的內容確認日後是否可訓練。"); finalStatusIndex = Math.max(finalStatusIndex, 4); }
-            let lowCoreNames = []; state.s3.core.forEach((v, i) => { if(v===1) lowCoreNames.push(S3_BARS_CORE[i].name); });
-            if (lowCoreNames.length > 0) { vetoReasons.push(`${lowCoreNames.join('、')} 低於2分`); vetoHints.push("補充培訓（1~3月）計劃提高職能分數。"); finalStatusIndex = Math.max(finalStatusIndex, 2); }
-
-            const STATUS = ["優先錄取", "建議錄取", "可培養 / 備取", "條件式錄取（限缺時）", "不建議錄取", "不錄取"];
-            
-            if (statusDiv) {
-                statusDiv.innerText = STATUS[finalStatusIndex]; 
-                state.idealStatus = STATUS[finalStatusIndex];
-                if (document.body.classList.contains('report-mode')) {
-                    statusDiv.className = "text-xl font-black mb-2 text-slate-800";
-                } else {
-                    statusDiv.className = `text-xl font-black mb-2 ${finalStatusIndex<=1?'text-emerald-400':(finalStatusIndex<=3?'text-amber-400':'text-red-400')}`;
-                }
-            }
-
-            if(vetoReasons.length > 0) {
-                if (expDiv) expDiv.innerHTML = `<span class="text-red-500 font-bold">⚠️ 判定原因：</span> ${vetoReasons.join('、')}。`;
-                if (hintArea) { hintArea.innerHTML = "💡 系統加分提示：<br>• " + vetoHints.join('<br>• '); hintArea.classList.remove('hidden'); }
-                if (inputArea) inputArea.classList.remove('rounded-t-lg');
-            } else {
-                let rangeText = grandTotal>=90?"90~100分":grandTotal>=80?"80~89分":grandTotal>=70?"70~79分":grandTotal>=60?"60~69分":grandTotal>=50?"50~59分":"小於50分";
-                if (expDiv) expDiv.innerHTML = `<span class="text-blue-500 font-bold">${grandTotal.toFixed(2)}分</span> 落在 ${rangeText} 級距，<br>${baseDesc}`;
-                if (hintArea) hintArea.classList.add('hidden');
-                if (inputArea) inputArea.classList.add('rounded-t-lg');
-            }
-        }
-
-        function toggleReportMode(isReport) {
-            const reportBar = document.getElementById('report-exit-bar');
-            const actionBar = document.getElementById('action-bar');
-            
-            if(isReport) {
-                document.body.classList.add('report-mode');
-                if(actionBar) actionBar.classList.add('hidden');
-                if(reportBar) reportBar.classList.remove('hidden');
-                calculateScores();
-                window.scrollTo(0,0); setTimeout(() => window.print(), 500);
-            } else {
-                document.body.classList.remove('report-mode');
-                if(actionBar) actionBar.classList.remove('hidden');
-                if(reportBar) reportBar.classList.add('hidden');
-                calculateScores(); 
-            }
-        }
-
-        // ================= 後台資料匯出 =================
+        // ================= 導出 CSV =================
         function exportCSV() {
-            let csv = "\uFEFF面試日期,應徵者姓名,單位,職位,一、筆試和綜合面談,二、外顯特質,三、職能面試,總得分,進度狀態,結果\n";
+            let csv = "\uFEFF面試日期,應徵者姓名,單位,職位,一、筆試和綜合面談,二、外顯特質,三、職能面試,總得分,進度狀態,結果,面試官備註\n";
             const db = JSON.parse(localStorage.getItem('interview_db') || '[]');
             let viewDb = currentUser && currentUser.role === 'MGR' && !['F00001', 'F00004', 'F00005'].includes(currentUser.id) ? db.filter(r => r.branch === currentUser.dept) : db;
 
             viewDb.forEach(r => { 
                 let statusText = r.docStatus === 'draft' ? '筆試及職能面試題目暫存' : r.docStatus === 'stage_done' ? '面試最終決策中' : '面試完成';
                 let decText = r.finalDecision === 'pass' ? '錄取' : r.finalDecision === 'fail' ? '不錄取' : '-';
-                csv += `"${r.date}","${r.name}","${r.branch}","${r.position}","${r.s1Final}","${r.s2Final}","${r.s3Final}","${r.grandTotal}","${statusText}","${decText}"\n`; 
+                // 清理備註中的換行字元以維持 CSV 格式正常
+                let note = (r.interviewNote || '').replace(/\n/g, ' | ').replace(/"/g, '""');
+                
+                csv += `"${r.date}","${r.name}","${r.branch}","${r.position}","${r.s1Final}","${r.s2Final}","${r.s3Final}","${r.grandTotal}","${statusText}","${decText}","${note}"\n`; 
             });
 
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
