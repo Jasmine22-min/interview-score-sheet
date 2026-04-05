@@ -302,7 +302,7 @@
             <div class="bg-slate-800 p-4 flex justify-between items-center">
                 <h2 class="text-white font-bold text-lg flex items-center gap-2">📊 逗點面試資料分析</h2>
                 <div class="flex gap-2">
-                    <a href="https://script.google.com/macros/s/AKfycbwJclMWsILyCdLNgFFeY5mcPRaRqSNPGnmwStEqYoSB6h-4bzbGCHSYTCyy0juVkzZu7g/exec" target="_blank" id="btn-google-sheet" class="bg-blue-600 text-white px-4 py-1.5 rounded-lg font-bold hover:bg-blue-700 shadow-sm text-sm transition-colors flex items-center gap-2 hidden">
+                    <a href="https://docs.google.com/spreadsheets/d/1RiFQdCr6WNoW6Nobgym35eu1SI03JlT1Njz8ZOhsT5Q/edit?gid=1973860664#gid=1973860664" target="_blank" id="btn-google-sheet" class="bg-blue-600 text-white px-4 py-1.5 rounded-lg font-bold hover:bg-blue-700 shadow-sm text-sm transition-colors flex items-center gap-2 hidden">
                         <span>🔗 進入 Google Sheet</span>
                     </a>
                     <button onclick="window.exportCSV()" class="bg-emerald-600 text-white px-4 py-1.5 rounded-lg font-bold hover:bg-emerald-700 shadow-sm text-sm transition-colors flex items-center gap-2">
@@ -319,8 +319,8 @@
                             <th class="p-3 border-b">分校/單位</th>
                             <th class="p-3 border-b">職位</th>
                             <th class="p-3 border-b text-center text-indigo-700">一、筆試和綜合面談</th>
-                            <th class="p-3 border-b text-center text-emerald-700">二、外顯特質</th>
-                            <th class="p-3 border-b text-center text-orange-700">三、職能面試</th>
+                            <th class="p-3 border-b text-center text-orange-700">二、職能面試</th>
+                            <th class="p-3 border-b text-center text-emerald-700">三、外顯特質</th>
                             <th class="p-3 border-b text-center text-blue-700">總得分</th>
                             <th class="p-3 border-b text-center">進度狀態</th>
                             <th class="p-3 border-b text-center">結果</th>
@@ -397,7 +397,7 @@
             </div>
         </section>
 
-        <!-- 階段一 -->
+        <!-- 階段一 (筆試) -->
         <section class="bg-white rounded-2xl shadow-sm border border-slate-200">
             <div class="bg-emerald-50 p-2.5 border-b border-emerald-100 flex justify-between items-center">
                 <h2 class="text-base font-bold text-emerald-900">1. 一、筆試和綜合面談 <span class="text-xs font-normal text-emerald-600 ml-1">(30%)</span></h2>
@@ -447,7 +447,7 @@
                     <svg class="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" /></svg>
                     暫存人才及職能題目
                 </button>
-                <p class="text-[11px] text-slate-400 mt-2">主管可於此暫存評分記憶，下次於「基本資訊」輸入相同應徵者姓名，將自動提示帶入已填項目。</p>
+                <p class="text-[11px] text-slate-400 mt-2">主管可於此暫存評分記憶，下階段面試前請務必確保檢核表填寫。</p>
             </div>
         </section>
 
@@ -988,6 +988,7 @@
             window.setTxt('datetime-preview', `${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()} (${["日","一","二","三","四","五","六"][d.getDay()]}) ${tInput ? '/ '+tInput+' 開始':''}`);
         }
 
+        // ================= 資料庫與 Google Sheet 傳送功能 =================
         window.saveToDB = function(status) {
             window.syncState();
             if(!window.state.name.trim()) return false;
@@ -1005,6 +1006,58 @@
             return true;
         }
 
+        window.sendToGoogleSheet = function(sheetName) {
+            const scriptURL = "https://script.google.com/macros/s/AKfycbxSXKlW8XzvOTczBmbqMj0CdOCZ2sZVEPadspKq-gtWhmUsqqh1EcNyItH10L2ey3_bYQ/exec"
+            const interviewerInputs = document.querySelectorAll('.ipt-interviewer');
+            const interviewers = Array.from(interviewerInputs).map(inp => inp.value).filter(v => v).join('、');
+
+            let s1Scores = [];
+            window.S1_DATA.forEach(g => {
+                if(g.id === 'bon') {
+                    const bonNote = window.state.s1.bonText ? window.state.s1.bonText.replace(/\n/g, ' ') : '';
+                    s1Scores.push(bonNote + " (" + window.state.s1[g.id][0] + "分)");
+                } else {
+                    g.qs.forEach((q, i) => s1Scores.push(window.state.s1[g.id][i]));
+                }
+            });
+
+            let s3Data = [];
+            window.state.s3Texts.core.forEach(item => {
+                s3Data.push(item.bei.replace(/\n/g, ' '), item.c.replace(/\n/g, ' '), item.a.replace(/\n/g, ' '), item.r.replace(/\n/g, ' '));
+            });
+            window.state.s3Texts.mgmt.forEach(item => {
+                s3Data.push(item.bei.replace(/\n/g, ' '), item.c.replace(/\n/g, ' '), item.a.replace(/\n/g, ' '), item.r.replace(/\n/g, ' '));
+            });
+
+            let s2Scores = window.state.s2;
+
+            let docStatusStr = window.state.docStatus === 'draft' ? '筆試及職能面試題目暫存' : (window.state.docStatus === 'stage_done' ? '面試最終決策中' : '面試完成');
+            let decisionStr = window.state.finalDecision === 'pass' ? '錄取' : (window.state.finalDecision === 'fail' ? '不錄取' : '');
+
+            const payload = {
+                sheetName: sheetName,
+                date: window.state.date,
+                candidate: window.state.name,
+                branch: window.state.branch,
+                position: window.state.position,
+                interviewer: interviewers,
+                s1: s1Scores,
+                s3: s3Data,
+                s2: s2Scores,
+                total: document.getElementById('header-total').innerText,
+                status: docStatusStr,
+                result: decisionStr,
+                note: window.state.interviewNote ? window.state.interviewNote.replace(/\n/g, ' ') : ''
+            };
+
+            fetch(scriptURL, {
+                method: 'POST',
+                body: JSON.stringify(payload),
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+            }).then(res => console.log("Google Sheet 傳送成功"))
+              .catch(err => console.error("Google Sheet 傳送失敗", err));
+        };
+
         window.handleSaveDraft = function() {
             if(!window.state.name.trim()) return alert('請先輸入「應徵者姓名」才能暫存！');
             window.syncState();
@@ -1016,9 +1069,10 @@
                 return;
             }
 
-            window.alert("提醒：下階段面試前請先完成檢核表內容（面試前）");
             window.saveToDB('draft');
-            window.showToast(`✅ 已暫存人才評分進度！`);
+            window.sendToGoogleSheet('人才暫存');
+            window.alert("提醒：下階段面試前請先完成檢核表內容（面試前）");
+            window.showToast(`✅ 已暫存人才評分進度並同步至 Google Sheet！`);
         }
 
         window.handleStageComplete = function() {
@@ -1066,9 +1120,10 @@
                 alert("請先在成績單區塊選擇「確認錄取」或「不予錄取」！");
                 return;
             }
-            window.alert("提醒：面試後檢核表請確實完成");
             window.saveToDB('completed');
-            window.showToast('☁️ 最終決策已送出！資料已更新至後台。');
+            window.sendToGoogleSheet('完成人才面試');
+            window.alert("提醒：面試後檢核表請確實完成");
+            window.showToast('☁️ 最終決策已送出！資料已更新至後台及 Google Sheet。');
         }
 
         window.showToast = function(msg) { const t = document.getElementById('toast'); if(t) { t.innerText = msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 1500); } }
@@ -1087,7 +1142,7 @@
                 if(!container) return;
                 let html = `<div class="bg-white p-2.5 rounded-xl border border-slate-200 shadow-sm mb-2"><div class="flex justify-between border-b-2 border-slate-100 pb-1"><h3 class="font-bold text-sm text-slate-800">${group.title}</h3></div><div class="space-y-1.5 mt-1.5">`;
                 if (group.id === 'bon') {
-                    html += `<div class="bg-slate-50 p-2.5 rounded flex flex-col gap-2"><div class="text-[13px] font-medium text-slate-700 w-full">${group.qs[0]} <span class="text-[10px] text-slate-400 font-normal">(選填)</span></div><textarea id="s1-bon-text" onchange="window.syncState()" rows="2" class="input-cell w-full text-sm" placeholder="請填寫加分項目說明...">${window.state.s1.bonText||''}</textarea><div class="flex gap-1.5 self-end">`;
+                    html += `<div class="bg-slate-50 p-2.5 rounded flex flex-col gap-2"><div class="text-[13px] font-medium text-slate-700 w-full">${group.qs[0]} <span class="text-[10px] text-slate-400 font-normal">(選填)</span></div><textarea id="s1-bon-text" oninput="window.syncState()" rows="2" class="input-cell w-full text-sm" placeholder="請填寫加分項目說明...">${window.state.s1.bonText||''}</textarea><div class="flex gap-1.5 self-end">`;
                     [1,2,3,4,5].map(v => {
                         const isActive = window.state.s1[group.id][0] == v;
                         html += `<button onclick="window.setScore('s1-${group.id}', 0, ${v}, this)" class="score-btn w-7 h-7 rounded text-xs font-bold text-slate-600 ${isActive?'active':''}" data-val="${v}">${v}</button>`;
@@ -1129,10 +1184,10 @@
 
             window.S3_BARS_CORE.forEach((item, i) => {
                 html += `<tr class="border-b border-slate-200"><td class="p-1.5 border-r bg-blue-50 font-bold text-center text-xs w-[60px]">核心<br><span class="text-[10px] text-blue-600">(${d.c[i]}%)</span></td><td class="p-1.5 border-r font-bold text-xs text-center w-[100px]">${item.name}</td>
-                <td class="bg-blue-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="2" onchange="window.state.s3Texts.core[${i}].bei=this.value">${window.state.s3Texts.core[i].bei}</textarea></td>
-                <td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="2" onchange="window.state.s3Texts.core[${i}].c=this.value">${window.state.s3Texts.core[i].c}</textarea></td>
-                <td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="2" onchange="window.state.s3Texts.core[${i}].a=this.value">${window.state.s3Texts.core[i].a}</textarea></td>
-                <td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="2" onchange="window.state.s3Texts.core[${i}].r=this.value">${window.state.s3Texts.core[i].r}</textarea></td>
+                <td class="bg-blue-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="2" oninput="window.state.s3Texts.core[${i}].bei=this.value">${window.state.s3Texts.core[i].bei || ''}</textarea></td>
+                <td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="2" oninput="window.state.s3Texts.core[${i}].c=this.value">${window.state.s3Texts.core[i].c || ''}</textarea></td>
+                <td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="2" oninput="window.state.s3Texts.core[${i}].a=this.value">${window.state.s3Texts.core[i].a || ''}</textarea></td>
+                <td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="2" oninput="window.state.s3Texts.core[${i}].r=this.value">${window.state.s3Texts.core[i].r || ''}</textarea></td>
                 <td class="p-1.5 text-center relative"><div class="flex gap-1 justify-center">`;
                 [1,2,3,4,5].map(v => {
                     const isActive = window.state.s3.core[i] == v;
@@ -1145,10 +1200,10 @@
 
             window.S3_BARS_MGMT.forEach((item, i) => {
                 html += `<tr class="border-b border-slate-200"><td class="p-1.5 border-r bg-green-50 font-bold text-center text-xs w-[60px]">管理<br><span class="text-[10px] text-green-600">(${d.m[i]}%)</span></td><td class="p-1.5 border-r font-bold text-xs text-center w-[100px]">${item.name}</td>
-                <td class="bg-blue-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="2" onchange="window.state.s3Texts.mgmt[${i}].bei=this.value">${window.state.s3Texts.mgmt[i].bei}</textarea></td>
-                <td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="2" onchange="window.state.s3Texts.mgmt[${i}].c=this.value">${window.state.s3Texts.mgmt[i].c}</textarea></td>
-                <td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="2" onchange="window.state.s3Texts.mgmt[${i}].a=this.value">${window.state.s3Texts.mgmt[i].a}</textarea></td>
-                <td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="2" onchange="window.state.s3Texts.mgmt[${i}].r=this.value">${window.state.s3Texts.mgmt[i].r}</textarea></td>
+                <td class="bg-blue-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="2" oninput="window.state.s3Texts.mgmt[${i}].bei=this.value">${window.state.s3Texts.mgmt[i].bei || ''}</textarea></td>
+                <td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="2" oninput="window.state.s3Texts.mgmt[${i}].c=this.value">${window.state.s3Texts.mgmt[i].c || ''}</textarea></td>
+                <td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="2" oninput="window.state.s3Texts.mgmt[${i}].a=this.value">${window.state.s3Texts.mgmt[i].a || ''}</textarea></td>
+                <td class="bg-indigo-50/10 p-1 border-r"><textarea class="input-cell text-xs" rows="2" oninput="window.state.s3Texts.mgmt[${i}].r=this.value">${window.state.s3Texts.mgmt[i].r || ''}</textarea></td>
                 <td class="p-1.5 text-center relative"><div class="flex gap-1 justify-center">`;
                 [1,2,3,4,5].map(v => {
                     const isActive = window.state.s3.mgmt[i] == v;
@@ -1167,6 +1222,7 @@
             window.renderS3(); window.calculateScores(); 
         }
 
+        // 不會觸發 DOM 重繪，僅切換 Class 並更新分數，保留 textarea 內容
         window.setScore = function(group, idx, val, btn) {
             Array.from(btn.parentElement.children).forEach(b => b.classList.remove('active'));
             
