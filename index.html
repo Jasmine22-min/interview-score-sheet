@@ -37,7 +37,7 @@
         .th-btn-primary { background-color: var(--th-btn); color: white; transition: all 0.3s ease; }
         .th-btn-primary:hover { background-color: var(--th-btn-hover); transform: translateY(-1px); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
 
-        /* 頁面切換邏輯與登入置中修復 */
+        /* 頁面切換邏輯與登入置中 */
         .page-view { display: none !important; }
         .page-view.active { display: block !important; animation: fadeIn 0.3s ease; }
         #view-login.active { display: flex !important; } 
@@ -75,7 +75,7 @@
         @keyframes small-pop { 0% { transform: scale(0.95); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
         .animate-small-pop { animation: small-pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 
-        /* 列印模式 (A4橫式極致壓縮) */
+        /* 列印模式 (A4橫式) */
         .report-label { display: none; } 
         body.report-mode { background-color: white; padding-bottom: 0 !important; }
         body.report-mode .hide-in-report { display: none !important; }
@@ -302,7 +302,7 @@
             <div class="bg-slate-800 p-4 flex justify-between items-center">
                 <h2 class="text-white font-bold text-lg flex items-center gap-2">📊 逗點面試資料分析</h2>
                 <div class="flex gap-2">
-                    <a href="https://script.google.com/macros/s/AKfycbxSXKlW8XzvOTczBmbqMj0CdOCZ2sZVEPadspKq-gtWhmUsqqh1EcNyItH10L2ey3_bYQ/exec" target="_blank" id="btn-google-sheet" class="bg-blue-600 text-white px-4 py-1.5 rounded-lg font-bold hover:bg-blue-700 shadow-sm text-sm transition-colors flex items-center gap-2 hidden">
+                    <a href="https://script.google.com/macros/s/AKfycbxCPQLOLkHCDJJkyxhAPq8PI49K4FOLCdyFjahQnoAOFPUq6CtriFwU0uEtLKVlQkYF/exec" target="_blank" id="btn-google-sheet" class="bg-blue-600 text-white px-4 py-1.5 rounded-lg font-bold hover:bg-blue-700 shadow-sm text-sm transition-colors flex items-center gap-2 hidden">
                         <span>🔗 進入 Google Sheet</span>
                     </a>
                     <button onclick="window.exportCSV()" class="bg-emerald-600 text-white px-4 py-1.5 rounded-lg font-bold hover:bg-emerald-700 shadow-sm text-sm transition-colors flex items-center gap-2">
@@ -572,7 +572,7 @@
         window.S3_BARS_CORE = [
             { name: "品質成果導向", levels: ["逃避責任", "被動執行", "穩定執行", "主動精進", "卓越引領"], descs: ["經常拖延，需多次提醒才執行；遇問題傾向抱怨，品質不穩。","僅完成明確指示，缺乏自我檢查；需主管持續監督。","理解任務並依計畫執行；遇困難主動回報，品質大致穩定。","清楚拆解目標並優化流程；面對挑戰能分析並協調資源，具高責任感。","高度自我要求，帶領他人檢視改進；建立標準化機制與信任文化。"] },
             { name: "顧客導向", levels: ["忽視需求", "被動回應", "穩定服務", "主動協助", "建立信任"], descs: ["對家長反應漠不關心，傾向以規則回應，不願理解對方焦慮。","僅被詢問時回覆；面對抱怨易緊張防禦，缺乏安撫技巧。","能友善回覆，並在指導下處理簡單抱怨；維持禮貌與穩定。","察覺家長焦慮並主動關懷，提供具體協助；平衡雙方期待。","化解負面情緒並建立信任，帶領團隊形成穩定服務文化。"] },
-            { name: "問題解決", levels: ["逃避問題", "被回報", "穩定修正", "主動分析", "系統改善"], descs: ["面對問題閃避或推卸責任，缺乏改善行動。","察覺問題但僅通報主管，未嘗試分析或提出方案。","在指導下釐清問題，提出可行修正並完成任務。","獨立找出根源、提出並執行方案，追蹤結果防止重複。","整合團隊經驗建立SOP，推動持續改善與風險預警。"] },
+            { name: "問題解決", levels: ["逃避問題", "被動回報", "穩定修正", "主動分析", "系統改善"], descs: ["面對問題閃避或推卸責任，缺乏改善行動。","察覺問題但僅通報主管，未嘗試分析或提出方案。","在指導下釐清問題，提出可行修正並完成任務。","獨立找出根源、提出並執行方案，追蹤結果防止重複。","整合團隊經驗建立SOP，推動持續改善與風險預警。"] },
             { name: "團隊合作", levels: ["抗拒合作", "被動配合", "穩定參與", "主動支援", "領導團隊"], descs: ["缺乏團隊意識，只顧自身任務，對他人需求漠不關心。","願意合作但僅在被要求時行動，難以主動協助。","理解目標並完成分配任務，衝突時保持理性尊重。","協調不同意見、推動共識，主動分享經驗協助同儕。","帶領團隊形成穩定機制，推動跨部門協作建立信任。"] },
             { name: "溝通協調", levels: ["表達混亂", "被動回應", "清楚表達", "彈性調整", "影響引導"], descs: ["溝通缺乏邏輯或情緒化，易造成誤會或衝突。","單向表達未確認對方理解；常需他人重複解釋。","條理說明工作，能傾聽並確認理解。","依對象調整語氣方式，協助建立共識與合作。","跨部門清晰表達觀點，影響他人並維護形象。"] },
             { name: "創新能力", levels: ["抗拒改變", "被動接受", "穩定嘗試", "主動創新", "引領創新"], descs: ["拒絕新做法，傾向維持現狀或否定他人創意。","願意嘗試但缺乏主動觀察；需指導才能執行。","配合新流程，並在指導下提出小幅優化。","獨立觀察問題、提出新做法並追蹤結果，積極改善。","發展創新專案或制度，推動團隊建立優化文化。"] }
@@ -1007,7 +1007,7 @@
         }
 
         window.sendToGoogleSheet = function(sheetName) {
-            const scriptURL = "https://script.google.com/macros/s/AKfycbxSXKlW8XzvOTczBmbqMj0CdOCZ2sZVEPadspKq-gtWhmUsqqh1EcNyItH10L2ey3_bYQ/exec";
+            const scriptURL = "https://script.google.com/macros/s/AKfycbxCPQLOLkHCDJJkyxhAPq8PI49K4FOLCdyFjahQnoAOFPUq6CtriFwU0uEtLKVlQkYF/exec";
             
             const interviewerInputs = document.querySelectorAll('.ipt-interviewer');
             const interviewers = Array.from(interviewerInputs).map(inp => inp.value).filter(v => v).join('、');
@@ -1360,6 +1360,7 @@
             }
         }
 
+        // ================= 後台資料匯出 (CSV) =================
         window.exportCSV = function() {
             let csv = "\uFEFF面試日期,應徵者姓名,單位,職位,一、筆試和綜合面談,二、外顯特質,三、職能面試,總得分,進度狀態,結果,面試官備註\n";
             const dbData = JSON.parse(localStorage.getItem('interview_db') || '[]');
