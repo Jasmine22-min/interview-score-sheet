@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>面試評分系統 - Pro 旗艦版</title>
+    <title>面試評分系統</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <style>
-        /* 動態主題顏色變數 */
+        /* ================= 動態主題顏色變數 ================= */
         :root {
             --th-header: #1e3a8a; --th-header-border: #3b82f6; --th-header-dark: #172554;
             --th-light-bg: #eff6ff; --th-light-border: #bfdbfe; --th-text: #1d4ed8;
@@ -29,24 +29,19 @@
             --th-btn: #1e293b; --th-btn-hover: #0f172a; --th-score: #94a3b8;
         }
         
-        body { font-family: 'Noto Sans TC', sans-serif; background-color: #f1f5f9; scroll-behavior: smooth; }
         .th-header { background-color: var(--th-header); border-bottom: 3px solid var(--th-header-border); transition: background-color 0.3s ease; }
         .th-header-box { background-color: var(--th-header-dark); border: 1px solid var(--th-header-border); }
         .th-light-box { background-color: var(--th-light-bg); border: 1px solid var(--th-light-border); }
         .th-text { color: var(--th-text); }
+        .th-score-text { color: var(--th-score); }
         .th-btn-primary { background-color: var(--th-btn); color: white; transition: all 0.3s ease; }
         .th-btn-primary:hover { background-color: var(--th-btn-hover); transform: translateY(-1px); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
-
-        /* 頁面切換邏輯與登入置中 */
-        .page-view { display: none !important; }
-        .page-view.active { display: block !important; animation: fadeIn 0.3s ease; }
-        #view-login.active { display: flex !important; } 
         
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
+        body { font-family: 'Noto Sans TC', sans-serif; background-color: #f1f5f9; }
+        
         /* 評分按鈕 */
-        .score-btn { transition: all 0.15s ease-in-out; cursor: pointer; border: 1px solid #cbd5e1; background-color: white; position: relative; }
-        .score-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        .score-btn { transition: all 0.1s; cursor: pointer; border: 1px solid #cbd5e1; background-color: white; position: relative; }
+        .score-btn:hover { transform: translateY(-1px); box-shadow: 0 2px 4px -1px rgba(0,0,0,0.1); }
         .score-btn.active { transform: scale(1.05); border-width: 2px; }
         .score-btn.active[data-val="1"] { background-color: #ef4444; color: white; border-color: #b91c1c; }
         .score-btn.active[data-val="2"] { background-color: #f97316; color: white; border-color: #c2410c; }
@@ -54,28 +49,27 @@
         .score-btn.active[data-val="4"] { background-color: #84cc16; color: white; border-color: #4d7c0f; }
         .score-btn.active[data-val="5"] { background-color: #22c55e; color: white; border-color: #15803d; }
         
-        /* 懸停提示 (Tooltip) */
-        .tooltip-text { visibility: hidden; opacity: 0; position: absolute; bottom: 120%; left: 50%; transform: translateX(-50%); background-color: #1e293b; color: white; text-align: center; padding: 6px 10px; border-radius: 6px; font-size: 11px; white-space: nowrap; z-index: 50; pointer-events: none; transition: opacity 0.2s; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        /* Tooltip */
+        .tooltip-text { visibility: hidden; opacity: 0; position: absolute; bottom: 120%; left: 50%; transform: translateX(-50%); background-color: #1e293b; color: white; text-align: center; padding: 4px 8px; border-radius: 6px; font-size: 11px; white-space: nowrap; z-index: 10; transition: opacity 0.2s; pointer-events: none; }
         .score-btn:hover .tooltip-text { visibility: visible; opacity: 1; }
-        
-        .input-cell { @apply w-full border border-slate-300 rounded p-1.5 text-sm focus:ring-2 focus:ring-blue-400 outline-none resize-none transition-all; }
+
+        .input-cell { @apply w-full border border-slate-300 rounded p-1.5 text-sm focus:border-slate-500 outline-none resize-none transition-all; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        
+
+        /* 決策按鈕 */
         .decision-btn { transition: all 0.2s; border: 2px solid transparent; }
         .decision-btn.active-pass { background-color: #ecfdf5; border-color: #10b981; color: #047857; transform: scale(1.02); }
         .decision-btn.active-fail { background-color: #fef2f2; border-color: #ef4444; color: #b91c1c; transform: scale(1.02); }
 
-        #toast { position: fixed; bottom: 80px; right: 20px; background: #10b981; color: white; padding: 12px 24px; border-radius: 8px; font-weight: bold; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); transform: translateX(150%); transition: transform 0.3s ease; z-index: 99999; }
+        /* Toast 通知 */
+        #toast { position: fixed; top: 80px; right: 20px; background: #10b981; color: white; padding: 12px 24px; border-radius: 8px; font-weight: bold; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); transform: translateX(150%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 9999; }
         #toast.show { transform: translateX(0); }
 
         /* Modals */
         .modal-overlay { display: none; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(4px); z-index: 99999; }
         .modal-overlay.show { display: flex; }
 
-        @keyframes small-pop { 0% { transform: scale(0.95); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-        .animate-small-pop { animation: small-pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-
-        /* 列印模式 (A4橫式) */
+        /* ================= 列印 / 報告模式 CSS (A4極致壓縮) ================= */
         .report-label { display: none; } 
         body.report-mode { background-color: white; padding-bottom: 0 !important; }
         body.report-mode .hide-in-report { display: none !important; }
@@ -86,26 +80,52 @@
         body.report-mode .score-btn.active { transform: none !important; cursor: default; width: auto !important; padding: 1px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; margin: 0; box-shadow: none !important; border: 1px solid #ccc; }
         body.report-mode .s1-s2-btn .btn-num { display: none !important; }
         body.report-mode .s1-s2-btn .report-label { display: inline-block !important; margin-left: 2px; }
+
         body.report-mode .decision-btn:not([class*="active-"]) { display: none !important; }
         body.report-mode .decision-btn { padding: 4px 8px !important; pointer-events: none; font-size: 12px; border: 1px solid #ccc; }
         
         @media print {
             .no-print { display: none !important; }
-            body { font-size: 9px !important; line-height: 1.1 !important; color: #000; -webkit-print-color-adjust: exact; print-color-adjust: exact;}
-            @page { size: A4 landscape; margin: 10mm; } 
+            body { -webkit-print-color-adjust: exact; print-color-adjust: exact; font-size: 9px !important; line-height: 1.1 !important; color: #000; }
+            @page { size: A4 portrait; margin: 5mm; }
+            
             main { padding: 0 !important; margin: 0 !important; max-width: 100% !important; }
+            .p-4, .p-5, .p-6, .p-8, .p-3, .p-2 { padding: 2px 4px !important; }
+            .mb-6, .mb-8, .mb-4, .mb-3, .mb-2, .mb-1 { margin-bottom: 2px !important; }
+            .gap-6, .gap-8, .gap-4, .gap-3, .gap-2 { gap: 2px !important; }
+            .text-lg, .text-xl, .text-2xl, .text-3xl, .text-5xl, .text-4xl { font-size: 12px !important; line-height: 1.2 !important; }
+            .text-base { font-size: 10px !important; }
+            .text-sm { font-size: 9px !important; }
+            .text-xs { font-size: 8px !important; }
+            
             section { border: 1px solid #94a3b8 !important; margin-bottom: 3px !important; border-radius: 4px !important; break-inside: avoid; }
+            
+            /* 壓縮表格 */
             table { width: 100% !important; table-layout: fixed !important; }
-            table th, table td { padding: 1px 2px !important; border: 1px solid #cbd5e1 !important; font-size: 8px !important; word-wrap: break-word !important;}
-            .overflow-x-auto { overflow: visible !important; }
+            table th, table td { padding: 1px 2px !important; border: 1px solid #cbd5e1 !important; font-size: 7px !important; word-wrap: break-word !important; }
+            .overflow-x-auto { overflow: hidden !important; }
+            
+            textarea { min-height: unset !important; height: auto !important; border-bottom: 1px dashed #ccc !important; }
+            
             .bg-slate-900, .bg-slate-800, .bg-emerald-50, .bg-indigo-50, .bg-orange-50 { background-color: #f1f5f9 !important; color: #000 !important; border: none !important; }
-            .text-white, .text-slate-200, .text-slate-400 { color: #0f172a !important; }
+            .text-white, .text-slate-200, .text-slate-300, .text-slate-400 { color: #0f172a !important; }
             .text-blue-400, .text-emerald-400, .text-orange-400, .text-amber-300, .text-red-400, .text-red-500 { color: #000 !important; font-weight: 900 !important; }
-            textarea { min-height: unset !important; height: auto !important; border-bottom: 1px dashed #ccc !important; font-size: 10px !important; }
+            
+            #ideal-status-exp, #bonus-method-input { padding: 2px !important; border: none !important; }
+            #report-grand-total { font-size: 20px !important; }
         }
+
+        @keyframes small-pop { 0% { transform: scale(0.95); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        .animate-small-pop { animation: small-pop 0.2s ease-out; }
+
+        /* 頁面切換邏輯與登入置中 */
+        .page-view { display: none !important; }
+        .page-view.active { display: block !important; animation: fadeIn 0.3s ease; }
+        #view-login.active { display: flex !important; } 
     </style>
 </head>
-<body data-theme="blue">
+<body class="text-slate-800 pb-40" data-theme="blue">
+
     <!-- 系統通知 -->
     <div id="toast">✅ 操作成功！</div>
 
@@ -118,7 +138,7 @@
             </div>
             <div class="p-6 overflow-auto bg-slate-50 space-y-6 flex-1">
                 <p class="text-sm text-slate-600 leading-relaxed font-medium">
-                    各位主任好，為因應從「逗點集團」出發的面試能夠標準且一致化，我們需拿出相同的品質來對待所有面試者，再請您確認以下面試準備清單，確保面試能夠有好的開始與結尾，感謝您
+                    各位主任/主管好，為因應從「逗點集團」出發的面試能夠標準且一致化，我們需拿出相同的品質來對待所有面試者，再請您確認以下面試準備清單，確保面試能夠有好的開始與結尾，感謝您
                 </p>
 
                 <!-- 一、面試前 -->
@@ -129,7 +149,7 @@
                         <label class="flex items-start gap-2 cursor-pointer text-sm text-slate-700 hover:bg-slate-200 p-1 rounded transition-colors"><input type="checkbox" class="chk-item mt-1" onchange="window.syncState()"> <span>已瀏覽及評分面試者填寫之應徵表單（筆試資料）</span></label>
                         <label class="flex items-start gap-2 cursor-pointer text-sm text-slate-700 hover:bg-red-50 p-1 rounded transition-colors border border-red-200 bg-white shadow-sm">
                             <input type="checkbox" id="chk-must-fill" class="chk-item mt-1" onchange="window.syncState()"> 
-                            <span class="text-red-600 font-black">已於二、職能面試中填上要詢問的問題 (※ 必勾選才能暫存)</span>
+                            <span class="text-red-600 font-black">已於職能面試中填上要詢問的問題 (※ 必勾選才能暫存)</span>
                         </label>
                         <label class="flex items-start gap-2 cursor-pointer text-sm text-slate-700 hover:bg-slate-200 p-1 rounded transition-colors"><input type="checkbox" class="chk-item mt-1" onchange="window.syncState()"> <span>若有題目疑慮，已提前與人資確認</span></label>
                         <label class="flex items-start gap-2 cursor-pointer text-sm text-slate-700 hover:bg-slate-200 p-1 rounded transition-colors"><input type="checkbox" class="chk-item mt-1" onchange="window.syncState()"> <span>已確認面試職位之職能需求（確保問對問題）</span></label>
@@ -162,7 +182,7 @@
 
                 <!-- 四、自我檢查 -->
                 <div>
-                    <h3 class="font-bold text-base text-slate-800 mb-2 border-l-4 border-purple-500 pl-2">四、主任自我檢查（可於每次面試後自省）</h3>
+                    <h3 class="font-bold text-base text-slate-800 mb-2 border-l-4 border-purple-500 pl-2">四、主任/主管自我檢查（可於每次面試後自省）</h3>
                     <div class="space-y-2 pl-2">
                         <label class="flex items-start gap-2 cursor-pointer text-sm text-slate-700 hover:bg-slate-200 p-1 rounded transition-colors"><input type="checkbox" class="chk-item mt-1" onchange="window.syncState()"> <span>我是否有確實閱讀完整履歷與表單？</span></label>
                         <label class="flex items-start gap-2 cursor-pointer text-sm text-slate-700 hover:bg-slate-200 p-1 rounded transition-colors"><input type="checkbox" class="chk-item mt-1" onchange="window.syncState()"> <span>今天的提問是否扣合該職位核心與管理職能？</span></label>
@@ -213,7 +233,7 @@
             <div class="space-y-4">
                 <input type="text" id="login-acc" placeholder="員工編號 (如: F00035)" class="w-full border-2 border-slate-200 p-3 rounded-xl focus:border-blue-500 outline-none font-bold text-slate-700 uppercase">
                 <input type="password" id="login-pwd" placeholder="登入密碼 (0000)" class="w-full border-2 border-slate-200 p-3 rounded-xl focus:border-blue-500 outline-none font-bold text-slate-700">
-                <button onclick="window.handleLogin()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-3 rounded-xl shadow-lg transition-colors mt-2 text-lg">登 入 系 統</button>
+                <button id="btn-login" onclick="window.handleLogin()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-3 rounded-xl shadow-lg transition-colors mt-2 text-lg">登 入 系 統</button>
             </div>
             <div class="mt-4 text-xs text-slate-400 text-left leading-relaxed">
                 💡 測試帳號提示：<br>
@@ -238,8 +258,10 @@
                 </div>
             </div>
             <div class="flex items-center gap-2 md:gap-3">
-                <button onclick="window.switchView('hr_search')" id="nav-front-btn" class="bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded text-sm font-bold transition-colors hidden">前台作業</button>
-                <button onclick="window.switchView('backend')" id="nav-back-btn" class="bg-black/30 hover:bg-black/50 px-3 py-1.5 rounded text-sm font-bold border border-white/20 transition-colors hidden shadow-inner">進入後台</button>
+                <!-- 將三個按鈕獨立 ID 管理，防呆更徹底 -->
+                <button id="nav-hr-search-btn" onclick="window.switchView('hr_search')" class="bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded text-sm font-bold transition-colors hidden">應徵者管理</button>
+                <button id="nav-mgr-front-btn" onclick="window.switchView('mgr_front')" class="bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded text-sm font-bold transition-colors hidden">前台評分</button>
+                <button id="nav-backend-btn" onclick="window.switchView('backend')" class="bg-black/30 hover:bg-black/50 px-3 py-1.5 rounded text-sm font-bold border border-white/20 transition-colors hidden shadow-inner">進入後台</button>
                 <button onclick="window.logout()" class="text-xs text-white/70 hover:text-white underline ml-2">登出</button>
             </div>
         </div>
@@ -300,7 +322,7 @@
     <div id="view-backend" class="page-view container mx-auto p-4 max-w-[1400px] mt-6">
         <section class="bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden">
             <div class="bg-slate-800 p-4 flex justify-between items-center">
-                <h2 class="text-white font-bold text-lg flex items-center gap-2">📊 逗點面試資料分析</h2>
+                <h2 class="text-white font-bold text-lg flex items-center gap-2">📊 逗點面試資料庫</h2>
                 <div class="flex gap-2">
                     <a href="https://docs.google.com/spreadsheets/d/1RiFQdCr6WNoW6Nobgym35eu1SI03JlT1Njz8ZOhsT5Q/edit?gid=1973860664#gid=1973860664" target="_blank" id="btn-google-sheet" class="bg-blue-600 text-white px-4 py-1.5 rounded-lg font-bold hover:bg-blue-700 shadow-sm text-sm transition-colors flex items-center gap-2 hidden">
                         <span>🔗 進入 Google Sheet</span>
@@ -311,16 +333,17 @@
                 </div>
             </div>
             <div class="p-0 overflow-x-auto">
-                <table class="w-full text-left border-collapse min-w-[1100px]">
+                <table class="w-full text-left border-collapse min-w-[1200px]">
                     <thead class="bg-slate-100 text-slate-700 text-sm">
                         <tr>
                             <th class="p-3 border-b w-24">面試日期</th>
                             <th class="p-3 border-b">應徵者</th>
                             <th class="p-3 border-b">分校/單位</th>
                             <th class="p-3 border-b">職位</th>
-                            <th class="p-3 border-b text-center text-indigo-700">一、筆試和綜合面談</th>
-                            <th class="p-3 border-b text-center text-orange-700">二、職能面試</th>
-                            <th class="p-3 border-b text-center text-emerald-700">三、外顯特質</th>
+                            <th class="p-3 border-b text-center text-slate-500">其他職務</th>
+                            <th class="p-3 border-b text-center text-indigo-700">筆試和綜合面談</th>
+                            <th class="p-3 border-b text-center text-orange-700">職能面試</th>
+                            <th class="p-3 border-b text-center text-emerald-700">外顯特質</th>
                             <th class="p-3 border-b text-center text-blue-700">總得分</th>
                             <th class="p-3 border-b text-center">進度狀態</th>
                             <th class="p-3 border-b text-center">結果</th>
@@ -346,7 +369,8 @@
                     ☑️ 檢核表
                 </button>
             </div>
-            <div class="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- 第一排 -->
                 <div>
                     <label class="block text-xs font-bold text-slate-400 mb-1">應徵者姓名</label>
                     <input type="text" id="ipt-name" onblur="window.checkExistingRecord()" oninput="window.syncState()" class="w-full border-b-2 border-slate-200 p-1.5 outline-none bg-slate-50 transition-all text-base font-bold focus:border-blue-500" placeholder="輸入姓名 (離開欄位自動搜尋紀錄)">
@@ -361,8 +385,8 @@
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-400 mb-1">應徵分校/單位 (最高權限可選)</label>
-                    <select id="sel-branch" onchange="window.syncState(); window.updateThemeManual(this.value);" class="w-full border-b-2 border-slate-200 p-1.5 outline-none bg-slate-50 text-base font-bold text-slate-600 transition-colors focus:border-blue-500">
+                    <label class="block text-xs font-bold text-slate-400 mb-1">應徵分校/單位 (可自由切換)</label>
+                    <select id="sel-branch" onchange="window.syncState(); window.updateThemeManual(this.value);" class="w-full border-b-2 border-slate-200 p-1.5 outline-none bg-slate-50 text-base font-bold text-slate-600 transition-colors focus:border-blue-500 cursor-pointer">
                         <option value="">請選擇...</option>
                         <optgroup label="各分校單位">
                             <option>青埔升大校</option><option>青埔翱翔校</option><option>青園展翅校</option><option>大園晨光校</option>
@@ -375,20 +399,30 @@
                         </optgroup>
                     </select>
                 </div>
-                <div class="flex gap-3">
-                    <div class="flex-1">
-                        <label class="block text-xs font-bold text-slate-400 mb-1">階段狀態</label>
-                        <select id="sel-stage" onchange="window.syncState()" class="w-full border-b-2 border-slate-200 p-1.5 outline-none bg-slate-50 text-base font-bold text-blue-700 cursor-pointer focus:border-blue-500">
-                            <option>階段一筆試</option><option>其他階段</option>
-                        </select>
-                    </div>
-                    <div class="flex-1">
-                        <label class="block text-xs font-bold text-slate-400 mb-1">應徵職位</label>
-                        <select id="sel-position" onchange="window.syncState()" class="w-full border-b-2 border-slate-200 p-1.5 outline-none bg-slate-50 text-base font-bold focus:border-blue-500">
-                            <option value="">選擇...</option><option>班級導師</option><option>行政導師</option><option>授課師</option><option>主任</option><option>處長</option><option>總部</option>
-                        </select>
-                    </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 mb-1">應徵職位</label>
+                    <select id="sel-position" onchange="window.syncState()" class="w-full border-b-2 border-slate-200 p-1.5 outline-none bg-slate-50 text-base font-bold focus:border-blue-500 cursor-pointer">
+                        <option value="">請選擇...</option>
+                        <option>班級導師</option><option>行政導師</option><option>授課師</option>
+                        <option>主任</option><option>處長</option><option>總部</option>
+                        <option value="其他">其他</option>
+                    </select>
                 </div>
+
+                <!-- 第二排 -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 mb-1">階段狀態</label>
+                    <select id="sel-stage" onchange="window.syncState()" class="w-full border-b-2 border-slate-200 p-1.5 outline-none bg-slate-50 text-base font-bold text-blue-700 cursor-pointer focus:border-blue-500">
+                        <option>階段一筆試</option><option>其他階段</option>
+                    </select>
+                </div>
+                <!-- 注意：面試官(rowspan=2) 佔用這裡的第二格 -->
+                
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 mb-1">其他職務 (自行輸入)</label>
+                    <input type="text" id="ipt-other-position" oninput="window.syncState()" class="w-full border-b-2 border-slate-200 p-1.5 outline-none bg-slate-50 transition-all text-base font-bold focus:border-blue-500" placeholder="請輸入職務名稱">
+                </div>
+
                 <div class="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-3 th-light-box p-3 rounded-xl transition-all duration-300">
                     <div><label class="block text-xs font-bold th-text mb-1">面試日期</label><input type="date" id="interview-date" onchange="window.updateDateTimeDisplay(); window.syncState();" class="w-full border border-white/50 rounded p-1 text-sm outline-none bg-white/80 focus:border-blue-500 transition-all"></div>
                     <div><label class="block text-xs font-bold th-text mb-1">開始時間</label><input type="time" id="interview-time" onchange="window.updateDateTimeDisplay(); window.syncState();" class="w-full border border-white/50 rounded p-1 text-sm outline-none bg-white/80 focus:border-blue-500 transition-all"></div>
@@ -400,7 +434,7 @@
         <!-- 階段一 (筆試) -->
         <section class="bg-white rounded-2xl shadow-sm border border-slate-200">
             <div class="bg-emerald-50 p-2.5 border-b border-emerald-100 flex justify-between items-center">
-                <h2 class="text-base font-bold text-emerald-900">1. 一、筆試和綜合面談 <span class="text-xs font-normal text-emerald-600 ml-1">(30%)</span></h2>
+                <h2 class="text-base font-bold text-emerald-900">一、筆試和綜合面談 <span class="text-xs font-normal text-emerald-600 ml-1">(30%)</span></h2>
                 <div class="text-xs font-bold text-emerald-700">得分: <span id="s1-final" class="text-lg">0.00</span>/30</div>
             </div>
             <div class="p-3 space-y-2.5 bg-slate-50/30">
@@ -411,7 +445,7 @@
         <!-- 階段二 (職能) -->
         <section class="bg-white rounded-2xl shadow-sm border border-slate-200">
             <div class="bg-orange-50 p-2.5 border-b border-orange-200 flex justify-between items-center">
-                <h2 class="text-base font-bold text-orange-900">2. 二、職能面試 <span class="text-xs font-normal text-orange-600 ml-1">(60%)</span></h2>
+                <h2 class="text-base font-bold text-orange-900">二、職能面試 <span class="text-xs font-normal text-orange-600 ml-1">(60%)</span></h2>
                 <div class="flex items-center gap-3">
                     <select id="job-level-select" class="border rounded outline-none font-bold text-xs p-1 hide-in-report focus:ring-2 focus:ring-orange-500" onchange="window.updateLevelLogic()">
                         <option value="1">職等 1 (核心90% / 管理10%)</option>
@@ -455,7 +489,7 @@
         <section class="bg-white rounded-2xl shadow-sm border border-slate-200">
             <div class="bg-indigo-50 p-2.5 border-b border-indigo-100 flex justify-between items-center">
                 <div>
-                    <h2 class="text-base font-bold text-indigo-900">3. 三、外顯特質 <span class="text-xs font-normal text-indigo-600 ml-1">(10%)</span></h2>
+                    <h2 class="text-base font-bold text-indigo-900">三、外顯特質 <span class="text-xs font-normal text-indigo-600 ml-1">(10%)</span></h2>
                     <p class="text-[10px] text-indigo-700 mt-0.5 hide-in-report">評分基準：[5]優異、[4]良好、[3]佳、[2]尚可、[1]差 (再次點選可取消)</p>
                 </div>
                 <div class="text-xs font-bold text-indigo-700">得分: <span id="s2-final" class="text-lg">0.00</span>/10</div>
@@ -476,7 +510,7 @@
             <div class="absolute top-0 right-0 -mt-16 -mr-16 w-64 h-64 bg-blue-600 rounded-full opacity-20 blur-3xl pointer-events-none no-print"></div>
             <div class="absolute bottom-0 left-0 -mb-16 -ml-16 w-64 h-64 bg-emerald-600 rounded-full opacity-10 blur-3xl pointer-events-none no-print"></div>
 
-            <h2 class="text-xl font-black mb-4 flex items-center gap-3 relative z-10">面試成績總結算 (Report Card)</h2>
+            <h2 class="text-xl font-black mb-4 flex items-center gap-3 relative z-10">面試成績總結算</h2>
             <div class="bg-slate-800 p-4 rounded-xl border border-slate-600 flex justify-between items-center mb-5 relative z-10">
                 <div>
                     <div class="text-lg font-black text-slate-200">系統最終總得分</div>
@@ -484,6 +518,21 @@
                 <div class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400" id="report-grand-total">0.00</div>
             </div>
             
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-6 relative z-10">
+                <div class="bg-slate-800/80 p-4 rounded-xl border border-slate-700 text-center">
+                    <div class="text-slate-400 text-xs font-bold mb-1">一、筆試和綜合面談</div>
+                    <div class="text-2xl font-black text-emerald-400" id="report-s1">0.00</div>
+                </div>
+                <div class="bg-slate-800/80 p-4 rounded-xl border border-slate-700 text-center">
+                    <div class="text-slate-400 text-xs font-bold mb-1">二、職能面試</div>
+                    <div class="text-2xl font-black text-orange-400" id="report-s3">0.00</div>
+                </div>
+                <div class="bg-slate-800/80 p-4 rounded-xl border border-slate-700 text-center">
+                    <div class="text-slate-400 text-xs font-bold mb-1">三、外顯特質</div>
+                    <div class="text-2xl font-black text-indigo-400" id="report-s2">0.00</div>
+                </div>
+            </div>
+
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 relative z-10">
                 <div class="space-y-3 bg-slate-800/80 p-4 rounded-xl border border-slate-700">
                     <label class="block text-slate-400 text-sm font-bold">系統建議理想狀態</label>
@@ -507,24 +556,22 @@
 
             <!-- 確認送出檢核 -->
             <div class="mt-8 flex justify-center hide-in-report relative z-10">
-                <button onclick="window.handleFinalSubmit()" class="bg-emerald-500 text-white px-10 py-3 rounded-2xl font-black shadow-lg hover:bg-emerald-600 hover:shadow-xl transition-all text-lg hover:scale-105 flex items-center gap-2">
+                <button id="btn-final-submit" onclick="window.handleFinalSubmit()" class="bg-emerald-500 text-white px-10 py-3 rounded-2xl font-black shadow-lg hover:bg-emerald-600 hover:shadow-xl transition-all text-lg hover:scale-105 flex items-center gap-2">
                     <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
-                    確認送出檢核並建檔
+                    <span id="btn-final-submit-text">確認送出檢核並建檔</span>
                 </button>
             </div>
         </section>
 
     </main>
 
-    <!-- 底部操作列 (極簡化版) -->
+    <!-- 底部操作列 -->
     <div id="action-bar" class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-2.5 shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.1)] z-50 no-print">
-        <div class="container mx-auto max-w-[1400px] flex justify-between items-center">
-            <div class="text-base font-black text-slate-800 flex items-center">
-                <!-- HR 專屬按鈕，透過 JS 控制顯示隱藏 -->
-                <button id="btn-to-hr-backend" onclick="window.switchView('backend')" class="text-[10px] bg-slate-200 hover:bg-slate-300 px-2 py-1 rounded text-slate-500 mr-3 transition-colors hidden">⚙️ 進入人資後台</button>
-                總得分：<span id="footer-total" class="text-blue-700 text-xl ml-1">0.00</span>
-            </div>
-            <div class="flex gap-2">
+        <div class="container mx-auto max-w-[1400px] flex justify-end items-center">
+            <div class="flex items-center gap-4">
+                <div class="text-base font-black text-slate-800 flex items-center">
+                    總得分：<span id="footer-total" class="text-blue-700 text-xl ml-1">0.00</span>
+                </div>
                 <button onclick="window.toggleReportMode(true)" class="px-6 py-1.5 bg-slate-800 rounded-lg text-white hover:bg-slate-700 text-sm font-black shadow-md transition-colors">📄 產出成績單</button>
             </div>
         </div>
@@ -532,6 +579,9 @@
 
     <!-- 所有 JavaScript 邏輯全域綁定與執行 -->
     <script>
+        window.SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxCPQLOLkHCDJJkyxhAPq8PI49K4FOLCdyFjahQnoAOFPUq6CtriFwU0uEtLKVlQkYF/exec";
+        window.dbCache = [];
+
         // ================= 1. 企業帳號與基礎資料 =================
         window.EMP_DB = {
             "F00001": { name: "徐暘智", dept: "企業主", role: "MGR" },
@@ -571,7 +621,7 @@
         window.S3_LEVELS = { 1: { c: [30, 20, 20, 15, 10, 5], m: [30, 30, 40], ratio: { c: 90, m: 10 } }, 4: { c: [20, 15, 20, 15, 15, 15], m: [30, 40, 30], ratio: { c: 60, m: 40 } }, 7: { c: [15, 10, 20, 15, 20, 20], m: [40, 35, 25], ratio: { c: 30, m: 70 } } };
         window.S3_BARS_CORE = [
             { name: "品質成果導向", levels: ["逃避責任", "被動執行", "穩定執行", "主動精進", "卓越引領"], descs: ["經常拖延，需多次提醒才執行；遇問題傾向抱怨，品質不穩。","僅完成明確指示，缺乏自我檢查；需主管持續監督。","理解任務並依計畫執行；遇困難主動回報，品質大致穩定。","清楚拆解目標並優化流程；面對挑戰能分析並協調資源，具高責任感。","高度自我要求，帶領他人檢視改進；建立標準化機制與信任文化。"] },
-            { name: "顧客導向", levels: ["忽視需求", "被動回應", "穩定服務", "主動協助", "建立信任"], descs: ["對家長反應漠不關心，傾向以規則回應，不願理解對方焦慮。","僅被詢問時回覆；面對抱怨易緊張防禦，缺乏安撫技巧。","能友善回覆，並在指導下處理簡單抱怨；維持禮貌與穩定。","察覺家長焦慮並主關懷，提供具體協助；平衡雙方期待。","化解負面情緒並建立信任，帶領團隊形成穩定服務文化。"] },
+            { name: "顧客導向", levels: ["忽視需求", "被動回應", "穩定服務", "主動協助", "建立信任"], descs: ["對家長反應漠不關心，傾向以規則回應，不願理解對方焦慮。","僅被詢問時回覆；面對抱怨易緊張防禦，缺乏安撫技巧。","能友善回覆，並在指導下處理簡單抱怨；維持禮貌與穩定。","察覺家長焦慮並主動關懷，提供具體協助；平衡雙方期待。","化解負面情緒並建立信任，帶領團隊形成穩定服務文化。"] },
             { name: "問題解決", levels: ["逃避問題", "被動回報", "穩定修正", "主動分析", "系統改善"], descs: ["面對問題閃避或推卸責任，缺乏改善行動。","察覺問題但僅通報主管，未嘗試分析或提出方案。","在指導下釐清問題，提出可行修正並完成任務。","獨立找出根源、提出並執行方案，追蹤結果防止重複。","整合團隊經驗建立SOP，推動持續改善與風險預警。"] },
             { name: "團隊合作", levels: ["抗拒合作", "被動配合", "穩定參與", "主動支援", "領導團隊"], descs: ["缺乏團隊意識，只顧自身任務，對他人需求漠不關心。","願意合作但僅在被要求時行動，難以主動協助。","理解目標並完成分配任務，衝突時保持理性尊重。","協調不同意見、推動共識，主動分享經驗協助同儕。","帶領團隊形成穩定機制，推動跨部門協作建立信任。"] },
             { name: "溝通協調", levels: ["表達混亂", "被動回應", "清楚表達", "彈性調整", "影響引導"], descs: ["溝通缺乏邏輯或情緒化，易造成誤會或衝突。","單向表達未確認對方理解；常需他人重複解釋。","條理說明工作，能傾聽並確認理解。","依對象調整語氣方式，協助建立共識與合作。","跨部門清晰表達觀點，影響他人並維護形象。"] },
@@ -589,7 +639,7 @@
         // ================= 2. 核心功能函式定義 =================
         window.getEmptyState = function() {
             return {
-                name: "", branch: "", position: "", date: "", time: "", stage: "階段一筆試",
+                name: "", branch: "", position: "", otherPosition: "", date: "", time: "", stage: "階段一筆試",
                 level: 1, finalDecision: null, bonusMethod: "", idealStatus: "", grandTotal: "",
                 s1Final: "0.00", s2Final: "0.00", s3Final: "0.00",
                 docStatus: "new", 
@@ -615,6 +665,7 @@
             }
             if(!window.state.checklist) window.state.checklist = Array(20).fill(false);
             if(typeof window.state.interviewNote === 'undefined') window.state.interviewNote = "";
+            if(typeof window.state.otherPosition === 'undefined') window.state.otherPosition = "";
         }
 
         window.setTxt = function(id, text) { const el = document.getElementById(id); if(el) el.innerText = text; }
@@ -630,16 +681,36 @@
             }
         }
 
-        window.handleLogin = function() {
+        // --- 核心：向雲端抓取資料 ---
+        window.fetchCloudDB = async function() {
+            try {
+                window.showToast('🔄 正在同步雲端資料，請稍候...');
+                const res = await fetch(window.SCRIPT_URL);
+                const data = await res.json();
+                window.dbCache = data || [];
+                window.showToast('✅ 雲端資料同步完成');
+            } catch (e) {
+                console.error("Fetch DB error", e);
+                window.dbCache = [];
+                window.showToast('❌ 同步失敗或無資料，進入離線模式');
+            }
+        }
+
+        window.handleLogin = async function() {
             const acc = document.getElementById('login-acc')?.value.trim().toUpperCase();
             const pwd = document.getElementById('login-pwd')?.value.trim();
             if(!acc || pwd !== "0000") return alert("帳號不存在或密碼錯誤 (測試密碼: 0000)");
             if(!window.EMP_DB[acc]) return alert("查無此員工編號權限");
 
+            const btnLogin = document.getElementById('btn-login');
+            if(btnLogin) btnLogin.innerText = "雲端同步中...";
+
             window.currentUser = window.EMP_DB[acc];
             window.currentUser.id = acc;
             
-            // 決定專屬登入稱呼
+            // 抓取遠端資料
+            await window.fetchCloudDB();
+
             let greeting = "";
             if (acc === "F00035") {
                 greeting = `歡迎人資長Sherry~~來了❤️`;
@@ -648,9 +719,9 @@
             } else if (acc === "F00001") {
                 greeting = `歡迎 徐暘智 執行長來了～～❤️`;
             } else if (window.currentUser.dept.includes("校")) {
-                greeting = `歡迎 ${window.currentUser.name} 主任來了～～❤️`;
+                greeting = `歡迎 ${window.currentUser.name} 主任/主管來了～～❤️`;
             } else {
-                greeting = `歡迎 ${window.currentUser.name} 處長來了～～❤️`;
+                greeting = `歡迎 ${window.currentUser.name} 主任/主管來了～～❤️`;
             }
             
             alert(greeting); 
@@ -659,42 +730,39 @@
             window.setTxt('header-user-info', `${greeting} | ${roleName}`);
             const mainHeader = document.getElementById('main-header');
             if(mainHeader) mainHeader.classList.remove('hidden');
-            
-            const navFrontBtn = document.getElementById('nav-front-btn');
-            const navBackBtn = document.getElementById('nav-back-btn');
-            const btnHrBackend = document.getElementById('btn-to-hr-backend');
-            const btnGoogleSheet = document.getElementById('btn-google-sheet');
 
-            if (btnGoogleSheet) {
-                if (['F00035', 'F00054', 'F00001'].includes(window.currentUser.id)) {
-                    btnGoogleSheet.classList.remove('hidden');
-                } else {
-                    btnGoogleSheet.classList.add('hidden');
-                }
-            }
-
-            // 確保一登入是「全空白狀態」
             window.state = window.getEmptyState();
             window.hydrateUI();
             window.calculateScores();
 
+            // 🔥【重要分流邏輯】🔥
             if(window.currentUser.role === 'HR') {
-                if(navFrontBtn) { navFrontBtn.innerText = "前台作業"; navFrontBtn.classList.remove('hidden'); navFrontBtn.onclick = () => window.switchView('hr_search'); }
-                if(navBackBtn) { navBackBtn.classList.remove('hidden'); navBackBtn.onclick = () => window.switchView('backend'); }
-                if(btnHrBackend) btnHrBackend.classList.remove('hidden');
+                // 如果是人資：顯示「應徵者管理」與「進入後台」，並預設跳轉到 hr_search
+                document.getElementById('nav-hr-search-btn').classList.remove('hidden');
+                document.getElementById('nav-mgr-front-btn').classList.add('hidden');
+                document.getElementById('nav-backend-btn').classList.remove('hidden');
                 window.switchView('hr_search');
             } else {
-                if(navFrontBtn) { navFrontBtn.innerText = "前台評分"; navFrontBtn.classList.remove('hidden'); navFrontBtn.onclick = () => window.switchView('mgr_front'); }
-                if(navBackBtn) { navBackBtn.classList.remove('hidden'); navBackBtn.onclick = () => window.switchView('backend'); }
-                if(btnHrBackend) btnHrBackend.classList.add('hidden');
+                // 如果是主管(非人資)：顯示「前台評分」與「進入後台」，並預設跳轉到 mgr_front
+                document.getElementById('nav-hr-search-btn').classList.add('hidden');
+                document.getElementById('nav-mgr-front-btn').classList.remove('hidden');
+                document.getElementById('nav-backend-btn').classList.remove('hidden');
                 window.switchView('mgr_front'); 
             }
+
+            if(btnLogin) btnLogin.innerText = "登 入 系 統";
         }
 
         window.logout = function() {
             window.currentUser = null;
             document.getElementById('main-header')?.classList.add('hidden');
             document.getElementById('action-bar')?.classList.add('hidden');
+            
+            // 安全隱藏所有選單按鈕
+            document.getElementById('nav-hr-search-btn')?.classList.add('hidden');
+            document.getElementById('nav-mgr-front-btn')?.classList.add('hidden');
+            document.getElementById('nav-backend-btn')?.classList.add('hidden');
+            
             document.querySelectorAll('.page-view').forEach(el => el.classList.remove('active'));
             document.getElementById('view-login')?.classList.add('active');
             const pwdInput = document.getElementById('login-pwd');
@@ -702,6 +770,11 @@
         }
 
         window.switchView = function(target) {
+            // 防呆：如果非人資帳號試圖進入 hr_search (例如手動竄改)，強制導向 mgr_front
+            if (target === 'hr_search' && window.currentUser && window.currentUser.role !== 'HR') {
+                target = 'mgr_front';
+            }
+
             document.querySelectorAll('.page-view').forEach(el => el.classList.remove('active'));
             document.getElementById('action-bar')?.classList.add('hidden');
             document.body.setAttribute('data-theme', 'blue'); 
@@ -719,7 +792,7 @@
         }
 
         window.getFilteredDB = function() {
-            const db = JSON.parse(localStorage.getItem('interview_db') || '[]');
+            const db = window.dbCache;
             if (!window.currentUser) return db;
 
             if (['F00035', 'F00054', 'F00001'].includes(window.currentUser.id)) {
@@ -738,7 +811,7 @@
         window.searchHRFront = function() {
             const sName = document.getElementById('search-name').value.trim();
             const sBranch = document.getElementById('search-branch').value;
-            const db = JSON.parse(localStorage.getItem('interview_db') || '[]');
+            const db = window.dbCache;
             
             let filtered = db;
             if(sName) filtered = filtered.filter(r => r.name.includes(sName));
@@ -780,7 +853,7 @@
         }
         
         window.viewDetailFromHR = function(originalIdx) { 
-            const db = JSON.parse(localStorage.getItem('interview_db') || '[]');
+            const db = window.dbCache;
             const r = db[originalIdx];
             if(r.docStatus === 'draft') {
                 if(!confirm(`已找到未完成的暫存人才，要讀取嗎？`)) return;
@@ -796,13 +869,13 @@
         }
 
         window.loadBackendData = function() {
-            const db = JSON.parse(localStorage.getItem('interview_db') || '[]');
+            const db = window.dbCache;
             const viewDb = window.getFilteredDB();
             const canDelete = window.currentUser && ['F00035', 'F00054', 'F00001'].includes(window.currentUser.id);
 
             const tbody = document.getElementById('db-list-tbody');
             if(viewDb.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="12" class="p-8 text-center text-slate-400 font-bold">目前尚無歷史評分紀錄</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="13" class="p-8 text-center text-slate-400 font-bold">目前尚無歷史評分紀錄</td></tr>`;
                 return;
             }
 
@@ -823,9 +896,10 @@
                     <td class="p-3 font-black text-blue-700">${r.name}</td>
                     <td class="p-3 text-slate-600 font-medium">${r.branch}</td>
                     <td class="p-3 text-slate-600">${r.position}</td>
+                    <td class="p-3 text-center text-slate-600">${r.otherPosition || '-'}</td>
                     <td class="p-3 text-center font-bold text-indigo-500">${r.s1Final || '0.00'}</td>
-                    <td class="p-3 text-center font-bold text-emerald-500">${r.s2Final || '0.00'}</td>
                     <td class="p-3 text-center font-bold text-orange-500">${r.s3Final || '0.00'}</td>
+                    <td class="p-3 text-center font-bold text-emerald-500">${r.s2Final || '0.00'}</td>
                     <td class="p-3 text-center font-black text-lg text-blue-600">${r.grandTotal || '0.00'}</td>
                     <td class="p-3 text-center font-bold text-slate-600 text-xs">${statusText}</td>
                     <td class="p-3 text-center font-bold ${r.finalDecision==='pass'?'text-emerald-600':r.finalDecision==='fail'?'text-red-600':'text-slate-400'}">${decText}</td>
@@ -840,8 +914,7 @@
         }
         
         window.editRecord = function(realDbIdx) {
-            const db = JSON.parse(localStorage.getItem('interview_db') || '[]');
-            window.state = db[realDbIdx];
+            window.state = window.dbCache[realDbIdx];
             window.hydrateUI();
             window.calculateScores();
             
@@ -850,13 +923,27 @@
             window.showToast('✅ 已載入紀錄，您可以繼續編輯');
         }
 
-        window.deleteRecord = function(realDbIdx) {
+        window.deleteRecord = async function(realDbIdx) {
             if(confirm('確定要刪除此應徵者的資料嗎？此操作無法復原。')) {
-                let db = JSON.parse(localStorage.getItem('interview_db') || '[]');
-                db.splice(realDbIdx, 1);
-                localStorage.setItem('interview_db', JSON.stringify(db));
+                const target = window.dbCache[realDbIdx];
+                const docId = target.name + "_" + target.date;
+                
+                window.dbCache.splice(realDbIdx, 1);
                 window.loadBackendData(); 
-                window.showToast('🗑️ 資料已成功刪除');
+                window.showToast('🗑️ 正在刪除雲端資料...');
+
+                try {
+                    fetch(window.SCRIPT_URL, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        redirect: 'follow',
+                        body: JSON.stringify({ action: 'delete', docId: docId }),
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+                    });
+                    window.showToast('✅ 雲端資料已成功刪除');
+                } catch(e) {
+                    console.error(e);
+                }
             }
         }
 
@@ -868,12 +955,11 @@
         window.syncState = function() {
             const elName = document.getElementById('ipt-name'); if(elName) window.state.name = elName.value.trim();
             const elBranch = document.getElementById('sel-branch');
-            if(window.currentUser && window.currentUser.role === 'MGR' && !['F00001', 'F00004', 'F00005'].includes(window.currentUser.id)) {
-                window.state.branch = window.currentUser.dept;
-            } else if(elBranch) {
+            if(elBranch) {
                 window.state.branch = elBranch.value;
             }
             const elPos = document.getElementById('sel-position'); if(elPos) window.state.position = elPos.value;
+            const elOtherPos = document.getElementById('ipt-other-position'); if(elOtherPos) window.state.otherPosition = elOtherPos.value;
             const elDate = document.getElementById('interview-date'); if(elDate) window.state.date = elDate.value;
             const elTime = document.getElementById('interview-time'); if(elTime) window.state.time = elTime.value;
             const elStage = document.getElementById('sel-stage'); if(elStage) window.state.stage = elStage.value;
@@ -894,8 +980,7 @@
             let name = elName.value.trim();
             if(!name) return;
 
-            let db = JSON.parse(localStorage.getItem('interview_db') || '[]');
-            let existing = db.find(r => r.name === name);
+            let existing = window.dbCache.find(r => r.name === name);
 
             if(existing) {
                 if(existing.docStatus !== 'completed' && existing.docStatus !== 'stage_done') {
@@ -926,17 +1011,24 @@
             
             const elBranch = document.getElementById('sel-branch'); 
             if(elBranch) {
-                if (window.currentUser && (window.currentUser.role === 'HR' || ['F00001', 'F00004', 'F00005'].includes(window.currentUser.id))) {
+                // 判斷是否為處長、管理科、人資或執行長
+                const isHighLevel = window.currentUser && (
+                    window.currentUser.role === 'HR' || 
+                    !window.currentUser.dept.includes('校') ||
+                    ['F00001', 'F00004', 'F00005'].includes(window.currentUser.id)
+                );
+
+                if (isHighLevel) {
                     elBranch.disabled = false;
                     elBranch.classList.remove('cursor-not-allowed', 'bg-slate-100');
                     elBranch.classList.add('bg-slate-50', 'cursor-pointer');
-                    elBranch.value = window.state.branch || "";
-                } else if (window.currentUser) {
+                    elBranch.value = window.state.branch || (window.currentUser ? window.currentUser.dept : "");
+                } else {
                     elBranch.disabled = true;
                     elBranch.classList.remove('bg-slate-50', 'cursor-pointer');
                     elBranch.classList.add('cursor-not-allowed', 'bg-slate-100');
-                    elBranch.value = window.currentUser.dept;
-                    window.state.branch = window.currentUser.dept;
+                    elBranch.value = window.currentUser ? window.currentUser.dept : "";
+                    window.state.branch = elBranch.value;
                 }
             }
 
@@ -946,6 +1038,7 @@
             }
 
             const elPos = document.getElementById('sel-position'); if(elPos) elPos.value = window.state.position;
+            const elOtherPos = document.getElementById('ipt-other-position'); if(elOtherPos) elOtherPos.value = window.state.otherPosition || "";
             const elStage = document.getElementById('sel-stage'); if(elStage) elStage.value = window.state.stage || "階段一筆試";
             const elDate = document.getElementById('interview-date'); if(elDate && window.state.date) elDate.value = window.state.date;
             const elTime = document.getElementById('interview-time'); if(elTime && window.state.time) elTime.value = window.state.time;
@@ -995,20 +1088,16 @@
             
             window.state.docStatus = status;
 
-            let db = JSON.parse(localStorage.getItem('interview_db') || '[]');
-            let existingIdx = db.findIndex(r => r.name === window.state.name);
+            let existingIdx = window.dbCache.findIndex(r => r.name === window.state.name && r.date === window.state.date);
             if(existingIdx >= 0) {
-                db[existingIdx] = window.state; 
+                window.dbCache[existingIdx] = JSON.parse(JSON.stringify(window.state)); 
             } else {
-                db.push(window.state); 
+                window.dbCache.push(JSON.parse(JSON.stringify(window.state))); 
             }
-            localStorage.setItem('interview_db', JSON.stringify(db));
             return true;
         }
 
         window.sendToGoogleSheet = function(sheetName) {
-            const scriptURL = "https://script.google.com/macros/s/AKfycbxCPQLOLkHCDJJkyxhAPq8PI49K4FOLCdyFjahQnoAOFPUq6CtriFwU0uEtLKVlQkYF/exec";
-            
             const interviewerInputs = document.querySelectorAll('.ipt-interviewer');
             const interviewers = Array.from(interviewerInputs).map(inp => inp.value).filter(v => v).join('、');
 
@@ -1031,32 +1120,43 @@
             });
 
             let s2Scores = window.state.s2;
-
-            let docStatusStr = window.state.docStatus === 'draft' ? '筆試及職能面試題目暫存' : (window.state.docStatus === 'stage_done' ? '面試最終決策中' : '面試完成');
+            let stageStatus = window.state.stage; 
             let decisionStr = window.state.finalDecision === 'pass' ? '錄取' : (window.state.finalDecision === 'fail' ? '不錄取' : '');
+
+            // 合併其他職位至 position 欄位
+            let sheetPosition = window.state.position === '其他' && window.state.otherPosition 
+                ? `其他 (${window.state.otherPosition})` 
+                : window.state.position;
 
             const payload = {
                 sheetName: sheetName,
                 date: window.state.date,
                 candidate: window.state.name,
                 branch: window.state.branch,
-                position: window.state.position,
+                position: sheetPosition,
                 interviewer: interviewers,
                 s1: s1Scores,
                 s3: s3Data,
                 s2: s2Scores,
-                total: document.getElementById('header-total').innerText,
-                status: docStatusStr,
+                total: document.getElementById('report-grand-total').innerText,
+                status: stageStatus, 
                 result: decisionStr,
-                note: window.state.interviewNote ? window.state.interviewNote.replace(/\n/g, ' ') : ''
+                note: window.state.interviewNote ? window.state.interviewNote.replace(/\n/g, ' ') : '',
+                state: window.state 
             };
 
-            fetch(scriptURL, {
-                method: 'POST',
-                body: JSON.stringify(payload),
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' }
-            }).then(res => console.log("Google Sheet 傳送成功"))
-              .catch(err => console.error("Google Sheet 傳送失敗", err));
+            try {
+                fetch(window.SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    redirect: 'follow',
+                    body: JSON.stringify(payload),
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+                });
+                console.log("Google Sheet 傳送請求已發出");
+            } catch(e) {
+                console.error(e);
+            }
         };
 
         window.handleSaveDraft = function() {
@@ -1123,8 +1223,21 @@
             }
             window.saveToDB('completed');
             window.sendToGoogleSheet('完成人才面試');
-            window.alert("提醒：面試後檢核表請確實完成");
-            window.showToast('☁️ 最終決策已送出！資料已更新至後台及 Google Sheet。');
+            window.alert("辛苦了！請產出成績單給人資。\n(提醒：面試後檢核表請確實完成)");
+            window.showToast('☁️ 最終決策已送出！資料已同步至雲端 Google Sheet。');
+
+            const submitBtn = document.getElementById('btn-final-submit');
+            const submitBtnText = document.getElementById('btn-final-submit-text');
+            if(submitBtn && submitBtnText) {
+                submitBtn.classList.remove('bg-emerald-500', 'hover:bg-emerald-600');
+                submitBtn.classList.add('bg-slate-500');
+                submitBtnText.innerText = "已完成 ✅";
+                setTimeout(() => {
+                    submitBtn.classList.add('bg-emerald-500', 'hover:bg-emerald-600');
+                    submitBtn.classList.remove('bg-slate-500');
+                    submitBtnText.innerText = "確認送出檢核並建檔";
+                }, 3000);
+            }
         }
 
         window.showToast = function(msg) { const t = document.getElementById('toast'); if(t) { t.innerText = msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 1500); } }
@@ -1172,7 +1285,7 @@
                     const isActive = window.state.s2[i] == v;
                     return `<button onclick="window.setScore('s2', ${i}, ${v}, this)" class="score-btn w-7 h-7 md:w-8 md:h-8 rounded shadow-sm text-xs font-bold text-slate-600 ${isActive?'active':''}" data-val="${v}">${v}</button>`;
                 }).join('');
-                return `<div class="flex items-center justify-between gap-4 border-b border-slate-100 py-2 hover:bg-slate-50 px-3 rounded-lg"><span class="text-[13px] text-slate-700 font-medium flex-1">${i+1}. ${q}</span><div class="flex gap-1.5 shrink-0">${btns}</div></div>`;
+                return `<div class="flex items-center justify-between gap-4 border-b border-slate-100 py-2 hover:bg-slate-50 px-3 rounded-lg"><span class="text-[13px] text-slate-700 font-medium flex-1">${q}</span><div class="flex gap-1.5 shrink-0">${btns}</div></div>`;
             }).join('');
         }
 
@@ -1223,7 +1336,6 @@
             window.renderS3(); window.calculateScores(); 
         }
 
-        // 不會觸發 DOM 重繪，僅切換 Class 並更新分數，保留 textarea 內容
         window.setScore = function(group, idx, val, btn) {
             Array.from(btn.parentElement.children).forEach(b => b.classList.remove('active'));
             
@@ -1362,8 +1474,8 @@
 
         // ================= 後台資料匯出 (CSV) =================
         window.exportCSV = function() {
-            let csv = "\uFEFF面試日期,應徵者姓名,單位,職位,一、筆試和綜合面談,二、外顯特質,三、職能面試,總得分,進度狀態,結果,面試官備註\n";
-            const dbData = JSON.parse(localStorage.getItem('interview_db') || '[]');
+            let csv = "\uFEFF面試日期,應徵者姓名,單位,職位,其他職務,一、筆試和綜合面談,二、外顯特質,三、職能面試,總得分,進度狀態,結果,面試官備註\n";
+            const dbData = window.dbCache || [];
             let viewDb = dbData;
             
             if (window.currentUser && window.currentUser.role === 'MGR' && !['F00001', 'F00004', 'F00005'].includes(window.currentUser.id)) {
@@ -1374,7 +1486,7 @@
                 let statusText = r.docStatus === 'draft' ? '筆試及職能面試題目暫存' : r.docStatus === 'stage_done' ? '面試最終決策中' : '面試完成';
                 let decText = r.finalDecision === 'pass' ? '錄取' : r.finalDecision === 'fail' ? '不錄取' : '-';
                 let note = (r.interviewNote || '').replace(/\n/g, ' | ').replace(/"/g, '""');
-                csv += `"${r.date}","${r.name}","${r.branch}","${r.position}","${r.s1Final}","${r.s2Final}","${r.s3Final}","${r.grandTotal}","${statusText}","${decText}","${note}"\n`; 
+                csv += `"${r.date}","${r.name}","${r.branch}","${r.position}","${r.otherPosition || ''}","${r.s1Final}","${r.s2Final}","${r.s3Final}","${r.grandTotal}","${statusText}","${decText}","${note}"\n`; 
             });
 
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -1404,6 +1516,3 @@
     </script>
 </body>
 </html>
-
-```
-I am trying to run an event and hitting the following error. Could you help?
